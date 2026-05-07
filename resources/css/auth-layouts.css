@@ -1,0 +1,463 @@
+/* ===========================================
+   NOOR LMS - Auth Layout Styles
+   Moved from inline styles in auth layout files
+   =========================================== */
+
+/* ==================== ACCENT COLOR VARIABLES ==================== */
+[data-theme="red"] {
+    --color-accent: #ef4444;
+    --color-accent-light: #fca5a5;
+}
+[data-theme="orange"] {
+    --color-accent: #f97316;
+    --color-accent-light: #fdba74;
+}
+[data-theme="amber"] {
+    --color-accent: #f59e0b;
+    --color-accent-light: #fcd34d;
+}
+[data-theme="yellow"] {
+    --color-accent: #eab308;
+    --color-accent-light: #fde047;
+}
+[data-theme="lime"] {
+    --color-accent: #84cc16;
+    --color-accent-light: #bef264;
+}
+[data-theme="green"] {
+    --color-accent: #22c55e;
+    --color-accent-light: #86efac;
+}
+[data-theme="emerald"] {
+    --color-accent: #10b981;
+    --color-accent-light: #6ee7b7;
+}
+[data-theme="teal"] {
+    --color-accent: #14b8a6;
+    --color-accent-light: #5eead4;
+}
+[data-theme="cyan"] {
+    --color-accent: #06b6d4;
+    --color-accent-light: #67e8f9;
+}
+[data-theme="sky"] {
+    --color-accent: #0ea5e9;
+    --color-accent-light: #7dd3fc;
+}
+[data-theme="blue"] {
+    --color-accent: #3b82f6;
+    --color-accent-light: #93c5fd;
+}
+[data-theme="indigo"] {
+    --color-accent: #6366f1;
+    --color-accent-light: #a5b4fc;
+}
+[data-theme="violet"] {
+    --color-accent: #8b5cf6;
+    --color-accent-light: #c4b5fd;
+}
+[data-theme="purple"] {
+    --color-accent: #a855f7;
+    --color-accent-light: #d8b4fe;
+}
+[data-theme="fuchsia"] {
+    --color-accent: #d946ef;
+    --color-accent-light: #f0abfc;
+}
+[data-theme="pink"] {
+    --color-accent: #ec4899;
+    --color-accent-light: #f9a8d4;
+}
+[data-theme="rose"] {
+    --color-accent: #f43f5e;
+    --color-accent-light: #fda4af;
+}
+[data-theme="slate"] {
+    --color-accent: #64748b;
+    --color-accent-light: #94a3b8;
+}
+[data-theme="gray"] {
+    --color-accent: #6b7280;
+    --color-accent-light: #9ca3af;
+}
+[data-theme="zinc"] {
+    --color-accent: #71717a;
+    --color-accent-light: #a1a1aa;
+}
+[data-theme="neutral"] {
+    --color-accent: #737373;
+    --color-accent-light: #a3a3a3;
+}
+[data-theme="stone"] {
+    --color-accent: #78716c;
+    --color-accent-light: #a8a29e;
+}
+[data-theme="base"] {
+    --color-accent: #3b82f6;
+    --color-accent-light: #93c5fd;
+}
+
+/* ==================== GLOBAL ACCENT COLOR APPLICATION ==================== */
+[data-theme] .bg-zinc-600,
+[data-theme] .bg-blue-600 {
+    background-color: var(--color-accent) !important;
+}
+
+[data-theme] .text-zinc-600,
+[data-theme] .text-blue-600 {
+    color: var(--color-accent) !important;
+}
+
+[data-theme] .border-zinc-500,
+[data-theme] .border-blue-500 {
+    border-color: var(--color-accent) !important;
+}
+
+/* Flux UI components */
+[data-theme] .flux-button-primary {
+    background-color: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+}
+
+[data-theme] .flux-button-primary:hover {
+    background-color: var(--color-accent-light) !important;
+}
+
+/* Focus states */
+[data-theme] input:focus,
+[data-theme] select:focus,
+[data-theme] textarea:focus {
+    outline: none;
+    border-color: var(--color-accent) !important;
+    box-shadow: 0 0 0 3px var(--color-accent-light) !important;
+}
+
+/* Links */
+[data-theme] a:not(.btn):not([class*="button"]) {
+    color: var(--color-accent) !important;
+}
+
+/* ==================== ACCESSIBILITY STYLES ==================== */
+[data-font-size="small"] {
+    font-size: 14px !important;
+}
+[data-font-size="large"] {
+    font-size: 18px !important;
+}
+[data-font-size="xlarge"] {
+    font-size: 20px !important;
+}
+
+[data-large-text-mode="true"] {
+    font-size: 18px !important;
+}
+
+[data-high-contrast-mode="true"] {
+    --tw-border-opacity: 1 !important;
+}
+
+[data-reduced-motion="true"] *,
+[data-reduced-motion="true"] *::before,
+[data-reduced-motion="true"] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+}
+
+[data-grayscale="true"] {
+    filter: grayscale(100%) !important;
+}
+
+[data-dyslexia-font-mode="true"] {
+    font-family: "OpenDyslexic", "Comic Sans MS", sans-serif !important;
+    letter-spacing: 0.05em !important;
+    word-spacing: 0.1em !important;
+}
+
+[data-line-spacing-mode="true"] p,
+[data-line-spacing-mode="true"] li,
+[data-line-spacing-mode="true"] span {
+    line-height: 2 !important;
+}
+
+[data-focus-outline-mode="true"] *:focus {
+    outline: 3px solid var(--color-accent, #6366f1) !important;
+    outline-offset: 2px !important;
+}
+
+/* ==================== SKIP LINK STYLES ==================== */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--color-accent, #6366f1);
+    color: white;
+    padding: 8px 16px;
+    z-index: 100;
+    transition: top 0.3s;
+    text-decoration: none;
+    border-radius: 0 0 4px 4px;
+}
+.skip-link:focus {
+    top: 0;
+    color: white;
+}
+
+/* ==================== LANGUAGE SWITCHER ==================== */
+.language-switcher {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    align-items: center;
+}
+.language-switcher a {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s;
+}
+.language-switcher a:hover,
+.language-switcher a:focus {
+    background-color: var(--color-accent-light, rgba(99, 102, 241, 0.2));
+}
+.language-switcher a[aria-current="true"] {
+    font-weight: bold;
+    background-color: var(--color-accent, #6366f1);
+    color: white;
+}
+
+/* ==================== AUTH BACKGROUND ==================== */
+.auth-background {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.auth-background::before {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background:
+        radial-gradient(
+            circle at 20% 80%,
+            var(--color-accent-light, rgba(99, 102, 241, 0.15)) 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(139, 92, 246, 0.15) 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at 40% 40%,
+            rgba(6, 182, 212, 0.1) 0%,
+            transparent 40%
+        );
+    animation: backgroundPulse 15s ease-in-out infinite;
+}
+
+@keyframes backgroundPulse {
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(2%, 2%) rotate(1deg);
+    }
+    50% {
+        transform: translate(0, 4%) rotate(0deg);
+    }
+    75% {
+        transform: translate(-2%, 2%) rotate(-1deg);
+    }
+}
+
+/* ==================== FLOATING ORBS ==================== */
+.floating-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.5;
+    animation: float 20s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.orb-1 {
+    width: 300px;
+    height: 300px;
+    top: 10%;
+    left: 10%;
+    background: var(--color-accent, #6366f1);
+    animation-delay: 0s;
+}
+
+.orb-2 {
+    width: 250px;
+    height: 250px;
+    bottom: 20%;
+    right: 15%;
+    background: #8b5cf6;
+    animation-delay: -5s;
+}
+
+.orb-3 {
+    width: 200px;
+    height: 200px;
+    top: 50%;
+    left: 60%;
+    background: #06b6d4;
+    animation-delay: -10s;
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-30px) scale(1.05);
+    }
+}
+
+/* ==================== GRID PATTERN ==================== */
+.grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+    pointer-events: none;
+}
+
+/* ==================== AUTH CARD GLASSMORPHISM ==================== */
+.auth-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 2px solid var(--color-accent, #6366f1) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.dark .auth-card {
+    background: rgba(30, 30, 35, 0.95) !important;
+    border: 2px solid var(--color-accent, #6366f1) !important;
+}
+
+/* Card Shine Effect */
+.auth-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transform: skewX(-25deg);
+    transition: left 0.5s;
+}
+
+.auth-card:hover::before {
+    left: 100%;
+    transition: left 0.7s;
+}
+
+/* ==================== AUTH FOOTER ==================== */
+.auth-footer {
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.dark .auth-footer {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.auth-footer a {
+    transition: all 0.2s ease;
+}
+
+.auth-footer a:hover {
+    color: var(--color-accent, #6366f1) !important;
+    text-decoration: underline;
+}
+
+/* ==================== ANIMATION CLASSES ==================== */
+.fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stagger-1 {
+    animation-delay: 0.1s;
+}
+.stagger-2 {
+    animation-delay: 0.2s;
+}
+.stagger-3 {
+    animation-delay: 0.3s;
+}
+.stagger-4 {
+    animation-delay: 0.4s;
+}
+
+/* ==================== RESPONSIVE STYLES ==================== */
+@media (max-width: 640px) {
+    .auth-card {
+        margin: 0.5rem;
+        border-radius: 0.75rem;
+    }
+    .language-switcher {
+        justify-content: center;
+    }
+    .floating-orb {
+        opacity: 0.3;
+    }
+    .gradient-selector-container {
+        bottom: 1rem !important;
+        left: 0.5rem !important;
+        top: auto !important;
+        right: auto !important;
+        transform: none !important;
+    }
+    .gradient-selector-container button {
+        width: 28px !important;
+        height: 28px !important;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .gradient-selector-container {
+        bottom: 1.5rem !important;
+        left: 1rem !important;
+        top: auto !important;
+        right: auto !important;
+        transform: none !important;
+    }
+}
+
+@media (min-width: 1025px) {
+    .gradient-selector-container {
+        bottom: 1.5rem !important;
+        left: 1.5rem !important;
+        top: auto !important;
+        right: auto !important;
+        transform: none !important;
+    }
+}

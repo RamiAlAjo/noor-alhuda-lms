@@ -1,0 +1,895 @@
+/* ===========================================
+   NOOR LMS - Theme Enhancements
+   Distinctive visual styles for each theme
+   =========================================== */
+
+/* ==================== THEME TRANSITIONS ==================== */
+
+/* Only animate theme changes, not all properties */
+.theme-change-transition {
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease;
+}
+
+/* ==================== BASE THEME CSS VARIABLES ==================== */
+
+:root {
+    /* Default CSS variables - will be overridden by inline styles from JS */
+    --theme-primary: #6366f1;
+    --theme-secondary: #8b5cf6;
+    --theme-accent: #a855f7;
+    --theme-surface: #f5f5f4;
+    --theme-card-bg: #ffffff;
+    --theme-card-border: #e7e5e4;
+    --theme-card-shadow: rgba(0, 0, 0, 0.08);
+    --theme-nav-bg: #ffffff;
+    --theme-nav-border: #e7e5e4;
+    --theme-input-bg: #ffffff;
+    --theme-input-border: #e7e5e4;
+    --theme-button-bg: #6366f1;
+    --theme-button-text: #ffffff;
+    --theme-glow: transparent;
+    --theme-gradient-start: #667eea;
+    --theme-gradient-end: #764ba2;
+    --theme-gradient-angle: 135deg;
+    --theme-border-radius: 0.75rem;
+    --theme-card-hover-transform: translateY(-2px);
+    --theme-card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --theme-focus-ring: rgba(99, 102, 241, 0.4);
+    --theme-scrollbar-thumb: linear-gradient(180deg, #667eea, #764ba2);
+    --theme-active-indicator: #6366f1;
+}
+
+/* ==================== THEME: DEFAULT LIGHT ==================== */
+
+[data-base-theme="default-light"] {
+    --theme-primary: #6366f1;
+    --theme-secondary: #8b5cf6;
+    --theme-accent: #a855f7;
+    --theme-surface: #f5f5f4;
+    --theme-card-bg: #ffffff;
+    --theme-card-border: #e7e5e4;
+    --theme-card-shadow: rgba(0, 0, 0, 0.08);
+    --theme-nav-bg: #ffffff;
+    --theme-nav-border: #e7e5e4;
+    --theme-input-bg: #ffffff;
+    --theme-input-border: #e7e5e4;
+    --theme-button-bg: #6366f1;
+    --theme-button-text: #ffffff;
+    --theme-glow: transparent;
+    --theme-gradient-start: #667eea;
+    --theme-gradient-end: #764ba2;
+    --theme-gradient-angle: 135deg;
+    --theme-border-radius: 0.75rem;
+    --theme-card-hover-transform: translateY(-2px);
+    --theme-card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --theme-focus-ring: rgba(99, 102, 241, 0.4);
+    --theme-scrollbar-thumb: linear-gradient(180deg, #667eea, #764ba2);
+    --theme-active-indicator: #6366f1;
+    --theme-card-accent: #6366f1;
+    --theme-link-color: #6366f1;
+    --theme-badge-bg: #ede9fe;
+    --theme-badge-text: #5b21b6;
+}
+
+[data-base-theme="default-light"] .text-neutral-600,
+[data-base-theme="default-light"] .text-gray-600,
+[data-base-theme="default-light"] .text-zinc-600 {
+    color: #525252 !important;
+}
+
+[data-base-theme="default-light"] .text-neutral-500,
+[data-base-theme="default-light"] .text-gray-500,
+[data-base-theme="default-light"] .text-zinc-500 {
+    color: #737373 !important;
+}
+
+[data-base-theme="default-light"] .text-neutral-400,
+[data-base-theme="default-light"] .text-gray-400,
+[data-base-theme="default-light"] .text-zinc-400 {
+    color: #a3a3a3 !important;
+}
+
+/* Apply default-light theme to body */
+[data-base-theme="default-light"] body {
+    background: linear-gradient(180deg, #fafafa 0%, #f5f5f4 100%);
+    background-attachment: fixed;
+}
+
+[data-base-theme="default-light"] .bg-white,
+[data-base-theme="default-light"] .card,
+[data-base-theme="default-light"] .rounded-xl,
+[data-base-theme="default-light"] .rounded-lg {
+    background-color: var(--theme-card-bg) !important;
+    border-color: var(--theme-card-border) !important;
+    box-shadow: 0 1px 3px var(--theme-card-shadow) !important;
+}
+
+/* ==================== THEME: DEFAULT DARK ==================== */
+
+[data-base-theme="default-dark"] {
+    --theme-primary: #818cf8;
+    --theme-secondary: #a78bfa;
+    --theme-accent: #c084fc;
+    --theme-surface: #1c1917;
+    --theme-card-bg: #292524;
+    --theme-card-border: #44403c;
+    --theme-card-shadow: rgba(0, 0, 0, 0.3);
+    --theme-nav-bg: #1c1917;
+    --theme-nav-border: #44403c;
+    --theme-input-bg: #292524;
+    --theme-input-border: #44403c;
+    --theme-button-bg: #6366f1;
+    --theme-button-text: #ffffff;
+    --theme-glow: transparent;
+    --theme-gradient-start: #4f46e5;
+    --theme-gradient-end: #7c3aed;
+    --theme-gradient-angle: 135deg;
+    --theme-border-radius: 0.75rem;
+    --theme-card-hover-transform: translateY(-2px);
+    --theme-card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+    --theme-focus-ring: rgba(129, 140, 248, 0.4);
+    --theme-scrollbar-thumb: linear-gradient(180deg, #4f46e5, #7c3aed);
+    --theme-active-indicator: #818cf8;
+    --theme-card-accent: #818cf8;
+    --theme-link-color: #818cf8;
+    --theme-badge-bg: #3730a3;
+    --theme-badge-text: #c7d2fe;
+}
+
+[data-base-theme="default-dark"] body {
+    background: linear-gradient(180deg, #0c0a09 0%, #1c1917 100%);
+    background-attachment: fixed;
+}
+
+[data-base-theme="default-dark"] .bg-white,
+[data-base-theme="default-dark"] .card,
+[data-base-theme="default-dark"] .rounded-xl,
+[data-base-theme="default-dark"] .rounded-lg {
+    background-color: var(--theme-card-bg) !important;
+    border-color: var(--theme-card-border) !important;
+    box-shadow: 0 1px 3px var(--theme-card-shadow) !important;
+}
+
+[data-base-theme="default-dark"] .text-neutral-600,
+[data-base-theme="default-dark"] .text-gray-600,
+[data-base-theme="default-dark"] .text-zinc-600 {
+    color: #d6d3d1 !important;
+}
+
+[data-base-theme="default-dark"] .text-neutral-500,
+[data-base-theme="default-dark"] .text-gray-500,
+[data-base-theme="default-dark"] .text-zinc-500 {
+    color: #a8a29e !important;
+}
+
+[data-base-theme="default-dark"] .text-neutral-400,
+[data-base-theme="default-dark"] .text-gray-400,
+[data-base-theme="default-dark"] .text-zinc-400 {
+    color: #78716c !important;
+}
+
+/* ==================== THEME: CYBERPUNK NEON ==================== */
+
+[data-base-theme="cyberpunk-neon"] {
+    --theme-primary: #ff00ff;
+    --theme-secondary: #00ffff;
+    --theme-accent: #ffff00;
+    --theme-surface: #2d1b4e;
+    --theme-card-bg: #1a0a2e;
+    --theme-card-border: #ff00ff;
+    --theme-card-shadow: rgba(255, 0, 255, 0.3);
+    --theme-nav-bg: #1a0a2e;
+    --theme-nav-border: #ff00ff;
+    --theme-input-bg: #2d1b4e;
+    --theme-input-border: #ff00ff;
+    --theme-button-bg: #ff00ff;
+    --theme-button-text: #000000;
+    --theme-glow: 0 0 20px rgba(255, 0, 255, 0.5);
+    --theme-gradient-start: #ff00ff;
+    --theme-gradient-end: #00ffff;
+    --theme-gradient-angle: 90deg;
+    --theme-border-radius: 0.5rem;
+    --theme-card-hover-transform: translateY(-4px);
+    --theme-card-hover-shadow:
+        0 0 30px rgba(255, 0, 255, 0.5), 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    --theme-focus-ring: rgba(255, 0, 255, 0.6);
+    --theme-scrollbar-thumb: linear-gradient(180deg, #ff00ff, #00ffff);
+    --theme-active-indicator: #ff00ff;
+    --theme-card-accent: #ff00ff;
+    --theme-link-color: #00ffff;
+    --theme-badge-bg: #ff00ff;
+    --theme-badge-text: #000000;
+}
+
+/* Icon visibility improvements for cyberpunk neon */
+[data-base-theme="cyberpunk-neon"] svg,
+[data-base-theme="cyberpunk-neon"] .icon {
+    color: #e0e0e0 !important;
+}
+
+[data-base-theme="cyberpunk-neon"] .navbar-icon-btn svg {
+    color: #ffffff !important;
+}
+
+[data-base-theme="cyberpunk-neon"] body {
+    background: linear-gradient(180deg, #1a0a2e 0%, #0d0518 100%);
+    background-attachment: fixed;
+}
+
+[data-base-theme="cyberpunk-neon"] .bg-white,
+[data-base-theme="cyberpunk-neon"] .card,
+[data-base-theme="cyberpunk-neon"] .rounded-xl,
+[data-base-theme="cyberpunk-neon"] .rounded-lg {
+    background-color: var(--theme-card-bg) !important;
+    border: 2px solid var(--theme-card-border) !important;
+    box-shadow:
+        var(--theme-glow),
+        0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-base-theme="cyberpunk-neon"] .text-neutral-600,
+[data-base-theme="cyberpunk-neon"] .text-gray-600,
+[data-base-theme="cyberpunk-neon"] .text-zinc-600 {
+    color: #e0e0e0 !important;
+}
+
+[data-base-theme="cyberpunk-neon"] .border,
+[data-base-theme="cyberpunk-neon"] .border-t,
+[data-base-theme="cyberpunk-neon"] .border-b,
+[data-base-theme="cyberpunk-neon"] .border-l,
+[data-base-theme="cyberpunk-neon"] .border-r {
+    border-color: var(--theme-card-border) !important;
+}
+
+/* ==================== THEME: CYBERPUNK DARK ==================== */
+
+[data-base-theme="cyberpunk-dark"] {
+    --theme-primary: #00ffff;
+    --theme-secondary: #ff00ff;
+    --theme-accent: #00ff00;
+    --theme-surface: #0a0a0a;
+    --theme-card-bg: #000000;
+    --theme-card-border: #00ffff;
+    --theme-card-shadow: rgba(0, 255, 255, 0.2);
+    --theme-nav-bg: #000000;
+    --theme-nav-border: #00ffff;
+    --theme-input-bg: #0a0a0a;
+    --theme-input-border: #00ffff;
+    --theme-button-bg: #00ffff;
+    --theme-button-text: #000000;
+    --theme-glow: 0 0 15px rgba(0, 255, 255, 0.4);
+    --theme-gradient-start: #000000;
+    --theme-gradient-end: #001a1a;
+    --theme-gradient-angle: 180deg;
+    --theme-border-radius: 0.25rem;
+    --theme-card-hover-transform: translateY(-3px);
+    --theme-card-hover-shadow:
+        0 0 25px rgba(0, 255, 255, 0.4), 0 15px 20px rgba(0, 0, 0, 0.5);
+    --theme-focus-ring: rgba(0, 255, 255, 0.5);
+    --theme-scrollbar-thumb: linear-gradient(180deg, #00ffff, #008888);
+    --theme-active-indicator: #00ffff;
+    --theme-card-accent: #00ffff;
+    --theme-link-color: #00ffff;
+    --theme-badge-bg: #00ffff;
+    --theme-badge-text: #000000;
+}
+
+[data-base-theme="cyberpunk-dark"] body {
+    background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
+    background-attachment: fixed;
+}
+
+[data-base-theme="cyberpunk-dark"] .bg-white,
+[data-base-theme="cyberpunk-dark"] .card,
+[data-base-theme="cyberpunk-dark"] .rounded-xl,
+[data-base-theme="cyberpunk-dark"] .rounded-lg {
+    background-color: var(--theme-card-bg) !important;
+    border: 1px solid var(--theme-card-border) !important;
+    box-shadow: var(--theme-glow) !important;
+}
+
+[data-base-theme="cyberpunk-dark"] .text-neutral-600,
+[data-base-theme="cyberpunk-dark"] .text-gray-600,
+[data-base-theme="cyberpunk-dark"] .text-zinc-600 {
+    color: #00ffff !important;
+}
+
+[data-base-theme="cyberpunk-dark"] .border {
+    border-color: var(--theme-card-border) !important;
+}
+
+/* Icon visibility improvements for cyberpunk dark */
+[data-base-theme="cyberpunk-dark"] svg,
+[data-base-theme="cyberpunk-dark"] .icon {
+    color: #00ffff !important;
+}
+
+[data-base-theme="cyberpunk-dark"] .navbar-icon-btn svg {
+    color: #ffffff !important;
+}
+
+/* ==================== THEME: SYNTHWAVE ==================== */
+
+[data-base-theme="synthwave"] {
+    --theme-primary: #ff71ce;
+    --theme-secondary: #01cdfe;
+    --theme-accent: #05ffa1;
+    --theme-surface: #2d1b2e;
+    --theme-card-bg: #1a0a1a;
+    --theme-card-border: #ff71ce;
+    --theme-card-shadow: rgba(255, 113, 206, 0.25);
+    --theme-nav-bg: #1a0a1a;
+    --theme-nav-border: #ff71ce;
+    --theme-input-bg: #2d1b2e;
+    --theme-input-border: #ff71ce;
+    --theme-button-bg: linear-gradient(135deg, #ff71ce, #01cdfe);
+    --theme-button-text: #1a0a1a;
+    --theme-glow: 0 0 15px rgba(255, 113, 206, 0.3);
+    --theme-gradient-start: #ff71ce;
+    --theme-gradient-end: #01cdfe;
+    --theme-gradient-angle: 135deg;
+    --theme-border-radius: 1rem;
+    --theme-card-hover-transform: translateY(-3px);
+    --theme-card-hover-shadow:
+        0 0 25px rgba(255, 113, 206, 0.4), 0 15px 25px rgba(0, 0, 0, 0.4);
+    --theme-focus-ring: rgba(255, 113, 206, 0.5);
+    --theme-scrollbar-thumb: linear-gradient(180deg, #ff71ce, #01cdfe);
+    --theme-active-indicator: #ff71ce;
+    --theme-card-accent: #ff71ce;
+    --theme-link-color: #01cdfe;
+    --theme-badge-bg: #ff71ce;
+    --theme-badge-text: #1a0a1a;
+}
+
+[data-base-theme="synthwave"] body {
+    background: linear-gradient(180deg, #1a0a1a 0%, #0d0510 100%);
+    background-attachment: fixed;
+}
+
+[data-base-theme="synthwave"] .bg-white,
+[data-base-theme="synthwave"] .card,
+[data-base-theme="synthwave"] .rounded-xl,
+[data-base-theme="synthwave"] .rounded-lg {
+    background-color: var(--theme-card-bg) !important;
+    border: 2px solid var(--theme-card-border) !important;
+    box-shadow: var(--theme-glow) !important;
+}
+
+[data-base-theme="synthwave"] .text-neutral-600,
+[data-base-theme="synthwave"] .text-gray-600,
+[data-base-theme="synthwave"] .text-zinc-600 {
+    color: #ff71ce !important;
+}
+
+[data-base-theme="synthwave"] .border {
+    border-color: var(--theme-card-border) !important;
+}
+
+/* Icon visibility improvements for synthwave */
+[data-base-theme="synthwave"] svg,
+[data-base-theme="synthwave"] .icon {
+    color: #ff71ce !important;
+}
+
+[data-base-theme="synthwave"] .navbar-icon-btn svg {
+    color: #ffffff !important;
+}
+
+/* ==================== THEME: MIDNIGHT ==================== */
+
+[data-base-theme="midnight"] {
+    --theme-primary: #60a5fa;
+    --theme-secondary: #818cf8;
+    --theme-accent: #a78bfa;
+    --theme-surface: #1e293b;
+    --theme-card-bg: #0f172a;
+    --theme-card-border: #334155;
+    --theme-card-shadow: rgba(0, 0, 0, 0.4);
+    --theme-nav-bg: #0f172a;
+    --theme-nav-border: #334155;
+    --theme-input-bg: #1e293b;
+    --theme-input-border: #334155;
+    --theme-button-bg: #3b82f6;
+    --theme-button-text: #ffffff;
+    --theme-glow: transparent;
+    --theme-gradient-start: #1e3a5f;
+    --theme-gradient-end: #0f172a;
+    --theme-gradient-angle: 180deg;
+    --theme-border-radius: 0.75rem;
+    --theme-card-hover-transform: translateY(-2px);
+    --theme-card-hover-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    --theme-focus-ring: rgba(96, 165, 250, 0.4);
+    --theme-scrollbar-thumb: linear-gradient(180deg, #3b82f6, #6366f1);
+    --theme-active-indicator: #60a5fa;
+    --theme-card-accent: #60a5fa;
+    --theme-link-color: #60a5fa;
+    --theme-badge-bg: #1e3a8a;
+    --theme-badge-text: #bfdbfe;
+}
+
+[data-base-theme="midnight"] body {
+    background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+    background-attachment: fixed;
+}
+
+[data-base-theme="midnight"] .bg-white,
+[data-base-theme="midnight"] .card,
+[data-base-theme="midnight"] .rounded-xl,
+[data-base-theme="midnight"] .rounded-lg {
+    background-color: var(--theme-card-bg) !important;
+    border-color: var(--theme-card-border) !important;
+    box-shadow: 0 4px 6px var(--theme-card-shadow) !important;
+}
+
+[data-base-theme="midnight"] .text-neutral-600,
+[data-base-theme="midnight"] .text-gray-600,
+[data-base-theme="midnight"] .text-zinc-600 {
+    color: #cbd5e1 !important;
+}
+
+[data-base-theme="midnight"] .text-neutral-500,
+[data-base-theme="midnight"] .text-gray-500,
+[data-base-theme="midnight"] .text-zinc-500 {
+    color: #94a3b8 !important;
+}
+
+[data-base-theme="midnight"] .text-neutral-400,
+[data-base-theme="midnight"] .text-gray-400,
+[data-base-theme="midnight"] .text-zinc-400 {
+    color: #64748b !important;
+}
+
+/* ==================== THEME: DRACULA ==================== */
+
+[data-base-theme="dracula"] {
+    --theme-primary: #bd93f9;
+    --theme-secondary: #ff79c6;
+    --theme-accent: #50fa7b;
+    --theme-surface: #282a36;
+    --theme-card-bg: #21222c;
+    --theme-card-border: #44475a;
+    --theme-card-shadow: rgba(0, 0, 0, 0.3);
+    --theme-nav-bg: #21222c;
+    --theme-nav-border: #44475a;
+    --theme-input-bg: #282a36;
+    --theme-input-border: #44475a;
+    --theme-button-bg: #bd93f9;
+    --theme-button-text: #282a36;
+    --theme-glow: transparent;
+    --theme-gradient-start: #44475a;
+    --theme-gradient-end: #21222c;
+    --theme-gradient-angle: 180deg;
+    --theme-border-radius: 0.5rem;
+    --theme-card-hover-transform: translateY(-2px);
+    --theme-card-hover-shadow: 0 15px 25px rgba(0, 0, 0, 0.35);
+    --theme-focus-ring: rgba(189, 147, 249, 0.4);
+    --theme-scrollbar-thumb: linear-gradient(180deg, #bd93f9, #ff79c6);
+    --theme-active-indicator: #bd93f9;
+    --theme-card-accent: #bd93f9;
+    --theme-link-color: #bd93f9;
+    --theme-badge-bg: #44475a;
+    --theme-badge-text: #f8f8f2;
+}
+
+[data-base-theme="dracula"] body {
+    background: linear-gradient(180deg, #21222c 0%, #191a21 100%);
+    background-attachment: fixed;
+}
+
+[data-base-theme="dracula"] .bg-white,
+[data-base-theme="dracula"] .card,
+[data-base-theme="dracula"] .rounded-xl,
+[data-base-theme="dracula"] .rounded-lg {
+    background-color: var(--theme-card-bg) !important;
+    border-color: var(--theme-card-border) !important;
+    box-shadow: 0 2px 4px var(--theme-card-shadow) !important;
+}
+
+[data-base-theme="dracula"] .text-neutral-600,
+[data-base-theme="dracula"] .text-gray-600,
+[data-base-theme="dracula"] .text-zinc-600 {
+    color: #6272a4 !important;
+}
+
+[data-base-theme="dracula"] .text-neutral-500,
+[data-base-theme="dracula"] .text-gray-500,
+[data-base-theme="dracula"] .text-zinc-500 {
+    color: #6272a4 !important;
+}
+
+[data-base-theme="dracula"] .text-neutral-400,
+[data-base-theme="dracula"] .text-gray-400,
+[data-base-theme="dracula"] .text-zinc-400 {
+    color: #6272a4 !important;
+}
+
+/* ==================== THEME: NORD ==================== */
+
+[data-base-theme="nord"] {
+    --theme-primary: #88c0d0;
+    --theme-secondary: #81a1c1;
+    --theme-accent: #b48ead;
+    --theme-surface: #3b4252;
+    --theme-card-bg: #2e3440;
+    --theme-card-border: #4c566a;
+    --theme-card-shadow: rgba(0, 0, 0, 0.25);
+    --theme-nav-bg: #2e3440;
+    --theme-nav-border: #4c566a;
+    --theme-input-bg: #3b4252;
+    --theme-input-border: #4c566a;
+    --theme-button-bg: #5e81ac;
+    --theme-button-text: #eceff4;
+    --theme-glow: transparent;
+    --theme-gradient-start: #3b4252;
+    --theme-gradient-end: #2e3440;
+    --theme-gradient-angle: 180deg;
+    --theme-border-radius: 0.5rem;
+    --theme-card-hover-transform: translateY(-2px);
+    --theme-card-hover-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+    --theme-focus-ring: rgba(136, 192, 208, 0.4);
+    --theme-scrollbar-thumb: linear-gradient(180deg, #5e81ac, #81a1c1);
+    --theme-active-indicator: #88c0d0;
+    --theme-card-accent: #88c0d0;
+    --theme-link-color: #88c0d0;
+    --theme-badge-bg: #4c566a;
+    --theme-badge-text: #eceff4;
+}
+
+[data-base-theme="nord"] body {
+    background: linear-gradient(180deg, #2e3440 0%, #242933 100%);
+    background-attachment: fixed;
+}
+
+[data-base-theme="nord"] .bg-white,
+[data-base-theme="nord"] .card,
+[data-base-theme="nord"] .rounded-xl,
+[data-base-theme="nord"] .rounded-lg {
+    background-color: var(--theme-card-bg) !important;
+    border-color: var(--theme-card-border) !important;
+    box-shadow: 0 2px 4px var(--theme-card-shadow) !important;
+}
+
+[data-base-theme="nord"] .text-neutral-600,
+[data-base-theme="nord"] .text-gray-600,
+[data-base-theme="nord"] .text-zinc-600 {
+    color: #d8dee9 !important;
+}
+
+[data-base-theme="nord"] .text-neutral-500,
+[data-base-theme="nord"] .text-gray-500,
+[data-base-theme="nord"] .text-zinc-500 {
+    color: #81a1c1 !important;
+}
+
+[data-base-theme="nord"] .text-neutral-400,
+[data-base-theme="nord"] .text-gray-400,
+[data-base-theme="nord"] .text-zinc-400 {
+    color: #5e81ac !important;
+}
+
+/* ==================== THEME-SPECIFIC CARD STYLES ==================== */
+
+/* Apply card hover effects based on theme */
+[data-base-theme] .card:hover,
+[data-base-theme] .rounded-xl:hover,
+[data-base-theme] .rounded-lg:hover {
+    transform: var(--theme-card-hover-transform);
+    box-shadow: var(--theme-card-hover-shadow) !important;
+}
+
+/* Theme-specific button styles */
+[data-base-theme="cyberpunk-neon"] .btn-primary,
+[data-base-theme="cyberpunk-neon"] button,
+[data-base-theme="cyberpunk-neon"] [class*="bg-indigo"],
+[data-base-theme="cyberpunk-neon"] [class*="bg-purple"] {
+    background: var(--theme-button-bg) !important;
+    color: var(--theme-button-text) !important;
+    box-shadow: var(--theme-glow) !important;
+    border-radius: var(--theme-border-radius) !important;
+}
+
+[data-base-theme="cyberpunk-dark"] .btn-primary,
+[data-base-theme="cyberpunk-dark"] button,
+[data-base-theme="cyberpunk-dark"] [class*="bg-indigo"] {
+    background: var(--theme-button-bg) !important;
+    color: var(--theme-button-text) !important;
+    box-shadow: var(--theme-glow) !important;
+    border-radius: var(--theme-border-radius) !important;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+[data-base-theme="synthwave"] .btn-primary,
+[data-base-theme="synthwave"] button,
+[data-base-theme="synthwave"] [class*="bg-indigo"] {
+    background: var(--theme-button-bg) !important;
+    color: var(--theme-button-text) !important;
+    box-shadow: var(--theme-glow) !important;
+    border-radius: var(--theme-border-radius) !important;
+}
+
+/* ==================== THEME ACTIVE NAVIGATION INDICATORS ==================== */
+
+[data-base-theme="default-light"] .sidebar-nav-item.active {
+    background: linear-gradient(
+        90deg,
+        rgba(99, 102, 241, 0.15) 0%,
+        rgba(99, 102, 241, 0.05) 100%
+    );
+    border-left: 3px solid var(--theme-active-indicator);
+}
+
+[data-base-theme="default-dark"] .sidebar-nav-item.active {
+    background: linear-gradient(
+        90deg,
+        rgba(129, 140, 248, 0.2) 0%,
+        rgba(129, 140, 248, 0.05) 100%
+    );
+    border-left: 3px solid var(--theme-active-indicator);
+}
+
+[data-base-theme="cyberpunk-neon"] .sidebar-nav-item.active {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 0, 255, 0.3) 0%,
+        rgba(255, 0, 255, 0.1) 100%
+    );
+    border-left: 3px solid var(--theme-active-indicator);
+    box-shadow: var(--theme-glow);
+}
+
+[data-base-theme="cyberpunk-dark"] .sidebar-nav-item.active {
+    background: linear-gradient(
+        90deg,
+        rgba(0, 255, 255, 0.25) 0%,
+        rgba(0, 255, 255, 0.1) 100%
+    );
+    border-left: 3px solid var(--theme-active-indicator);
+    box-shadow: var(--theme-glow);
+}
+
+[data-base-theme="synthwave"] .sidebar-nav-item.active {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 113, 206, 0.3) 0%,
+        rgba(255, 113, 206, 0.1) 100%
+    );
+    border-left: 3px solid var(--theme-active-indicator);
+    box-shadow: var(--theme-glow);
+}
+
+[data-base-theme="midnight"] .sidebar-nav-item.active {
+    background: linear-gradient(
+        90deg,
+        rgba(96, 165, 250, 0.2) 0%,
+        rgba(96, 165, 250, 0.05) 100%
+    );
+    border-left: 3px solid var(--theme-active-indicator);
+}
+
+[data-base-theme="dracula"] .sidebar-nav-item.active {
+    background: linear-gradient(
+        90deg,
+        rgba(189, 147, 249, 0.2) 0%,
+        rgba(189, 147, 249, 0.05) 100%
+    );
+    border-left: 3px solid var(--theme-active-indicator);
+}
+
+[data-base-theme="nord"] .sidebar-nav-item.active {
+    background: linear-gradient(
+        90deg,
+        rgba(136, 192, 208, 0.2) 0%,
+        rgba(136, 192, 208, 0.05) 100%
+    );
+    border-left: 3px solid var(--theme-active-indicator);
+}
+
+/* ==================== THEME GRADIENT BACKGROUNDS ==================== */
+
+/* Default Light Gradient */
+.theme-gradient-default-light {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Default Dark Gradient */
+.theme-gradient-default-dark {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+/* Cyberpunk Neon Gradient */
+.theme-gradient-cyberpunk-neon {
+    background: linear-gradient(90deg, #ff00ff 0%, #00ffff 100%);
+    box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+}
+
+/* Cyberpunk Dark Gradient */
+.theme-gradient-cyberpunk-dark {
+    background: linear-gradient(180deg, #001a1a 0%, #000000 100%);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+/* Synthwave Gradient */
+.theme-gradient-synthwave {
+    background: linear-gradient(135deg, #ff71ce 0%, #01cdfe 50%, #05ffa1 100%);
+    box-shadow: 0 0 25px rgba(255, 113, 206, 0.4);
+}
+
+/* Midnight Gradient */
+.theme-gradient-midnight {
+    background: linear-gradient(180deg, #1e3a5f 0%, #0f172a 100%);
+}
+
+/* Dracula Gradient */
+.theme-gradient-dracula {
+    background: linear-gradient(135deg, #44475a 0%, #21222c 100%);
+}
+
+/* Nord Gradient */
+.theme-gradient-nord {
+    background: linear-gradient(180deg, #3b4252 0%, #2e3440 100%);
+}
+
+/* ==================== THEME BADGE STYLES ==================== */
+
+[data-base-theme] .badge {
+    background-color: var(--theme-badge-bg) !important;
+    color: var(--theme-badge-text) !important;
+    border-radius: var(--theme-border-radius);
+}
+
+/* ==================== THEME FOCUS RINGS ==================== */
+
+[data-base-theme] input:focus,
+[data-base-theme] textarea:focus,
+[data-base-theme] select:focus,
+[data-base-theme] button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--theme-focus-ring) !important;
+}
+
+/* ==================== THEME LINK COLORS ==================== */
+
+[data-base-theme] a,
+[data-base-theme] .link {
+    color: var(--theme-link-color) !important;
+    transition: color 0.2s ease;
+}
+
+[data-base-theme] a:hover,
+[data-base-theme] .link:hover {
+    color: var(--theme-primary) !important;
+}
+
+/* ==================== THEME SCROLLBAR ==================== */
+
+[data-base-theme] ::-webkit-scrollbar-thumb {
+    background: var(--theme-scrollbar-thumb) !important;
+    border-radius: 4px;
+}
+
+[data-base-theme] * {
+    scrollbar-color: var(--theme-primary) var(--theme-surface);
+}
+
+/* ==================== THEME INPUT STYLES ==================== */
+
+[data-base-theme] input,
+[data-base-theme] textarea,
+[data-base-theme] select {
+    background-color: var(--theme-input-bg) !important;
+    border-color: var(--theme-input-border) !important;
+    color: inherit;
+}
+
+/* ==================== THEME CARD ACCENTS ==================== */
+
+/* Top accent border for cards */
+.card-accent-top {
+    position: relative;
+}
+
+.card-accent-top::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--theme-card-accent);
+    border-radius: var(--theme-border-radius) var(--theme-border-radius) 0 0;
+}
+
+/* ==================== GLOW EFFECTS BY THEME ==================== */
+
+[data-theme-glow="true"] .glow-primary {
+    box-shadow: 0 0 20px var(--theme-primary);
+}
+
+[data-theme-glow="true"] .glow-secondary {
+    box-shadow: 0 0 20px var(--theme-secondary);
+}
+
+[data-theme-glow="true"] .glow-accent {
+    box-shadow: 0 0 20px var(--theme-accent);
+}
+
+/* ==================== DARK MODE VS LIGHT MODE DISTINCTION ==================== */
+
+/* Make sure dark/light modes are clearly different */
+.light body {
+    background: linear-gradient(180deg, #fafafa 0%, #f5f5f4 100%) !important;
+    background-attachment: fixed;
+}
+
+.dark body {
+    background: linear-gradient(180deg, #0c0a09 0%, #1c1917 100%) !important;
+    background-attachment: fixed;
+}
+
+/* ==================== RESPONSIVE THEME ADJUSTMENTS ==================== */
+
+@media (max-width: 768px) {
+    [data-base-theme] .card:hover,
+    [data-base-theme] .rounded-xl:hover,
+    [data-base-theme] .rounded-lg:hover {
+        transform: none;
+    }
+}
+
+/* ==================== PRINT STYLES FOR THEMES ==================== */
+
+/* ==================== GENERAL ICON VISIBILITY ==================== */
+
+/* Ensure icons have good contrast across all themes */
+[data-base-theme] svg:not([data-base-theme] .navbar-icon-btn svg):not([data-base-theme] .theme-btn svg),
+[data-base-theme] .icon:not([data-base-theme] .navbar-icon-btn .icon):not([data-base-theme] .theme-btn .icon) {
+    color: inherit !important;
+    opacity: 0.9 !important;
+}
+
+/* Special handling for navbar icons */
+[data-base-theme] .navbar-icon-btn svg {
+    color: currentColor !important;
+}
+
+/* Ensure text icons and decorative elements are visible */
+[data-base-theme] .text-icon,
+[data-base-theme] [aria-hidden="true"] {
+    color: inherit !important;
+    opacity: 1 !important;
+}
+
+/* Improve contrast for small text elements */
+[data-base-theme] .text-xs,
+[data-base-theme] .text-sm {
+    color: inherit !important;
+}
+
+/* Ensure form labels and help text are visible */
+[data-base-theme] label,
+[data-base-theme] .form-label,
+[data-base-theme] .help-text,
+[data-base-theme] .form-text {
+    color: inherit !important;
+    opacity: 0.8 !important;
+}
+
+@media print {
+    [data-base-theme] body {
+        background: white !important;
+        color: black !important;
+    }
+
+    [data-base-theme] .card,
+    [data-base-theme] .rounded-xl,
+    [data-base-theme] .rounded-lg {
+        background: white !important;
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+    }
+}

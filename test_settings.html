@@ -1,0 +1,1771 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="dark"
+    dir="ltr"
+    
+    
+    
+    
+    
+    
+    
+    data-font-size="medium"
+    data-theme="neon-purple"
+    data-accent-color="neon-purple"
+>
+    <head>
+        <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- Primary Meta Tags -->
+<title>Noor LMS</title>
+<meta name="title" content="Noor LMS">
+<meta name="description" content="Noor LMS - Manage your courses, grades, and academic progress">
+<meta name="author" content="Noor LMS">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#3b82f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1917" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="http://127.0.0.1:8000/login">
+<meta property="og:title" content="Noor LMS">
+<meta property="og:description" content="Learning Management System">
+<meta property="og:site_name" content="Noor LMS">
+<meta property="og:locale" content="en">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="http://127.0.0.1:8000/login">
+<meta property="twitter:title" content="Noor LMS">
+<meta property="twitter:description" content="Learning Management System">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="http://127.0.0.1:8000/login">
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+
+<!-- DNS Prefetch and Preconnect for Performance -->
+<link rel="dns-prefetch" href="https://fonts.bunny.net">
+<link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+
+<!-- Fonts -->
+<link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+
+<!-- =====================================================
+     HEAD PARTIAL - CRITICAL STYLES
+     Used by: All pages (included in layouts)
+     Description: Dark mode flash prevention, CSS variables for themes,
+     reduced motion media queries
+===================================================== -->
+<!-- Critical CSS for Dark Mode Flash Prevention -->
+<style>
+    :root { color-scheme: light dark; }
+    html.dark { background-color: #0c0a09; color: #fafaf9; }
+    html.light { background-color: #ffffff; color: #1c1917; }
+    html[data-base-theme="default-dark"],
+    html[data-base-theme="cyberpunk-neon"],
+    html[data-base-theme="cyberpunk-dark"],
+    html[data-base-theme="synthwave"],
+    html[data-base-theme="midnight"],
+    html[data-base-theme="dracula"],
+    html[data-base-theme="nord"] { background-color: var(--theme-background, #0c0a09); color: var(--theme-text, #fafaf9); }
+</style>
+
+<link rel="preload" as="style" href="http://127.0.0.1:8000/build/assets/app-CI_lFBAU.css" /><link rel="preload" as="style" href="http://127.0.0.1:8000/build/assets/accessibility-Bfe2B5iC.css" /><link rel="preload" as="style" href="http://127.0.0.1:8000/build/assets/mobile-C8ZdhN5j.css" /><link rel="modulepreload" as="script" href="http://127.0.0.1:8000/build/assets/app-BKxjKExa.js" /><link rel="modulepreload" as="script" href="http://127.0.0.1:8000/build/assets/ux-enhancements-COiq0Zb3.js" /><link rel="stylesheet" href="http://127.0.0.1:8000/build/assets/app-CI_lFBAU.css" data-navigate-track="reload" /><link rel="stylesheet" href="http://127.0.0.1:8000/build/assets/accessibility-Bfe2B5iC.css" data-navigate-track="reload" /><link rel="stylesheet" href="http://127.0.0.1:8000/build/assets/mobile-C8ZdhN5j.css" data-navigate-track="reload" /><script type="module" src="http://127.0.0.1:8000/build/assets/app-BKxjKExa.js" data-navigate-track="reload"></script><script type="module" src="http://127.0.0.1:8000/build/assets/ux-enhancements-COiq0Zb3.js" data-navigate-track="reload"></script><style>
+    :root.dark {
+        color-scheme: dark;
+    }
+</style>
+<script>
+    window.Flux = {
+        applyAppearance (appearance) {
+            let applyDark = () => document.documentElement.classList.add('dark')
+            let applyLight = () => document.documentElement.classList.remove('dark')
+
+            if (appearance === 'system') {
+                let media = window.matchMedia('(prefers-color-scheme: dark)')
+
+                window.localStorage.removeItem('flux.appearance')
+
+                media.matches ? applyDark() : applyLight()
+            } else if (appearance === 'dark') {
+                window.localStorage.setItem('flux.appearance', 'dark')
+
+                applyDark()
+            } else if (appearance === 'light') {
+                window.localStorage.setItem('flux.appearance', 'light')
+
+                applyLight()
+            }
+        }
+    }
+
+    window.Flux.applyAppearance(window.localStorage.getItem('flux.appearance') || 'system')
+</script>
+
+<!-- Accessibility: Reduced Motion -->
+<style>
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+</style>
+        <title>Login</title>
+        <meta name="description" content="Login to your LMS account to access courses, grades, and more.">
+        <meta name="robots" content="noindex, nofollow">
+
+        <!-- =====================================================
+             AUTH LAYOUT STYLES - SIMPLE.BLADE.PHP
+             Used by: Login, Register, Forgot Password, Reset Password pages
+             Description: Gradient backgrounds, glassmorphism cards,
+             floating orbs animation, language switcher, gradient selector
+        ===================================================== -->
+        <style>
+            /* Base accent color from theme */
+            [data-theme="red"] { --color-accent: #ef4444; --color-accent-light: #fca5a5; }
+            [data-theme="orange"] { --color-accent: #f97316; --color-accent-light: #fdba74; }
+            [data-theme="amber"] { --color-accent: #f59e0b; --color-accent-light: #fcd34d; }
+            [data-theme="yellow"] { --color-accent: #eab308; --color-accent-light: #fde047; }
+            [data-theme="lime"] { --color-accent: #84cc16; --color-accent-light: #bef264; }
+            [data-theme="green"] { --color-accent: #22c55e; --color-accent-light: #86efac; }
+            [data-theme="emerald"] { --color-accent: #10b981; --color-accent-light: #6ee7b7; }
+            [data-theme="teal"] { --color-accent: #14b8a6; --color-accent-light: #5eead4; }
+            [data-theme="cyan"] { --color-accent: #06b6d4; --color-accent-light: #67e8f9; }
+            [data-theme="sky"] { --color-accent: #0ea5e9; --color-accent-light: #7dd3fc; }
+            [data-theme="blue"] { --color-accent: #3b82f6; --color-accent-light: #93c5fd; }
+            [data-theme="indigo"] { --color-accent: #6366f1; --color-accent-light: #a5b4fc; }
+            [data-theme="violet"] { --color-accent: #8b5cf6; --color-accent-light: #c4b5fd; }
+            [data-theme="purple"] { --color-accent: #a855f7; --color-accent-light: #d8b4fe; }
+            [data-theme="fuchsia"] { --color-accent: #d946ef; --color-accent-light: #f0abfc; }
+            [data-theme="pink"] { --color-accent: #ec4899; --color-accent-light: #f9a8d4; }
+            [data-theme="rose"] { --color-accent: #f43f5e; --color-accent-light: #fda4af; }
+            [data-theme="slate"] { --color-accent: #64748b; --color-accent-light: #94a3b8; }
+            [data-theme="gray"] { --color-accent: #6b7280; --color-accent-light: #9ca3af; }
+            [data-theme="zinc"] { --color-accent: #71717a; --color-accent-light: #a1a1aa; }
+            [data-theme="neutral"] { --color-accent: #737373; --color-accent-light: #a3a3a3; }
+            [data-theme="stone"] { --color-accent: #78716c; --color-accent-light: #a8a29e; }
+            [data-theme="base"] { --color-accent: #3b82f6; --color-accent-light: #93c5fd; }
+
+            /* Global accent color application */
+            [data-theme] .bg-zinc-600,
+            [data-theme] .bg-blue-600 {
+                background-color: var(--color-accent) !important;
+            }
+
+            [data-theme] .text-zinc-600,
+            [data-theme] .text-blue-600 {
+                color: var(--color-accent) !important;
+            }
+
+            [data-theme] .border-zinc-500,
+            [data-theme] .border-blue-500 {
+                border-color: var(--color-accent) !important;
+            }
+
+            /* Flux UI components */
+            [data-theme] .flux-button-primary {
+                background-color: var(--color-accent) !important;
+                border-color: var(--color-accent) !important;
+            }
+
+            [data-theme] .flux-button-primary:hover {
+                background-color: var(--color-accent-light) !important;
+            }
+
+            /* Focus states */
+            [data-theme] input:focus,
+            [data-theme] select:focus,
+            [data-theme] textarea:focus {
+                outline: none;
+                border-color: var(--color-accent) !important;
+                box-shadow: 0 0 0 3px var(--color-accent-light) !important;
+            }
+
+            /* Links */
+            [data-theme] a:not(.btn):not([class*="button"]) {
+                color: var(--color-accent) !important;
+            }
+
+            /* Accessibility: Font Size */
+            [data-font-size="small"] { font-size: 14px !important; }
+            [data-font-size="large"] { font-size: 18px !important; }
+            [data-font-size="xlarge"] { font-size: 20px !important; }
+
+            /* Accessibility: Large Text Mode */
+            [data-large-text-mode="true"] { font-size: 18px !important; }
+
+            /* Accessibility: High Contrast Mode */
+            [data-high-contrast-mode="true"] {
+                --tw-border-opacity: 1 !important;
+            }
+
+            /* Accessibility: Reduced Motion */
+            [data-reduced-motion="true"] *,
+            [data-reduced-motion="true"] *::before,
+            [data-reduced-motion="true"] *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            /* Accessibility: Grayscale */
+            [data-grayscale="true"] {
+                filter: grayscale(100%) !important;
+            }
+
+            /* Accessibility: Dyslexia Font */
+            [data-dyslexia-font-mode="true"] {
+                font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
+                letter-spacing: 0.05em !important;
+                word-spacing: 0.1em !important;
+            }
+
+            /* Accessibility: Line Spacing */
+            [data-line-spacing-mode="true"] p,
+            [data-line-spacing-mode="true"] li,
+            [data-line-spacing-mode="true"] span {
+                line-height: 2 !important;
+            }
+
+            /* Accessibility: Focus Outline */
+            [data-focus-outline-mode="true"] *:focus {
+                outline: 3px solid var(--color-accent, #6366f1) !important;
+                outline-offset: 2px !important;
+            }
+
+            /* Skip Link Styles */
+            .skip-link {
+                position: absolute;
+                top: -40px;
+                left: 0;
+                background: var(--color-accent, #6366f1);
+                color: white;
+                padding: 8px 16px;
+                z-index: 100;
+                transition: top 0.3s;
+                text-decoration: none;
+                border-radius: 0 0 4px 4px;
+            }
+            .skip-link:focus {
+                top: 0;
+                color: white;
+            }
+
+            /* Language Switcher */
+            .language-switcher {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.25rem;
+                align-items: center;
+            }
+            .language-switcher a {
+                padding: 0.25rem 0.5rem;
+                border-radius: 0.25rem;
+                transition: background-color 0.2s;
+            }
+            .language-switcher a:hover,
+            .language-switcher a:focus {
+                background-color: var(--color-accent-light, rgba(99, 102, 241, 0.2));
+            }
+            .language-switcher a[aria-current="true"] {
+                font-weight: bold;
+                background-color: var(--color-accent, #6366f1);
+                color: white;
+            }
+
+            /* Background Pattern */
+            .auth-background {
+                position: fixed;
+                inset: 0;
+                z-index: -1;
+                overflow: hidden;
+            }
+
+            .auth-background::before {
+                content: '';
+                position: absolute;
+                width: 200%;
+                height: 200%;
+                top: -50%;
+                left: -50%;
+                background:
+                    radial-gradient(circle at 20% 80%, var(--color-accent-light, rgba(99, 102, 241, 0.15)) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(6, 182, 212, 0.1) 0%, transparent 40%);
+                animation: backgroundPulse 15s ease-in-out infinite;
+            }
+
+            @keyframes backgroundPulse {
+                0%, 100% { transform: translate(0, 0) rotate(0deg); }
+                25% { transform: translate(2%, 2%) rotate(1deg); }
+                50% { transform: translate(0, 4%) rotate(0deg); }
+                75% { transform: translate(-2%, 2%) rotate(-1deg); }
+            }
+
+            /* Floating Orbs */
+            .floating-orb {
+                position: absolute;
+                border-radius: 50%;
+                filter: blur(60px);
+                opacity: 0.5;
+                animation: float 20s ease-in-out infinite;
+                pointer-events: none;
+            }
+
+            .orb-1 {
+                width: 300px;
+                height: 300px;
+                top: 10%;
+                left: 10%;
+                background: var(--color-accent, #6366f1);
+                animation-delay: 0s;
+            }
+
+            .orb-2 {
+                width: 250px;
+                height: 250px;
+                bottom: 20%;
+                right: 15%;
+                background: #8b5cf6;
+                animation-delay: -5s;
+            }
+
+            .orb-3 {
+                width: 200px;
+                height: 200px;
+                top: 50%;
+                left: 60%;
+                background: #06b6d4;
+                animation-delay: -10s;
+            }
+
+            @keyframes float {
+                0%, 100% { transform: translateY(0) scale(1); }
+                50% { transform: translateY(-30px) scale(1.05); }
+            }
+
+            /* Grid Pattern */
+            .grid-pattern {
+                position: absolute;
+                inset: 0;
+                background-image:
+                    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+                background-size: 50px 50px;
+                mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+                pointer-events: none;
+            }
+
+            /* Card Glassmorphism */
+            .auth-card {
+                background: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border: 2px solid var(--color-accent, #6366f1) !important;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            }
+
+            .dark .auth-card {
+                background: rgba(30, 30, 35, 0.95) !important;
+                border: 2px solid var(--color-accent, #6366f1) !important;
+            }
+
+            /* Card Shine Effect */
+            .auth-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 50%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                transform: skewX(-25deg);
+                transition: left 0.5s;
+            }
+
+            .auth-card:hover::before {
+                left: 100%;
+                transition: left 0.7s;
+            }
+
+            /* Footer */
+            .auth-footer {
+                font-size: 0.875rem;
+                color: rgba(0, 0, 0, 0.6);
+            }
+
+            .dark .auth-footer {
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+            .auth-footer a {
+                transition: all 0.2s ease;
+            }
+
+            .auth-footer a:hover {
+                color: var(--color-accent, #6366f1) !important;
+                text-decoration: underline;
+            }
+
+            /* Animation Classes */
+            .fade-in-up {
+                animation: fadeInUp 0.5s ease-out forwards;
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            @keyframes fadeInUp {
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            .stagger-1 { animation-delay: 0.1s; }
+            .stagger-2 { animation-delay: 0.2s; }
+            .stagger-3 { animation-delay: 0.3s; }
+            .stagger-4 { animation-delay: 0.4s; }
+
+            /* Responsive */
+            @media (max-width: 640px) {
+                .auth-card {
+                    margin: 0.5rem;
+                    border-radius: 0.75rem;
+                }
+                .language-switcher {
+                    justify-content: center;
+                }
+                .floating-orb {
+                    opacity: 0.3;
+                }
+                /* Gradient selector responsive */
+                .gradient-selector-container {
+                    bottom: 1rem !important;
+                    left: 0.5rem !important;
+                    top: auto !important;
+                    right: auto !important;
+                    transform: none !important;
+                }
+                .gradient-selector-container button {
+                    width: 28px !important;
+                    height: 28px !important;
+                }
+            }
+
+            /* Tablet responsive */
+            @media (min-width: 641px) and (max-width: 1024px) {
+                .gradient-selector-container {
+                    bottom: 1.5rem !important;
+                    left: 1rem !important;
+                    top: auto !important;
+                    right: auto !important;
+                    transform: none !important;
+                }
+            }
+
+            /* Large screens */
+            @media (min-width: 1025px) {
+                .gradient-selector-container {
+                    bottom: 1.5rem !important;
+                    left: 1.5rem !important;
+                    top: auto !important;
+                    right: auto !important;
+                    transform: none !important;
+                }
+            }
+        </style>
+        <!-- =====================================================
+     THEME SETTINGS INITIALIZATION
+     Used by: Welcome page (welcome.blade.php)
+     Description: JavaScript that initializes theme and accessibility
+     settings from localStorage on the welcome/landing page
+===================================================== -->
+<!-- Global Theme and Accessibility Settings Initialization -->
+<script>
+(function() {
+    'use strict';
+
+    // Define accent colors mapping with accessible contrast ratios
+    const accentColors = {
+        'red': '#ef4444', 'orange': '#f97316', 'amber': '#f59e0b', 'yellow': '#eab308',
+        'lime': '#84cc16', 'green': '#22c55e', 'emerald': '#10b981', 'teal': '#14b8a6',
+        'cyan': '#06b6d4', 'sky': '#0ea5e9', 'blue': '#3b82f6', 'indigo': '#6366f1',
+        'violet': '#8b5cf6', 'purple': '#a855f7', 'fuchsia': '#d946ef', 'pink': '#ec4899',
+        'rose': '#f43f5e', 'slate': '#64748b', 'gray': '#6b7280', 'zinc': '#71717a',
+        'neutral': '#737373', 'stone': '#78716c'
+    };
+
+    // Base themes configuration with enhanced visual properties
+    const baseThemes = {
+        'default-light': {
+            name: 'Classic Light',
+            background: '#ffffff',
+            surface: '#f5f5f4',
+            text: '#1c1917',
+            border: '#e7e5e4',
+            primary: '#6366f1',
+            secondary: '#8b5cf6',
+            accent: '#a855f7',
+            isDark: false,
+            contrastRatio: 'AAA',
+            cardBg: '#ffffff',
+            cardBorder: '#e7e5e4',
+            cardShadow: 'rgba(0, 0, 0, 0.08)',
+            navBg: '#ffffff',
+            navBorder: '#e7e5e4',
+            inputBg: '#ffffff',
+            inputBorder: '#e7e5e4',
+            buttonBg: '#6366f1',
+            buttonText: '#ffffff',
+            glow: false,
+            gradientStart: '#667eea',
+            gradientEnd: '#764ba2'
+        },
+        'default-dark': {
+            name: 'Classic Dark',
+            background: '#0c0a09',
+            surface: '#1c1917',
+            text: '#fafaf9',
+            border: '#292524',
+            primary: '#818cf8',
+            secondary: '#a78bfa',
+            accent: '#c084fc',
+            isDark: true,
+            contrastRatio: 'AAA',
+            cardBg: '#292524',
+            cardBorder: '#44403c',
+            cardShadow: 'rgba(0, 0, 0, 0.3)',
+            navBg: '#1c1917',
+            navBorder: '#44403c',
+            inputBg: '#292524',
+            inputBorder: '#44403c',
+            buttonBg: '#6366f1',
+            buttonText: '#ffffff',
+            glow: false,
+            gradientStart: '#4f46e5',
+            gradientEnd: '#7c3aed'
+        },
+        'cyberpunk-neon': {
+            name: 'Cyber Neon',
+            background: '#1a0a2e',
+            surface: '#2d1b4e',
+            text: '#e0e0e0',
+            border: '#ff00ff',
+            primary: '#ff00ff',
+            secondary: '#00ffff',
+            accent: '#ffff00',
+            isDark: true,
+            glow: true,
+            contrastRatio: 'AA',
+            cardBg: '#1a0a2e',
+            cardBorder: '#ff00ff',
+            cardShadow: 'rgba(255, 0, 255, 0.3)',
+            navBg: '#1a0a2e',
+            navBorder: '#ff00ff',
+            inputBg: '#2d1b4e',
+            inputBorder: '#ff00ff',
+            buttonBg: '#ff00ff',
+            buttonText: '#000000',
+            gradientStart: '#ff00ff',
+            gradientEnd: '#00ffff'
+        },
+        'cyberpunk-dark': {
+            name: 'Cyber Dark',
+            background: '#000000',
+            surface: '#0a0a0a',
+            text: '#00ffff',
+            border: '#00ffff',
+            primary: '#00ffff',
+            secondary: '#ff00ff',
+            accent: '#00ff00',
+            isDark: true,
+            glow: true,
+            contrastRatio: 'AA',
+            cardBg: '#000000',
+            cardBorder: '#00ffff',
+            cardShadow: 'rgba(0, 255, 255, 0.2)',
+            navBg: '#000000',
+            navBorder: '#00ffff',
+            inputBg: '#0a0a0a',
+            inputBorder: '#00ffff',
+            buttonBg: '#00ffff',
+            buttonText: '#000000',
+            gradientStart: '#000000',
+            gradientEnd: '#001a1a'
+        },
+        'synthwave': {
+            name: 'Synthwave',
+            background: '#1a0a1a',
+            surface: '#2d1b2e',
+            text: '#ff71ce',
+            border: '#ff71ce',
+            primary: '#ff71ce',
+            secondary: '#01cdfe',
+            accent: '#05ffa1',
+            isDark: true,
+            contrastRatio: 'AA',
+            cardBg: '#1a0a1a',
+            cardBorder: '#ff71ce',
+            cardShadow: 'rgba(255, 113, 206, 0.25)',
+            navBg: '#1a0a1a',
+            navBorder: '#ff71ce',
+            inputBg: '#2d1b2e',
+            inputBorder: '#ff71ce',
+            buttonBg: '#ff71ce',
+            buttonText: '#1a0a1a',
+            gradientStart: '#ff71ce',
+            gradientEnd: '#01cdfe'
+        },
+        'midnight': {
+            name: 'Midnight',
+            background: '#0f172a',
+            surface: '#1e293b',
+            text: '#e2e8f0',
+            border: '#334155',
+            primary: '#60a5fa',
+            secondary: '#818cf8',
+            accent: '#a78bfa',
+            isDark: true,
+            contrastRatio: 'AAA',
+            cardBg: '#0f172a',
+            cardBorder: '#334155',
+            cardShadow: 'rgba(0, 0, 0, 0.4)',
+            navBg: '#0f172a',
+            navBorder: '#334155',
+            inputBg: '#1e293b',
+            inputBorder: '#334155',
+            buttonBg: '#3b82f6',
+            buttonText: '#ffffff',
+            gradientStart: '#1e3a5f',
+            gradientEnd: '#0f172a'
+        },
+        'dracula': {
+            name: 'Dracula',
+            background: '#21222c',
+            surface: '#282a36',
+            text: '#f8f8f2',
+            border: '#44475a',
+            primary: '#bd93f9',
+            secondary: '#ff79c6',
+            accent: '#50fa7b',
+            isDark: true,
+            contrastRatio: 'AAA',
+            cardBg: '#21222c',
+            cardBorder: '#44475a',
+            cardShadow: 'rgba(0, 0, 0, 0.3)',
+            navBg: '#21222c',
+            navBorder: '#44475a',
+            inputBg: '#282a36',
+            inputBorder: '#44475a',
+            buttonBg: '#bd93f9',
+            buttonText: '#282a36',
+            gradientStart: '#44475a',
+            gradientEnd: '#21222c'
+        },
+        'nord': {
+            name: 'Nord',
+            background: '#2e3440',
+            surface: '#3b4252',
+            text: '#eceff4',
+            border: '#4c566a',
+            primary: '#88c0d0',
+            secondary: '#81a1c1',
+            accent: '#b48ead',
+            isDark: true,
+            contrastRatio: 'AAA',
+            cardBg: '#2e3440',
+            cardBorder: '#4c566a',
+            cardShadow: 'rgba(0, 0, 0, 0.25)',
+            navBg: '#2e3440',
+            navBorder: '#4c566a',
+            inputBg: '#3b4252',
+            inputBorder: '#4c566a',
+            buttonBg: '#5e81ac',
+            buttonText: '#eceff4',
+            gradientStart: '#3b4252',
+            gradientEnd: '#2e3440'
+        },
+    };
+
+    const htmlElement = document.documentElement;
+
+    // Helper: Announce changes to screen readers
+    function announceToScreenReader(message) {
+        const announcement = document.createElement('div');
+        announcement.setAttribute('role', 'status');
+        announcement.setAttribute('aria-live', 'polite');
+        announcement.setAttribute('aria-atomic', 'true');
+        announcement.className = 'sr-only';
+        announcement.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;';
+        announcement.textContent = message;
+        document.body.appendChild(announcement);
+        setTimeout(function() { announcement.remove(); }, 1000);
+    }
+
+    // Helper: Check system preference for reduced motion
+    function prefersReducedMotion() {
+        return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
+
+    // Helper: Check system preference for color scheme
+    function getSystemColorScheme() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+        }
+        return 'light';
+    }
+
+    // Helper: Check for high contrast mode
+    function prefersHighContrast() {
+        return window.matchMedia('(prefers-contrast: more)').matches;
+    }
+
+    // Load accent color: localStorage > data-theme attribute > default
+    const savedColor = localStorage.getItem('accent_color') || htmlElement.getAttribute('data-theme') || 'zinc';
+    if (accentColors[savedColor]) {
+        const hexColor = accentColors[savedColor];
+        htmlElement.setAttribute('data-theme', savedColor);
+        htmlElement.setAttribute('data-accent-color', savedColor);
+        htmlElement.style.setProperty('--color-accent', hexColor, 'important');
+        htmlElement.style.setProperty('--color-accent-light', hexColor + '80', 'important');
+    }
+
+    // Load base theme or detect system preference
+    let savedBaseTheme = localStorage.getItem('base_theme');
+
+    // If no saved theme, use system preference
+    if (!savedBaseTheme) {
+        savedBaseTheme = getSystemColorScheme() === 'dark' ? 'default-dark' : 'default-light';
+    }
+
+    if (savedBaseTheme && baseThemes[savedBaseTheme]) {
+        htmlElement.setAttribute('data-base-theme', savedBaseTheme);
+        const theme = baseThemes[savedBaseTheme];
+
+        if (theme.glow) {
+            htmlElement.setAttribute('data-theme-glow', 'true');
+        }
+
+        // Apply base theme CSS variables
+        htmlElement.style.setProperty('--theme-background', theme.background);
+        htmlElement.style.setProperty('--theme-surface', theme.surface);
+        htmlElement.style.setProperty('--theme-text', theme.text);
+        htmlElement.style.setProperty('--theme-border', theme.border);
+
+        // Apply enhanced theme variables
+        htmlElement.style.setProperty('--theme-primary', theme.primary);
+        htmlElement.style.setProperty('--theme-secondary', theme.secondary);
+        htmlElement.style.setProperty('--theme-accent', theme.accent);
+        htmlElement.style.setProperty('--theme-card-bg', theme.cardBg);
+        htmlElement.style.setProperty('--theme-card-border', theme.cardBorder);
+        htmlElement.style.setProperty('--theme-card-shadow', theme.cardShadow);
+        htmlElement.style.setProperty('--theme-nav-bg', theme.navBg);
+        htmlElement.style.setProperty('--theme-nav-border', theme.navBorder);
+        htmlElement.style.setProperty('--theme-input-bg', theme.inputBg);
+        htmlElement.style.setProperty('--theme-input-border', theme.inputBorder);
+        htmlElement.style.setProperty('--theme-button-bg', theme.buttonBg);
+        htmlElement.style.setProperty('--theme-button-text', theme.buttonText);
+        htmlElement.style.setProperty('--theme-gradient-start', theme.gradientStart);
+        htmlElement.style.setProperty('--theme-gradient-end', theme.gradientEnd);
+
+        // Apply body background based on theme
+        if (theme.isDark) {
+            htmlElement.style.background = 'linear-gradient(180deg, ' + theme.background + ' 0%, ' + theme.surface + ' 100%)';
+        } else {
+            htmlElement.style.background = 'linear-gradient(180deg, ' + theme.surface + ' 0%, ' + theme.background + ' 100%)';
+        }
+
+        // Set dark/light class for Tailwind
+        if (theme.isDark) {
+            htmlElement.classList.add('dark');
+            htmlElement.classList.remove('light');
+        } else {
+            htmlElement.classList.add('light');
+            htmlElement.classList.remove('dark');
+        }
+    }
+
+    // Load accessibility settings
+    const accessibilitySettings = ['high_contrast', 'large_text', 'dyslexia_font', 'reduced_motion', 'grayscale', 'line_spacing', 'focus_outline', 'font_size'];
+
+    accessibilitySettings.forEach(function(setting) {
+        const savedValue = localStorage.getItem('accessibility_' + setting);
+        if (savedValue !== null) {
+            if (setting === 'font_size') {
+                document.documentElement.setAttribute('data-font-size', savedValue);
+            } else if (savedValue === 'true') {
+                document.documentElement.setAttribute('data-' + setting.replace('_', '-') + '-mode', 'true');
+            }
+        }
+    });
+
+    // Apply system high contrast preference if not manually set
+    if (prefersHighContrast() && localStorage.getItem('accessibility_high_contrast') === null) {
+        document.documentElement.setAttribute('data-high-contrast-mode', 'true');
+    }
+
+    // Apply system reduced motion preference if not manually set
+    if (prefersReducedMotion() && localStorage.getItem('accessibility_reduced_motion') === null) {
+        document.documentElement.setAttribute('data-reduced-motion-mode', 'true');
+    }
+
+    // Listen for system color scheme changes
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+            if (localStorage.getItem('flux_appearance') === 'system' || !localStorage.getItem('flux_appearance')) {
+                const newTheme = e.matches ? 'default-dark' : 'default-light';
+                if (baseThemes[newTheme]) {
+                    setBaseTheme(newTheme);
+                }
+            }
+        });
+
+        // Listen for reduced motion preference changes
+        window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', function(e) {
+            if (e.matches) {
+                document.documentElement.setAttribute('data-reduced-motion-mode', 'true');
+            } else if (localStorage.getItem('accessibility_reduced_motion') === null) {
+                document.documentElement.removeAttribute('data-reduced-motion-mode');
+            }
+        });
+
+        // Listen for high contrast preference changes
+        window.matchMedia('(prefers-contrast: more)').addEventListener('change', function(e) {
+            if (e.matches) {
+                document.documentElement.setAttribute('data-high-contrast-mode', 'true');
+            } else if (localStorage.getItem('accessibility_high_contrast') === null) {
+                document.documentElement.removeAttribute('data-high-contrast-mode');
+            }
+        });
+    }
+
+    // Expose theme data globally for components
+    window.themeManager = {
+        accentColors: accentColors,
+        baseThemes: baseThemes,
+        getCurrentTheme: function() {
+            return localStorage.getItem('base_theme') || 'default-light';
+        },
+        getCurrentAccent: function() {
+            return localStorage.getItem('accent_color') || 'zinc';
+        },
+        isDarkMode: function() {
+            const theme = baseThemes[this.getCurrentTheme()];
+            return theme ? theme.isDark : false;
+        }
+    };
+})();
+
+// Theme Color Setter Function (global)
+function setThemeColor(name, hex) {
+    const htmlElement = document.documentElement;
+    htmlElement.setAttribute('data-theme', name);
+    htmlElement.setAttribute('data-accent-color', name);
+    htmlElement.style.setProperty('--color-accent', hex, 'important');
+    htmlElement.style.setProperty('--color-accent-light', hex + '80', 'important');
+    localStorage.setItem('accent_color', name);
+
+    // Dispatch custom event for components to react
+    window.dispatchEvent(new CustomEvent('themechange', {
+        detail: { type: 'accent', name: name, hex: hex }
+    }));
+
+    // Announce to screen readers
+    if (typeof announceToScreenReader === 'function') {
+        announceToScreenReader('Accent color changed to ' + name);
+    }
+
+    console.log('Theme color applied: ' + name + ' (' + hex + ')');
+}
+
+// Base Theme Setter Function (global)
+function setBaseTheme(themeName) {
+    const baseThemes = {
+        'default-light': {
+            name: 'Classic Light',
+            background: '#ffffff',
+            surface: '#f5f5f4',
+            text: '#1c1917',
+            border: '#e7e5e4',
+            primary: '#6366f1',
+            secondary: '#8b5cf6',
+            accent: '#a855f7',
+            isDark: false,
+            cardBg: '#ffffff',
+            cardBorder: '#e7e5e4',
+            cardShadow: 'rgba(0, 0, 0, 0.08)',
+            navBg: '#ffffff',
+            navBorder: '#e7e5e4',
+            inputBg: '#ffffff',
+            inputBorder: '#e7e5e4',
+            buttonBg: '#6366f1',
+            buttonText: '#ffffff',
+            gradientStart: '#667eea',
+            gradientEnd: '#764ba2'
+        },
+        'default-dark': {
+            name: 'Classic Dark',
+            background: '#0c0a09',
+            surface: '#1c1917',
+            text: '#fafaf9',
+            border: '#292524',
+            primary: '#818cf8',
+            secondary: '#a78bfa',
+            accent: '#c084fc',
+            isDark: true,
+            cardBg: '#292524',
+            cardBorder: '#44403c',
+            cardShadow: 'rgba(0, 0, 0, 0.3)',
+            navBg: '#1c1917',
+            navBorder: '#44403c',
+            inputBg: '#292524',
+            inputBorder: '#44403c',
+            buttonBg: '#6366f1',
+            buttonText: '#ffffff',
+            gradientStart: '#4f46e5',
+            gradientEnd: '#7c3aed'
+        },
+        'cyberpunk-neon': {
+            name: 'Cyber Neon',
+            background: '#1a0a2e',
+            surface: '#2d1b4e',
+            text: '#e0e0e0',
+            border: '#ff00ff',
+            primary: '#ff00ff',
+            secondary: '#00ffff',
+            accent: '#ffff00',
+            glow: true,
+            isDark: true,
+            cardBg: '#1a0a2e',
+            cardBorder: '#ff00ff',
+            cardShadow: 'rgba(255, 0, 255, 0.3)',
+            navBg: '#1a0a2e',
+            navBorder: '#ff00ff',
+            inputBg: '#2d1b4e',
+            inputBorder: '#ff00ff',
+            buttonBg: '#ff00ff',
+            buttonText: '#000000',
+            gradientStart: '#ff00ff',
+            gradientEnd: '#00ffff'
+        },
+        'cyberpunk-dark': {
+            name: 'Cyber Dark',
+            background: '#000000',
+            surface: '#0a0a0a',
+            text: '#00ffff',
+            border: '#00ffff',
+            primary: '#00ffff',
+            secondary: '#ff00ff',
+            accent: '#00ff00',
+            glow: true,
+            isDark: true,
+            cardBg: '#000000',
+            cardBorder: '#00ffff',
+            cardShadow: 'rgba(0, 255, 255, 0.2)',
+            navBg: '#000000',
+            navBorder: '#00ffff',
+            inputBg: '#0a0a0a',
+            inputBorder: '#00ffff',
+            buttonBg: '#00ffff',
+            buttonText: '#000000',
+            gradientStart: '#000000',
+            gradientEnd: '#001a1a'
+        },
+        'synthwave': {
+            name: 'Synthwave',
+            background: '#1a0a1a',
+            surface: '#2d1b2e',
+            text: '#ff71ce',
+            border: '#ff71ce',
+            primary: '#ff71ce',
+            secondary: '#01cdfe',
+            accent: '#05ffa1',
+            isDark: true,
+            cardBg: '#1a0a1a',
+            cardBorder: '#ff71ce',
+            cardShadow: 'rgba(255, 113, 206, 0.25)',
+            navBg: '#1a0a1a',
+            navBorder: '#ff71ce',
+            inputBg: '#2d1b2e',
+            inputBorder: '#ff71ce',
+            buttonBg: '#ff71ce',
+            buttonText: '#1a0a1a',
+            gradientStart: '#ff71ce',
+            gradientEnd: '#01cdfe'
+        },
+        'midnight': {
+            name: 'Midnight',
+            background: '#0f172a',
+            surface: '#1e293b',
+            text: '#e2e8f0',
+            border: '#334155',
+            primary: '#60a5fa',
+            secondary: '#818cf8',
+            accent: '#a78bfa',
+            isDark: true,
+            cardBg: '#0f172a',
+            cardBorder: '#334155',
+            cardShadow: 'rgba(0, 0, 0, 0.4)',
+            navBg: '#0f172a',
+            navBorder: '#334155',
+            inputBg: '#1e293b',
+            inputBorder: '#334155',
+            buttonBg: '#3b82f6',
+            buttonText: '#ffffff',
+            gradientStart: '#1e3a5f',
+            gradientEnd: '#0f172a'
+        },
+        'dracula': {
+            name: 'Dracula',
+            background: '#21222c',
+            surface: '#282a36',
+            text: '#f8f8f2',
+            border: '#44475a',
+            primary: '#bd93f9',
+            secondary: '#ff79c6',
+            accent: '#50fa7b',
+            isDark: true,
+            cardBg: '#21222c',
+            cardBorder: '#44475a',
+            cardShadow: 'rgba(0, 0, 0, 0.3)',
+            navBg: '#21222c',
+            navBorder: '#44475a',
+            inputBg: '#282a36',
+            inputBorder: '#44475a',
+            buttonBg: '#bd93f9',
+            buttonText: '#282a36',
+            gradientStart: '#44475a',
+            gradientEnd: '#21222c'
+        },
+        'nord': {
+            name: 'Nord',
+            background: '#2e3440',
+            surface: '#3b4252',
+            text: '#eceff4',
+            border: '#4c566a',
+            primary: '#88c0d0',
+            secondary: '#81a1c1',
+            accent: '#b48ead',
+            isDark: true,
+            cardBg: '#2e3440',
+            cardBorder: '#4c566a',
+            cardShadow: 'rgba(0, 0, 0, 0.25)',
+            navBg: '#2e3440',
+            navBorder: '#4c566a',
+            inputBg: '#3b4252',
+            inputBorder: '#4c566a',
+            buttonBg: '#5e81ac',
+            buttonText: '#eceff4',
+            gradientStart: '#3b4252',
+            gradientEnd: '#2e3440'
+        },
+    };
+
+    const theme = baseThemes[themeName];
+    if (!theme) return;
+
+    const htmlElement = document.documentElement;
+    htmlElement.style.setProperty('--theme-background', theme.background);
+    htmlElement.style.setProperty('--theme-surface', theme.surface);
+    htmlElement.style.setProperty('--theme-text', theme.text);
+    htmlElement.style.setProperty('--theme-border', theme.border);
+
+    // Apply enhanced theme variables
+    htmlElement.style.setProperty('--theme-primary', theme.primary);
+    htmlElement.style.setProperty('--theme-secondary', theme.secondary);
+    htmlElement.style.setProperty('--theme-accent', theme.accent);
+    htmlElement.style.setProperty('--theme-card-bg', theme.cardBg);
+    htmlElement.style.setProperty('--theme-card-border', theme.cardBorder);
+    htmlElement.style.setProperty('--theme-card-shadow', theme.cardShadow);
+    htmlElement.style.setProperty('--theme-nav-bg', theme.navBg);
+    htmlElement.style.setProperty('--theme-nav-border', theme.navBorder);
+    htmlElement.style.setProperty('--theme-input-bg', theme.inputBg);
+    htmlElement.style.setProperty('--theme-input-border', theme.inputBorder);
+    htmlElement.style.setProperty('--theme-button-bg', theme.buttonBg);
+    htmlElement.style.setProperty('--theme-button-text', theme.buttonText);
+    htmlElement.style.setProperty('--theme-gradient-start', theme.gradientStart);
+    htmlElement.style.setProperty('--theme-gradient-end', theme.gradientEnd);
+
+    // Apply body background based on theme
+    if (theme.isDark) {
+        htmlElement.style.background = 'linear-gradient(180deg, ' + theme.background + ' 0%, ' + theme.surface + ' 100%)';
+    } else {
+        htmlElement.style.background = 'linear-gradient(180deg, ' + theme.surface + ' 0%, ' + theme.background + ' 100%)';
+    }
+
+    htmlElement.setAttribute('data-base-theme', themeName);
+
+    if (theme.glow) {
+        htmlElement.setAttribute('data-theme-glow', 'true');
+    } else {
+        htmlElement.removeAttribute('data-theme-glow');
+    }
+
+    // Update dark/light classes for Tailwind
+    if (theme.isDark) {
+        htmlElement.classList.add('dark');
+        htmlElement.classList.remove('light');
+    } else {
+        htmlElement.classList.add('light');
+        htmlElement.classList.remove('dark');
+    }
+
+    localStorage.setItem('base_theme', themeName);
+
+    // Dispatch custom event for components to react
+    window.dispatchEvent(new CustomEvent('themechange', {
+        detail: { type: 'base', name: themeName, theme: theme }
+    }));
+
+    // Announce to screen readers
+    const announcement = document.createElement('div');
+    announcement.setAttribute('role', 'status');
+    announcement.setAttribute('aria-live', 'polite');
+    announcement.setAttribute('aria-atomic', 'true');
+    announcement.className = 'sr-only';
+    announcement.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;';
+    announcement.textContent = 'Theme changed to ' + theme.name;
+    document.body.appendChild(announcement);
+    setTimeout(function() { announcement.remove(); }, 1000);
+
+    console.log('Base theme applied: ' + theme.name);
+}
+
+// Appearance Setter Function (global)
+function setAppearance(mode) {
+    localStorage.setItem('flux_appearance', mode);
+    localStorage.setItem('color-theme', mode);
+
+    if (mode === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+    } else if (mode === 'light') {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+    } else {
+        // System - detect
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+        } else {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
+        }
+    }
+
+    // Dispatch custom event for components to react
+    window.dispatchEvent(new CustomEvent('themechange', {
+        detail: { type: 'appearance', mode: mode }
+    }));
+}
+
+// Accessibility Settings Setter Function (global)
+function setAccessibilitySetting(setting, value) {
+    const storageKey = 'accessibility_' + setting;
+    localStorage.setItem(storageKey, value);
+
+    if (setting === 'font_size') {
+        document.documentElement.setAttribute('data-font-size', value);
+    } else if (value === 'true') {
+        document.documentElement.setAttribute('data-' + setting.replace('_', '-') + '-mode', 'true');
+    } else {
+        document.documentElement.removeAttribute('data-' + setting.replace('_', '-') + '-mode');
+    }
+
+    // Dispatch custom event for components to react
+    window.dispatchEvent(new CustomEvent('accessibilitychange', {
+        detail: { setting: setting, value: value }
+    }));
+}
+</script>
+    <script id="browser-logger-active">
+(function() {
+    const ENDPOINT = 'http://127.0.0.1:8000/_boost/browser-logs';
+    const logQueue = [];
+    let flushTimeout = null;
+
+    console.log('🔍 Browser logger active (MCP server detected). Posting to: ' + ENDPOINT);
+
+    // Store original console methods
+    const originalConsole = {
+        log: console.log,
+        info: console.info,
+        error: console.error,
+        warn: console.warn,
+        table: console.table
+    };
+
+    // Helper to safely stringify values
+    function safeStringify(obj) {
+        const seen = new WeakSet();
+        return JSON.stringify(obj, (key, value) => {
+            if (typeof value === 'object' && value !== null) {
+                if (seen.has(value)) return '[Circular]';
+                seen.add(value);
+            }
+            if (value instanceof Error) {
+                return {
+                    name: value.name,
+                    message: value.message,
+                    stack: value.stack
+                };
+            }
+            return value;
+        });
+    }
+
+    // Batch and send logs
+    function flushLogs() {
+        if (logQueue.length === 0) return;
+
+        const batch = logQueue.splice(0, logQueue.length);
+
+        fetch(ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ logs: batch })
+        }).catch(err => {
+            // Silently fail to avoid infinite loops
+            originalConsole.error('Failed to send logs:', err);
+        });
+    }
+
+    // Debounced flush (100ms)
+    function scheduleFlush() {
+        if (flushTimeout) clearTimeout(flushTimeout);
+        flushTimeout = setTimeout(flushLogs, 100);
+    }
+
+    // Intercept console methods
+    ['log', 'info', 'error', 'warn', 'table'].forEach(method => {
+        console[method] = function(...args) {
+            // Call original method
+            originalConsole[method].apply(console, args);
+
+            // Capture log data
+            try {
+                logQueue.push({
+                    type: method,
+                    timestamp: new Date().toISOString(),
+                    data: args.map(arg => {
+                        try {
+                            return typeof arg === 'object' ? JSON.parse(safeStringify(arg)) : arg;
+                        } catch (e) {
+                            return String(arg);
+                        }
+                    }),
+                    url: window.location.href,
+                    userAgent: navigator.userAgent
+                });
+
+                scheduleFlush();
+            } catch (e) {
+                // Fail silently
+            }
+        };
+    });
+
+    // Global error handlers for uncaught errors
+    const originalOnError = window.onerror;
+    window.onerror = function boostErrorHandler(errorMsg, url, lineNumber, colNumber, error) {
+        try {
+            logQueue.push({
+                type: 'uncaught_error',
+                timestamp: new Date().toISOString(),
+                data: [{
+                    message: errorMsg,
+                    filename: url,
+                    lineno: lineNumber,
+                    colno: colNumber,
+                    error: error ? {
+                        name: error.name,
+                        message: error.message,
+                        stack: error.stack
+                    } : null
+                }],
+                url: window.location.href,
+                userAgent: navigator.userAgent
+            });
+
+            scheduleFlush();
+        } catch (e) {
+            // Fail silently
+        }
+
+        // Call original handler if it exists
+        if (originalOnError && typeof originalOnError === 'function') {
+            return originalOnError(errorMsg, url, lineNumber, colNumber, error);
+        }
+
+        // Let the error continue to propagate
+        return false;
+    }
+    window.addEventListener('error', (event) => {
+        try {
+            logQueue.push({
+                type: 'window_error',
+                timestamp: new Date().toISOString(),
+                data: [{
+                    message: event.message,
+                    filename: event.filename,
+                    lineno: event.lineno,
+                    colno: event.colno,
+                    error: event.error ? {
+                        name: event.error.name,
+                        message: event.error.message,
+                        stack: event.error.stack
+                    } : null
+                }],
+                url: window.location.href,
+                userAgent: navigator.userAgent
+            });
+
+            scheduleFlush();
+        } catch (e) {
+            // Fail silently
+        }
+
+        // Let the error continue to propagate
+        return false;
+    });
+    window.addEventListener('unhandledrejection', (event) => {
+        try {
+            logQueue.push({
+                type: 'error',
+                timestamp: new Date().toISOString(),
+                data: [{
+                    message: 'Unhandled Promise Rejection',
+                    reason: event.reason instanceof Error ? {
+                        name: event.reason.name,
+                        message: event.reason.message,
+                        stack: event.reason.stack
+                    } : event.reason
+                }],
+                url: window.location.href,
+                userAgent: navigator.userAgent
+            });
+
+            scheduleFlush();
+        } catch (e) {
+            // Fail silently
+        }
+
+        // Let the rejection continue to propagate
+        return false;
+    });
+
+    // Flush on page unload
+    window.addEventListener('beforeunload', () => {
+        if (logQueue.length > 0) {
+            navigator.sendBeacon(ENDPOINT, JSON.stringify({ logs: logQueue }));
+        }
+    });
+})();
+</script>
+<!-- Livewire Styles --><style >[wire\:loading][wire\:loading], [wire\:loading\.delay][wire\:loading\.delay], [wire\:loading\.list-item][wire\:loading\.list-item], [wire\:loading\.inline-block][wire\:loading\.inline-block], [wire\:loading\.inline][wire\:loading\.inline], [wire\:loading\.block][wire\:loading\.block], [wire\:loading\.flex][wire\:loading\.flex], [wire\:loading\.table][wire\:loading\.table], [wire\:loading\.grid][wire\:loading\.grid], [wire\:loading\.inline-flex][wire\:loading\.inline-flex] {display: none;}[wire\:loading\.delay\.none][wire\:loading\.delay\.none], [wire\:loading\.delay\.shortest][wire\:loading\.delay\.shortest], [wire\:loading\.delay\.shorter][wire\:loading\.delay\.shorter], [wire\:loading\.delay\.short][wire\:loading\.delay\.short], [wire\:loading\.delay\.default][wire\:loading\.delay\.default], [wire\:loading\.delay\.long][wire\:loading\.delay\.long], [wire\:loading\.delay\.longer][wire\:loading\.delay\.longer], [wire\:loading\.delay\.longest][wire\:loading\.delay\.longest] {display: none;}[wire\:offline][wire\:offline] {display: none;}[wire\:dirty]:not(textarea):not(input):not(select) {display: none;}:root {--livewire-progress-bar-color: #2299dd;}[x-cloak] {display: none !important;}[wire\:cloak] {display: none !important;}dialog#livewire-error::backdrop {background-color: rgba(0, 0, 0, .6);}</style>
+</head>
+    <body class="min-h-screen antialiased dark">
+        <!-- Skip Link -->
+        <a href="#main-content" class="skip-link">Skip to main content</a>
+
+        <!-- Animated Background -->
+        <div class="auth-background bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:bg-gradient-to-b dark:from-indigo-950 dark:via-purple-950/30 dark:to-zinc-900" aria-hidden="true">
+            <div class="floating-orb orb-1"></div>
+            <div class="floating-orb orb-2"></div>
+            <div class="floating-orb orb-3"></div>
+            <div class="grid-pattern"></div>
+        </div>
+
+        <div class="bg-muted flex min-h-svh flex-col items-center justify-center gap-2 p-4" role="presentation">
+            <!-- Language Switcher -->
+            <nav class="absolute top-4 end-4 language-switcher" role="navigation" aria-label="Language selection">
+                <a href="http://127.0.0.1:8000/language/en" aria-current=&quot;true&quot; wire:navigate>EN</a>
+                <span aria-hidden="true">|</span>
+                <a href="http://127.0.0.1:8000/language/ar"  wire:navigate>AR</a>
+                <span aria-hidden="true">|</span>
+                <a href="http://127.0.0.1:8000/language/fr"  wire:navigate>FR</a>
+                <span aria-hidden="true">|</span>
+                <a href="http://127.0.0.1:8000/language/tr"  wire:navigate>TR</a>
+                <span aria-hidden="true">|</span>
+                <a href="http://127.0.0.1:8000/language/zh"  wire:navigate>ZH</a>
+                <span aria-hidden="true">|</span>
+                <a href="http://127.0.0.1:8000/language/fa"  wire:navigate>FA</a>
+                <span aria-hidden="true">|</span>
+                <a href="http://127.0.0.1:8000/language/id"  wire:navigate>ID</a>
+                <span aria-hidden="true">|</span>
+                <a href="http://127.0.0.1:8000/language/ku"  wire:navigate>KU</a>
+                <span aria-hidden="true">|</span>
+                <a href="http://127.0.0.1:8000/language/hy"  wire:navigate>HY</a>
+            </nav>
+
+            <!-- Gradient Selector -->
+            <div class="gradient-selector-container fixed bottom-6 left-6 z-50 flex gap-2 p-1.5 rounded-full bg-white/50 dark:bg-black/50 backdrop-blur-sm" role="group" aria-label="Background gradient selection">
+                                <style>
+                    :root {
+                        --gradient-primary: #6366f1;
+                        --gradient-secondary: #8b5cf6;
+                    }
+                </style>
+                <style>
+                    /* Form elements use gradient colors */
+                    .auth-card button[type="submit"],
+                    .auth-card [type="submit"] {
+                        background-color: var(--gradient-primary) !important;
+                        border-color: var(--gradient-primary) !important;
+                    }
+
+                    .auth-card button[type="submit"]:hover,
+                    .auth-card [type="submit"]:hover {
+                        background-color: var(--gradient-secondary) !important;
+                    }
+
+                    .auth-card input:focus,
+                    .auth-card select:focus,
+                    .auth-card textarea:focus {
+                        border-color: var(--gradient-primary) !important;
+                        box-shadow: 0 0 0 3px var(--gradient-secondary) !important;
+                    }
+
+                    .auth-card a {
+                        color: var(--gradient-primary) !important;
+                    }
+
+                    .auth-card .flux-link {
+                        color: var(--gradient-primary) !important;
+                    }
+
+                    /* Form card border uses gradient */
+                    .auth-card {
+                        border-color: var(--gradient-primary) !important;
+                    }
+
+                    /* Language switcher uses gradient */
+                    .language-switcher a[aria-current="true"] {
+                        background-color: var(--gradient-primary) !important;
+                    }
+
+                    .language-switcher a:hover,
+                    .language-switcher a:focus {
+                        background-color: var(--gradient-secondary) !important;
+                        opacity: 0.8;
+                    }
+
+                    /* Decorative corner uses gradient */
+                    .bg-gradient-to-bl {
+                        background: var(--gradient-primary) !important;
+                    }
+
+                    /* Skip link uses gradient */
+                    .skip-link {
+                        background: var(--gradient-primary) !important;
+                    }
+                </style>
+                                    <button type="button"
+                        class="w-8 h-8 rounded-full border-3 border-black dark:border-white ring-2 ring-offset-2 ring-[var(--gradient-primary)] transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-accent)] cursor-pointer"
+                        style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)"
+                        title="Indigo Gradient"
+                        aria-label="Select Indigo gradient"
+                        aria-pressed=&quot;true&quot;
+                        onclick="switchGradient('indigo')">
+                    </button>
+                                    <button type="button"
+                        class="w-8 h-8 rounded-full border-3 border-transparent hover:border-black dark:hover:border-white transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-accent)] cursor-pointer"
+                        style="background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%)"
+                        title="Blue Gradient"
+                        aria-label="Select Blue gradient"
+                        aria-pressed=&quot;false&quot;
+                        onclick="switchGradient('blue')">
+                    </button>
+                                    <button type="button"
+                        class="w-8 h-8 rounded-full border-3 border-transparent hover:border-black dark:hover:border-white transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-accent)] cursor-pointer"
+                        style="background: linear-gradient(135deg, #a855f7 0%, #d946ef 100%)"
+                        title="Purple Gradient"
+                        aria-label="Select Purple gradient"
+                        aria-pressed=&quot;false&quot;
+                        onclick="switchGradient('purple')">
+                    </button>
+                                    <button type="button"
+                        class="w-8 h-8 rounded-full border-3 border-transparent hover:border-black dark:hover:border-white transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-accent)] cursor-pointer"
+                        style="background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%)"
+                        title="Pink Gradient"
+                        aria-label="Select Pink gradient"
+                        aria-pressed=&quot;false&quot;
+                        onclick="switchGradient('pink')">
+                    </button>
+                                    <button type="button"
+                        class="w-8 h-8 rounded-full border-3 border-transparent hover:border-black dark:hover:border-white transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-accent)] cursor-pointer"
+                        style="background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%)"
+                        title="Rose Gradient"
+                        aria-label="Select Rose gradient"
+                        aria-pressed=&quot;false&quot;
+                        onclick="switchGradient('rose')">
+                    </button>
+                                    <button type="button"
+                        class="w-8 h-8 rounded-full border-3 border-transparent hover:border-black dark:hover:border-white transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-accent)] cursor-pointer"
+                        style="background: linear-gradient(135deg, #f97316 0%, #fb923c 100%)"
+                        title="Orange Gradient"
+                        aria-label="Select Orange gradient"
+                        aria-pressed=&quot;false&quot;
+                        onclick="switchGradient('orange')">
+                    </button>
+                                    <button type="button"
+                        class="w-8 h-8 rounded-full border-3 border-transparent hover:border-black dark:hover:border-white transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-accent)] cursor-pointer"
+                        style="background: linear-gradient(135deg, #10b981 0%, #34d399 100%)"
+                        title="Emerald Gradient"
+                        aria-label="Select Emerald gradient"
+                        aria-pressed=&quot;false&quot;
+                        onclick="switchGradient('emerald')">
+                    </button>
+                                    <button type="button"
+                        class="w-8 h-8 rounded-full border-3 border-transparent hover:border-black dark:hover:border-white transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-accent)] cursor-pointer"
+                        style="background: linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%)"
+                        title="Teal Gradient"
+                        aria-label="Select Teal gradient"
+                        aria-pressed=&quot;false&quot;
+                        onclick="switchGradient('teal')">
+                    </button>
+                                    <button type="button"
+                        class="w-8 h-8 rounded-full border-3 border-transparent hover:border-black dark:hover:border-white transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-accent)] cursor-pointer"
+                        style="background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%)"
+                        title="Cyan Gradient"
+                        aria-label="Select Cyan gradient"
+                        aria-pressed=&quot;false&quot;
+                        onclick="switchGradient('cyan')">
+                    </button>
+                                <script>
+                    function switchGradient(gradient) {
+                        // Define gradient mappings
+                        const gradients = {
+                            'indigo': { light: 'from-indigo-50 via-white to-purple-50', dark: 'dark:from-indigo-950 dark:via-purple-950/30 dark:to-zinc-900', primary: '#6366f1', secondary: '#8b5cf6' },
+                            'blue': { light: 'from-blue-50 via-white to-cyan-50', dark: 'dark:from-blue-950 dark:via-cyan-950/30 dark:to-zinc-900', primary: '#3b82f6', secondary: '#0ea5e9' },
+                            'purple': { light: 'from-purple-50 via-pink-50 to-rose-50', dark: 'dark:from-purple-950 dark:via-pink-950/30 dark:to-zinc-900', primary: '#a855f7', secondary: '#d946ef' },
+                            'pink': { light: 'from-pink-50 via-rose-50 to-orange-50', dark: 'dark:from-pink-950 dark:via-rose-950/30 dark:to-zinc-900', primary: '#ec4899', secondary: '#f472b6' },
+                            'rose': { light: 'from-rose-50 via-red-50 to-orange-50', dark: 'dark:from-rose-950 dark:via-red-950/30 dark:to-zinc-900', primary: '#f43f5e', secondary: '#fb7185' },
+                            'orange': { light: 'from-orange-50 via-amber-50 to-yellow-50', dark: 'dark:from-orange-950 dark:via-amber-950/30 dark:to-zinc-900', primary: '#f97316', secondary: '#fb923c' },
+                            'emerald': { light: 'from-emerald-50 via-teal-50 to-cyan-50', dark: 'dark:from-emerald-950 dark:via-teal-950/30 dark:to-zinc-900', primary: '#10b981', secondary: '#34d399' },
+                            'teal': { light: 'from-teal-50 via-green-50 to-emerald-50', dark: 'dark:from-teal-950 dark:via-green-950/30 dark:to-zinc-900', primary: '#14b8a6', secondary: '#2dd4bf' },
+                            'cyan': { light: 'from-cyan-50 via-sky-50 to-blue-50', dark: 'dark:from-cyan-950 dark:via-sky-950/30 dark:to-zinc-900', primary: '#06b6d4', secondary: '#22d3ee' },
+                        };
+
+                        const selected = gradients[gradient] || gradients['indigo'];
+
+                        // IMMEDIATELY update the background without waiting for server
+                        const bg = document.querySelector('.auth-background');
+                        bg.className = 'auth-background bg-gradient-to-br ' + selected.light + ' ' + selected.dark;
+
+                        // IMMEDIATELY update CSS variables for instant button color change
+                        document.documentElement.style.setProperty('--gradient-primary', selected.primary);
+                        document.documentElement.style.setProperty('--gradient-secondary', selected.secondary);
+
+                        // IMMEDIATELY update button styles
+                        document.querySelectorAll('[onclick^="switchGradient"]').forEach(btn => {
+                            const isSelected = btn.getAttribute('onclick').includes(gradient);
+                            // Remove selection styling from all buttons
+                            btn.classList.remove('ring-2', 'ring-offset-2', 'border-black', 'dark:border-white');
+                            btn.setAttribute('aria-pressed', 'false');
+
+                            if (isSelected) {
+                                // Add selection styling to clicked button
+                                btn.classList.add('ring-2', 'ring-offset-2', 'border-black', 'dark:border-white');
+                                btn.setAttribute('aria-pressed', 'true');
+                            }
+                        });
+
+                        // Store in localStorage for immediate effect
+                        localStorage.setItem('auth_gradient', gradient);
+
+                        // Also save to server (fire and forget)
+                        fetch('http://127.0.0.1:8000/gradient/switch', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-CSRF-TOKEN': 'WghQoFvHra81XAkWowmrY7skJ5Rp5AK0tKtW8JCz'
+                            },
+                            body: 'gradient=' + gradient
+                        }).catch(() => {});
+                    }
+
+                    // Initialize gradient colors on page load
+                    (function() {
+                        const currentGradient = 'indigo';
+                        const gradients = {
+                            'indigo': { primary: '#6366f1', secondary: '#8b5cf6' },
+                            'blue': { primary: '#3b82f6', secondary: '#0ea5e9' },
+                            'purple': { primary: '#a855f7', secondary: '#d946ef' },
+                            'pink': { primary: '#ec4899', secondary: '#f472b6' },
+                            'rose': { primary: '#f43f5e', secondary: '#fb7185' },
+                            'orange': { primary: '#f97316', secondary: '#fb923c' },
+                            'emerald': { primary: '#10b981', secondary: '#34d399' },
+                            'teal': { primary: '#14b8a6', secondary: '#2dd4bf' },
+                            'cyan': { primary: '#06b6d4', secondary: '#22d3ee' },
+                        };
+                        const selected = gradients[currentGradient] || gradients['indigo'];
+                        document.documentElement.style.setProperty('--gradient-primary', selected.primary);
+                        document.documentElement.style.setProperty('--gradient-secondary', selected.secondary);
+                    })();
+                </script>
+            </div>
+
+            <div class="flex w-full max-w-sm flex-col gap-2">
+                <main id="main-content" class="flex flex-col gap-2" role="main" aria-label="Authentication form">
+                    <!-- Logo outside card -->
+                    <div class="flex justify-center">
+                        <a href="http://127.0.0.1:8000" wire:navigate aria-label="Go to homepage">
+                            <img src="http://127.0.0.1:8000/inu-logo.jpg" alt="Noor LMS Logo"  width="200" height="200" />
+                        </a>
+                    </div>
+                    <div class="auth-card rounded-xl text-stone-800 dark:text-stone-200 shadow-lg relative overflow-hidden">
+                        <div class="px-4 py-3 relative z-10">
+                                <div class="flex flex-col gap-6">
+        <div class="flex w-full flex-col text-center items-center gap-2" role="heading" aria-level="1">
+    <div class="font-medium [:where(&amp;)]:text-zinc-800 [:where(&amp;)]:dark:text-white text-2xl [&amp;:has(+[data-flux-subheading])]:mb-2 [[data-flux-subheading]+&amp;]:mt-2 text-zinc-900 dark:text-zinc-100" data-flux-heading>Log in to your account</div>
+            <div class="text-sm [:where(&amp;)]:text-zinc-500 [:where(&amp;)]:dark:text-white/70 text-zinc-600 dark:text-zinc-400" data-flux-subheading>
+    Enter your email and password below to log in
+</div>
+    </div>
+
+        <!-- Session Status -->
+        
+        <form method="POST" action="http://127.0.0.1:8000/login" class="flex flex-col gap-6">
+            <input type="hidden" name="_token" value="WghQoFvHra81XAkWowmrY7skJ5Rp5AK0tKtW8JCz" autocomplete="off">
+            <!-- Email Address -->
+            <ui-field class="min-w-0 [&amp;:not(:has([data-flux-field])):has([data-flux-control][disabled])&gt;[data-flux-label]]:opacity-50 [&amp;:has(&gt;[data-flux-radio-group][disabled])&gt;[data-flux-label]]:opacity-50 [&amp;:has(&gt;[data-flux-checkbox-group][disabled])&gt;[data-flux-label]]:opacity-50 block *:data-flux-label:mb-3 [&amp;&gt;[data-flux-label]:has(+[data-flux-description])]:mb-2 [&amp;&gt;[data-flux-label]+[data-flux-description]]:mt-0 [&amp;&gt;[data-flux-label]+[data-flux-description]]:mb-3 [&amp;&gt;*:not([data-flux-label])+[data-flux-description]]:mt-3" data-flux-field>
+    <ui-label class="inline-flex items-center text-sm font-medium  [:where(&amp;)]:text-zinc-800 [:where(&amp;)]:dark:text-white [&amp;:has([data-flux-label-trailing])]:flex" data-flux-label>
+    Email address
+
+    
+    
+    </ui-label>
+        
+        
+        <div class="w-full relative block group/input" data-flux-input>
+            
+            <input
+                type="email"
+                
+                class="w-full border rounded-lg block disabled:shadow-none dark:shadow-none appearance-none text-base sm:text-sm py-2 h-10 leading-[1.375rem] ps-3 pe-3 bg-white dark:bg-white/10 dark:disabled:bg-white/[7%] text-zinc-700 disabled:text-zinc-500 placeholder-zinc-400 disabled:placeholder-zinc-400/70 dark:text-zinc-300 dark:disabled:text-zinc-400 dark:placeholder-zinc-400 dark:disabled:placeholder-zinc-500 shadow-xs border-zinc-200 border-b-zinc-300/80 disabled:border-b-zinc-200 dark:border-white/10 dark:disabled:border-white/5 data-invalid:shadow-none data-invalid:border-red-500 dark:data-invalid:border-red-500 disabled:data-invalid:border-red-500 dark:disabled:data-invalid:border-red-500" label="Email address" required="required" autofocus="autofocus" autocomplete="email" placeholder="email@example.com"
+                 name="email"                                                                                                 data-flux-control
+                data-flux-group-target
+                                            >
+
+                    </div>
+
+                <div role="alert" aria-live="polite" aria-atomic="true" class="mt-3 text-sm font-medium text-red-500 dark:text-red-400 hidden" data-flux-error>
+    </div>
+</ui-field>
+
+            <!-- Password -->
+            <div class="relative">
+                <ui-field class="min-w-0 [&amp;:not(:has([data-flux-field])):has([data-flux-control][disabled])&gt;[data-flux-label]]:opacity-50 [&amp;:has(&gt;[data-flux-radio-group][disabled])&gt;[data-flux-label]]:opacity-50 [&amp;:has(&gt;[data-flux-checkbox-group][disabled])&gt;[data-flux-label]]:opacity-50 block *:data-flux-label:mb-3 [&amp;&gt;[data-flux-label]:has(+[data-flux-description])]:mb-2 [&amp;&gt;[data-flux-label]+[data-flux-description]]:mt-0 [&amp;&gt;[data-flux-label]+[data-flux-description]]:mb-3 [&amp;&gt;*:not([data-flux-label])+[data-flux-description]]:mt-3" data-flux-field>
+    <ui-label class="inline-flex items-center text-sm font-medium  [:where(&amp;)]:text-zinc-800 [:where(&amp;)]:dark:text-white [&amp;:has([data-flux-label-trailing])]:flex" data-flux-label>
+    Password
+
+    
+    
+    </ui-label>
+        
+        
+        <div class="w-full relative block group/input" data-flux-input>
+            
+            <input
+                type="password"
+                
+                class="w-full border rounded-lg block disabled:shadow-none dark:shadow-none appearance-none text-base sm:text-sm py-2 h-10 leading-[1.375rem] ps-3 pe-10 bg-white dark:bg-white/10 dark:disabled:bg-white/[7%] text-zinc-700 disabled:text-zinc-500 placeholder-zinc-400 disabled:placeholder-zinc-400/70 dark:text-zinc-300 dark:disabled:text-zinc-400 dark:placeholder-zinc-400 dark:disabled:placeholder-zinc-500 shadow-xs border-zinc-200 border-b-zinc-300/80 disabled:border-b-zinc-200 dark:border-white/10 dark:disabled:border-white/5 data-invalid:shadow-none data-invalid:border-red-500 dark:data-invalid:border-red-500 disabled:data-invalid:border-red-500 dark:disabled:data-invalid:border-red-500" label="Password" required="required" autocomplete="current-password" placeholder="Password"
+                 name="password"                                                                                                 data-flux-control
+                data-flux-group-target
+                                            >
+
+                            <div class="absolute top-0 bottom-0 flex items-center gap-x-1.5 pe-2 border-e border-transparent end-0 text-xs text-zinc-400">
+                    
+                    
+                    
+                    
+                    
+                    
+                                            <button type="button" class="relative items-center font-medium justify-center gap-2 whitespace-nowrap disabled:opacity-75 dark:disabled:opacity-75 disabled:cursor-default disabled:pointer-events-none justify-center h-8 text-sm rounded-md w-8 inline-flex -ms-1.5 -me-1.5 bg-transparent hover:bg-zinc-800/5 dark:hover:bg-white/15 text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-white      -me-1" data-flux-button="data-flux-button" x-data="fluxInputViewable" x-on:click="toggle()" x-bind:data-viewable-open="open" aria-label="Toggle password visibility">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hidden [[data-viewable-open]>&]:block" variant="micro" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+</svg>
+    <svg class="shrink-0 [:where(&amp;)]:size-4 block [[data-viewable-open]>&]:hidden" data-flux-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/>
+  <path fill-rule="evenodd" d="M1.38 8.28a.87.87 0 0 1 0-.566 7.003 7.003 0 0 1 13.238.006.87.87 0 0 1 0 .566A7.003 7.003 0 0 1 1.379 8.28ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" clip-rule="evenodd"/>
+</svg>
+    </button>
+                    
+                                    </div>
+                    </div>
+
+                <div role="alert" aria-live="polite" aria-atomic="true" class="mt-3 text-sm font-medium text-red-500 dark:text-red-400 hidden" data-flux-error>
+    </div>
+</ui-field>
+
+                                    <a class="inline font-medium underline-offset-[6px] hover:decoration-current underline [[data-color]&gt;&amp;]:text-inherit [[data-color]&gt;&amp;]:decoration-current/20 dark:[[data-color]&gt;&amp;]:decoration-current/50 [[data-color]&gt;&amp;]:hover:decoration-current text-[var(--color-accent-content)] decoration-[color-mix(in_oklab,var(--color-accent-content),transparent_80%)] absolute top-0 text-sm end-0" href="http://127.0.0.1:8000/forgot-password" wire:navigate="" data-flux-link >Forgot your password?</a>                            </div>
+
+            <!-- Remember Me -->
+            <ui-field class="min-w-0 [&amp;:not(:has([data-flux-field])):has([data-flux-control][disabled])&gt;[data-flux-label]]:opacity-50 [&amp;:has(&gt;[data-flux-radio-group][disabled])&gt;[data-flux-label]]:opacity-50 [&amp;:has(&gt;[data-flux-checkbox-group][disabled])&gt;[data-flux-label]]:opacity-50 grid gap-x-3 gap-y-1.5 has-[[data-flux-label]~[data-flux-control]]:grid-cols-[1fr_auto] has-[[data-flux-control]~[data-flux-label]]:grid-cols-[auto_1fr] [&amp;&gt;[data-flux-control]~[data-flux-description]]:row-start-2 [&amp;&gt;[data-flux-control]~[data-flux-description]]:col-start-2 [&amp;&gt;[data-flux-control]~[data-flux-error]]:col-span-2 [&amp;&gt;[data-flux-control]~[data-flux-error]]:mt-1 [&amp;&gt;[data-flux-label]~[data-flux-control]]:row-start-1 [&amp;&gt;[data-flux-label]~[data-flux-control]]:col-start-2" data-flux-field>
+    <ui-checkbox class="flex size-[1.125rem] rounded-[.3rem] mt-px outline-offset-2" label="Remember me"  name="remember"  data-flux-control data-flux-checkbox>
+        <div class="shrink-0 size-[1.125rem] rounded-[.3rem] flex justify-center items-center text-sm text-zinc-700 dark:text-zinc-800 shadow-xs [ui-checkbox[disabled]_&amp;]:opacity-75 [ui-checkbox[data-checked][disabled]_&amp;]:opacity-50 [ui-checkbox[disabled]_&amp;]:shadow-none [ui-checkbox[data-checked]_&amp;]:shadow-none [ui-checkbox[data-indeterminate]_&amp;]:shadow-none [ui-checkbox[data-checked]:not([data-indeterminate])_&amp;&gt;svg:first-child]:block [ui-checkbox[data-indeterminate]_&amp;&gt;svg:last-child]:block border border-zinc-300 dark:border-white/10 [ui-checkbox[disabled]_&amp;]:border-zinc-200 dark:[ui-checkbox[disabled]_&amp;]:border-white/5 [ui-checkbox[data-checked]_&amp;]:border-transparent [ui-checkbox[data-indeterminate]_&amp;]:border-transparent [ui-checkbox[disabled][data-checked]_&amp;]:border-transparent [ui-checkbox[disabled][data-indeterminate]_&amp;]:border-transparent [print-color-adjust:exact] bg-white dark:bg-white/10 [ui-checkbox[data-checked]_&amp;]:bg-[var(--color-accent)] hover:[ui-checkbox[data-checked]_&amp;]:bg-(--color-accent) focus:[ui-checkbox[data-checked]_&amp;]:bg-(--color-accent) [ui-checkbox[data-indeterminate]_&amp;]:bg-[var(--color-accent)] hover:[ui-checkbox[data-indeterminate]_&amp;]:bg-(--color-accent) focus:[ui-checkbox[data-indeterminate]_&amp;]:bg-(--color-accent)" data-flux-checkbox-indicator>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hidden text-[var(--color-accent-foreground)]" variant="micro" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+</svg>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hidden text-[var(--color-accent-foreground)]" variant="micro" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+</svg>
+</div>
+    </ui-checkbox>
+
+                    <ui-label class="inline-flex items-center text-sm font-medium  [:where(&amp;)]:text-zinc-800 [:where(&amp;)]:dark:text-white [&amp;:has([data-flux-label-trailing])]:flex" data-flux-label>
+    Remember me
+
+    
+    
+    </ui-label>
+        
+        
+        <div role="alert" aria-live="polite" aria-atomic="true" class="mt-3 text-sm font-medium text-red-500 dark:text-red-400 hidden" data-flux-error>
+    </div>
+</ui-field>
+
+
+            <div class="flex items-center justify-end">
+                <button type="submit" class="relative items-center font-medium justify-center gap-2 whitespace-nowrap disabled:opacity-75 dark:disabled:opacity-75 disabled:cursor-default disabled:pointer-events-none justify-center h-10 text-sm rounded-lg ps-4 pe-4 inline-flex  bg-[var(--color-accent)] hover:bg-[color-mix(in_oklab,_var(--color-accent),_transparent_10%)] text-[var(--color-accent-foreground)] border border-black/10 dark:border-0 shadow-[inset_0px_1px_--theme(--color-white/.2)] [[data-flux-button-group]_&amp;]:border-e-0 [:is([data-flux-button-group]&gt;&amp;:last-child,_[data-flux-button-group]_:last-child&gt;&amp;)]:border-e-[1px] dark:[:is([data-flux-button-group]&gt;&amp;:last-child,_[data-flux-button-group]_:last-child&gt;&amp;)]:border-e-0 dark:[:is([data-flux-button-group]&gt;&amp;:last-child,_[data-flux-button-group]_:last-child&gt;&amp;)]:border-s-[1px] [:is([data-flux-button-group]&gt;&amp;:not(:first-child),_[data-flux-button-group]_:not(:first-child)&gt;&amp;)]:border-s-[color-mix(in_srgb,var(--color-accent-foreground),transparent_85%)] *:transition-opacity [&amp;[disabled]&gt;:not([data-flux-loading-indicator])]:opacity-0 [&amp;[disabled]&gt;[data-flux-loading-indicator]]:opacity-100 [&amp;[disabled]]:pointer-events-none  w-full" data-flux-button="data-flux-button" data-flux-group-target="data-flux-group-target" data-test="login-button">
+        <div class="absolute inset-0 flex items-center justify-center opacity-0" data-flux-loading-indicator>
+                <svg class="shrink-0 [:where(&amp;)]:size-4 animate-spin" data-flux-icon xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true" data-slot="icon">
+    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+</svg>
+                    </div>
+        
+        
+                    
+            
+            <span>Log in</span>
+    </button>
+            </div>
+        </form>
+    </div>
+                        </div>
+                    </div>
+                </main>
+
+                <footer class="auth-footer text-center fade-in-up stagger-2 text-xs">
+                    <p>&copy; 2026 Noor LMS</p>
+                </footer>
+            </div>
+        </div>
+        <script src="http://127.0.0.1:8000/flux/flux.js?id=dca30f4a" data-navigate-once></script>
+    <!-- Livewire Scripts -->
+<script src="http://127.0.0.1:8000/livewire-a326a6a8/livewire.js?id=cfc5c1ae"   data-csrf="WghQoFvHra81XAkWowmrY7skJ5Rp5AK0tKtW8JCz" data-module-url="http://127.0.0.1:8000/livewire-a326a6a8" data-update-uri="http://127.0.0.1:8000/livewire-a326a6a8/update" data-navigate-once="true"></script>
+</body>
+</html>
+

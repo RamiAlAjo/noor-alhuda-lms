@@ -1,0 +1,768 @@
+/**
+ * Accessibility Enhancements for LMS
+ *
+ * This file contains CSS for:
+ * - Focus indicators for keyboard navigation
+ * - High contrast mode improvements
+ * - Reduced motion support
+ * - Better color contrast
+ * - Skip links and navigation helpers
+ * - Screen reader utilities
+ */
+
+/* ==================== CSS CUSTOM PROPERTIES ==================== */
+
+:root {
+    --a11y-focus-color: #6366f1;
+    --a11y-focus-color-light: rgba(99, 102, 241, 0.2);
+    --a11y-focus-width: 2px;
+    --a11y-focus-offset: 2px;
+}
+
+.dark {
+    --a11y-focus-color: #818cf8;
+    --a11y-focus-color-light: rgba(129, 140, 248, 0.3);
+}
+
+/* ==================== SKIP LINKS ==================== */
+
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: var(--a11y-focus-color);
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 0 0 8px 8px;
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+    top: 0;
+    outline: 3px solid white;
+    outline-offset: 2px;
+}
+
+.skip-link:focus-visible {
+    top: 0;
+    outline: 3px solid white;
+    outline-offset: 2px;
+}
+
+/* Multiple skip links */
+.skip-link.skip-to-nav {
+    left: 25%;
+}
+
+.skip-link.skip-to-content {
+    left: 50%;
+}
+
+.skip-link.skip-to-footer {
+    left: 75%;
+}
+
+/* ==================== FOCUS INDICATORS ==================== */
+
+/* Default focus styles */
+*:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+/* Visible focus for interactive elements */
+*:focus-visible {
+    outline: var(--a11y-focus-width) solid var(--a11y-focus-color);
+    outline-offset: var(--a11y-focus-offset);
+    border-radius: 4px;
+}
+
+/* Button focus */
+button:focus-visible,
+.btn:focus-visible,
+[role="button"]:focus-visible,
+flux\:button:focus-visible,
+input[type="button"]:focus-visible,
+input[type="reset"]:focus-visible,
+input[type="submit"]:focus-visible {
+    outline: var(--a11y-focus-width) solid var(--a11y-focus-color);
+    outline-offset: var(--a11y-focus-offset);
+    box-shadow: 0 0 0 4px var(--a11y-focus-color-light);
+}
+
+/* Link focus */
+a:focus-visible {
+    outline: var(--a11y-focus-width) solid var(--a11y-focus-color);
+    outline-offset: var(--a11y-focus-offset);
+    border-radius: 2px;
+    text-decoration-thickness: 2px;
+}
+
+/* Form input focus */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="textbox"]:focus-visible,
+[contenteditable="true"]:focus-visible {
+    outline: var(--a11y-focus-width) solid var(--a11y-focus-color);
+    outline-offset: 0;
+    border-color: var(--a11y-focus-color) !important;
+    box-shadow: 0 0 0 3px var(--a11y-focus-color-light);
+}
+
+/* Checkbox and radio focus */
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible {
+    outline: var(--a11y-focus-width) solid var(--a11y-focus-color);
+    outline-offset: var(--a11y-focus-offset);
+}
+
+/* Range slider focus */
+input[type="range"]:focus-visible {
+    outline: var(--a11y-focus-width) solid var(--a11y-focus-color);
+    outline-offset: 4px;
+}
+
+/* Dropdown menu focus */
+[role="menu"]:focus-visible,
+[role="menuitem"]:focus-visible,
+[role="listbox"]:focus-visible,
+[role="option"]:focus-visible,
+[role="combobox"]:focus-visible {
+    outline: var(--a11y-focus-width) solid var(--a11y-focus-color);
+    outline-offset: -2px;
+    background-color: var(--a11y-focus-color-light);
+}
+
+/* Tab focus */
+[role="tab"]:focus-visible {
+    outline: var(--a11y-focus-width) solid var(--a11y-focus-color);
+    outline-offset: -2px;
+}
+
+/* Accordion focus */
+[role="button"][aria-expanded]:focus-visible {
+    outline: var(--a11y-focus-width) solid var(--a11y-focus-color);
+    outline-offset: var(--a11y-focus-offset);
+}
+
+/* Dialog/Modal focus */
+dialog:focus-visible,
+[role="dialog"]:focus-visible {
+    outline: var(--a11y-focus-width) solid var(--a11y-focus-color);
+    outline-offset: -2px;
+}
+
+/* Focus within for parent highlighting */
+.focus-within-highlight:focus-within {
+    outline: var(--a11y-focus-width) solid var(--a11y-focus-color);
+    outline-offset: var(--a11y-focus-offset);
+    background-color: var(--a11y-focus-color-light);
+}
+
+/* ==================== HIGH CONTRAST MODE ==================== */
+
+/* System high contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --a11y-focus-color: #0000ff;
+        --a11y-focus-width: 3px;
+    }
+
+    .dark {
+        --a11y-focus-color: #00ffff;
+    }
+
+    * {
+        border-color: currentColor !important;
+    }
+
+    button,
+    .btn,
+    a {
+        text-decoration: underline;
+    }
+
+    input,
+    select,
+    textarea {
+        border-width: 2px !important;
+    }
+
+    /* Ensure images have borders in high contrast */
+    img:not([alt=""]) {
+        border: 2px solid currentColor;
+    }
+
+    /* Better link visibility */
+    a:not(.btn):not([class*="button"]) {
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+    }
+}
+
+/* App high contrast mode */
+[data-high-contrast="true"] {
+    --tw-border-opacity: 1 !important;
+    --a11y-focus-width: 3px;
+}
+
+[data-high-contrast="true"] .dark,
+[data-high-contrast="true"].dark {
+    --tw-border-opacity: 1 !important;
+}
+
+[data-high-contrast="true"] .dark *,
+[data-high-contrast="true"].dark * {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+[data-high-contrast="true"] button,
+[data-high-contrast="true"] .btn,
+[data-high-contrast="true"] a {
+    font-weight: 600;
+}
+
+[data-high-contrast="true"] input,
+[data-high-contrast="true"] select,
+[data-high-contrast="true"] textarea {
+    border-width: 2px !important;
+    background-color: white !important;
+    color: black !important;
+}
+
+.dark [data-high-contrast="true"] input,
+.dark [data-high-contrast="true"] select,
+.dark [data-high-contrast="true"] textarea {
+    background-color: #1c1917 !important;
+    color: white !important;
+    border-color: white !important;
+}
+
+/* High contrast for status indicators */
+[data-high-contrast="true"] .status-present,
+[data-high-contrast="true"] .text-success {
+    color: #008000 !important;
+    border: 2px solid #008000 !important;
+}
+
+[data-high-contrast="true"] .status-absent,
+[data-high-contrast="true"] .text-danger {
+    color: #ff0000 !important;
+    border: 2px solid #ff0000 !important;
+}
+
+[data-high-contrast="true"] .status-late,
+[data-high-contrast="true"] .text-warning {
+    color: #ffa500 !important;
+    border: 2px solid #ffa500 !important;
+}
+
+/* ==================== REDUCED MOTION ==================== */
+
+/* System reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+        caret-color: auto !important;
+    }
+
+    .animate-fade-in,
+    .animate-slide-up,
+    .animate-slide-down,
+    .animate-scale-in,
+    .animate-bounce,
+    .animate-pulse,
+    .animate-spin {
+        animation: none !important;
+    }
+
+    /* Keep essential transitions but make them instant */
+    .modal-backdrop,
+    .sidebar-overlay {
+        transition: none !important;
+    }
+
+    /* Disable parallax effects */
+    [data-parallax] {
+        transform: none !important;
+    }
+
+    /* Disable auto-playing videos */
+    video[autoplay] {
+        autoplay: false;
+    }
+}
+
+/* App reduced motion mode */
+[data-reduced-motion="true"] *,
+[data-reduced-motion="true"] *::before,
+[data-reduced-motion="true"] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+}
+
+/* ==================== COLOR CONTRAST IMPROVEMENTS ==================== */
+
+/* Better text contrast */
+.text-muted {
+    color: #44403c !important;
+}
+
+.dark .text-muted {
+    color: #d6d3d1 !important;
+}
+
+/* Better placeholder contrast */
+::placeholder {
+    color: #78716c !important;
+    opacity: 1;
+}
+
+.dark ::placeholder {
+    color: #a8a29e !important;
+}
+
+/* Better link contrast */
+a:not(.btn):not([class*="button"]) {
+    color: var(--a11y-focus-color, #4f46e5);
+    text-decoration: none;
+}
+
+a:not(.btn):not([class*="button"]):hover {
+    text-decoration: underline;
+}
+
+a:not(.btn):not([class*="button"]):focus-visible {
+    text-decoration-thickness: 3px;
+}
+
+/* Better button contrast */
+.btn-primary,
+.bg-zinc-600,
+.bg-blue-600 {
+    background-color: var(--a11y-focus-color, #4f46e5) !important;
+    color: white !important;
+}
+
+/* Better form label contrast */
+label,
+.flux-label,
+.form-label {
+    color: #1c1917 !important;
+    font-weight: 500;
+}
+
+.dark label,
+.dark .flux-label,
+.dark .form-label {
+    color: #fafaf9 !important;
+}
+
+/* Better error message contrast */
+.text-red-500,
+.text-danger,
+.error-message {
+    color: #dc2626 !important;
+}
+
+.dark .text-red-500,
+.dark .text-danger,
+.dark .error-message {
+    color: #f87171 !important;
+}
+
+/* Better success message contrast */
+.text-green-500,
+.text-success {
+    color: #16a34a !important;
+}
+
+.dark .text-green-500,
+.dark .text-success {
+    color: #4ade80 !important;
+}
+
+/* Better warning message contrast */
+.text-yellow-500,
+.text-warning {
+    color: #ca8a04 !important;
+}
+
+.dark .text-yellow-500,
+.dark .text-warning {
+    color: #facc15 !important;
+}
+
+/* Better info message contrast */
+.text-blue-500,
+.text-info {
+    color: #2563eb !important;
+}
+
+.dark .text-blue-500,
+.dark .text-info {
+    color: #60a5fa !important;
+}
+
+/* ==================== FOCUS OUTLINE MODE ==================== */
+
+[data-focus-outline="true"] *:focus,
+[data-focus-outline="true"] *:focus-visible {
+    outline: 3px solid var(--a11y-focus-color) !important;
+    outline-offset: 2px !important;
+}
+
+[data-focus-outline="true"] button:focus,
+[data-focus-outline="true"] .btn:focus,
+[data-focus-outline="true"] a:focus {
+    box-shadow: 0 0 0 4px var(--a11y-focus-color-light) !important;
+}
+
+/* ==================== KEYBOARD NAVIGATION HELPERS ==================== */
+
+/* Hide focus ring when using mouse */
+.using-mouse *:focus {
+    outline: none !important;
+}
+
+.using-mouse *:focus-visible {
+    outline: none !important;
+}
+
+/* Show focus ring when using keyboard */
+.using-keyboard *:focus {
+    outline: var(--a11y-focus-width) solid var(--a11y-focus-color) !important;
+    outline-offset: var(--a11y-focus-offset) !important;
+}
+
+/* Focus trap container */
+.focus-trap {
+    outline: none;
+}
+
+/* ==================== SCREEN READER ONLY ==================== */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.sr-only:focus,
+.sr-only:active {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}
+
+/* Visually hidden but accessible */
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* ==================== LOADING STATES ==================== */
+
+/* Loading spinner animation */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* Skeleton loading animation */
+@keyframes skeleton-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.skeleton {
+    animation: skeleton-pulse 2s ease-in-out infinite;
+    background-color: #e5e7eb;
+}
+
+.dark .skeleton {
+    background-color: #374151;
+}
+
+/* Loading overlay */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.dark .loading-overlay {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+/* ==================== BUTTON DISABLED STATES ==================== */
+
+button:disabled,
+.btn:disabled,
+button[aria-disabled="true"],
+.btn[aria-disabled="true"],
+[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Loading state for buttons */
+button.loading,
+.btn.loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+}
+
+button.loading::after,
+.btn.loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1rem;
+    height: 1rem;
+    margin: -0.5rem 0 0 -0.5rem;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+}
+
+/* ==================== RESPONSIVE FOCUS ==================== */
+
+/* Larger touch targets on mobile */
+@media (max-width: 768px) {
+    button,
+    .btn,
+    a,
+    input[type="checkbox"],
+    input[type="radio"],
+    [role="button"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Increase tap target area */
+    .flux\:sidebar.item,
+    .flux\:navbar.item {
+        padding: 12px 16px;
+    }
+
+    /* Larger focus indicators on touch */
+    *:focus-visible {
+        outline-width: 3px;
+        outline-offset: 3px;
+    }
+}
+
+/* ==================== PRINT STYLES ==================== */
+
+@media print {
+    /* Show links in print */
+    a[href]::after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+        color: #666;
+    }
+
+    /* Don't show link for anchor links */
+    a[href^="#"]::after,
+    a[href^="javascript"]::after {
+        content: "";
+    }
+
+    /* Show abbreviations */
+    abbr[title]::after {
+        content: " (" attr(title) ")";
+    }
+
+    /* Ensure text is readable */
+    body {
+        font-size: 12pt;
+        line-height: 1.5;
+        color: black;
+        background: white;
+    }
+
+    /* Show link URLs */
+    a {
+        text-decoration: underline;
+        color: black;
+    }
+
+    /* Hide non-essential elements */
+    nav,
+    footer,
+    .no-print,
+    .sidebar,
+    .navigation {
+        display: none !important;
+    }
+}
+
+/* ==================== READING MODE ==================== */
+
+[data-reading-mode="true"] {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    max-width: 70ch;
+    margin: 0 auto;
+}
+
+[data-reading-mode="true"] p {
+    margin-bottom: 1.5em;
+}
+
+[data-reading-mode="true"] h1,
+[data-reading-mode="true"] h2,
+[data-reading-mode="true"] h3 {
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+}
+
+/* ==================== LIVE REGIONS ==================== */
+
+[aria-live="polite"],
+[aria-live="assertive"] {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+[aria-live="assertive"] {
+    /* More prominent for urgent announcements */
+}
+
+/* ==================== FOCUS INDICATOR UTILITY CLASSES ==================== */
+
+.focus-ring-primary {
+    --a11y-focus-color: #6366f1;
+}
+
+.focus-ring-success {
+    --a11y-focus-color: #22c55e;
+}
+
+.focus-ring-warning {
+    --a11y-focus-color: #eab308;
+}
+
+.focus-ring-danger {
+    --a11y-focus-color: #ef4444;
+}
+
+.focus-ring-info {
+    --a11y-focus-color: #3b82f6;
+}
+
+/* ==================== ACCESSIBILITY UTILITY CLASSES ==================== */
+
+/* Ensure minimum touch target size */
+.touch-target {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+/* Better text selection */
+.select-all {
+    user-select: all;
+}
+
+/* Prevent text selection */
+.no-select {
+    user-select: none;
+}
+
+/* Ensure text is readable */
+.readable-text {
+    max-width: 70ch;
+    line-height: 1.6;
+}
+
+/* High contrast text */
+.high-contrast-text {
+    color: black;
+    background: white;
+}
+
+.dark .high-contrast-text {
+    color: white;
+    background: black;
+}
+
+/* ==================== ANIMATION PREFERENCES ==================== */
+
+/* Safe animations that respect reduced motion */
+.animate-safe {
+    animation-duration: 0.3s;
+    animation-timing-function: ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-safe {
+        animation: none !important;
+    }
+}
+
+/* Transition safe class */
+.transition-safe {
+    transition-duration: 0.2s;
+    transition-timing-function: ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .transition-safe {
+        transition: none !important;
+    }
+}

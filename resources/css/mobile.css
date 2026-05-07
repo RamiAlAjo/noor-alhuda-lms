@@ -1,0 +1,1406 @@
+/**
+ * Mobile Responsiveness Enhancements for LMS
+ *
+ * This file contains CSS for:
+ * - Responsive layouts for all screen sizes
+ * - Mobile navigation improvements
+ * - Touch-friendly interactions
+ * - Responsive forms and tables
+ * - Safe area support for notched devices
+ */
+
+/* ==================== BASE RESPONSIVE SETUP ==================== */
+
+/* Ensure proper box sizing */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Responsive images */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Responsive videos */
+video,
+iframe {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Responsive tables */
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ==================== BREAKPOINT DEFINITIONS ==================== */
+
+/*
+ * Breakpoints:
+ * - xs: 0 - 479px (Extra small phones)
+ * - sm: 480px - 639px (Small phones)
+ * - md: 640px - 767px (Large phones)
+ * - lg: 768px - 1023px (Tablets)
+ * - xl: 1024px - 1279px (Small laptops)
+ * - 2xl: 1280px+ (Desktops)
+ */
+
+/* ==================== SIDEBAR RESPONSIVENESS ==================== */
+
+/* Mobile sidebar overlay */
+@media (max-width: 1023px) {
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 40;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Sidebar slides in from left */
+    flux\:sidebar {
+        position: fixed !important;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 50;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    flux\:sidebar.open {
+        transform: translateX(0);
+    }
+
+    /* RTL support */
+    [dir="rtl"] flux\:sidebar {
+        left: auto;
+        right: 0;
+        transform: translateX(100%);
+    }
+
+    [dir="rtl"] flux\:sidebar.open {
+        transform: translateX(0);
+    }
+
+    /* Sidebar width on mobile */
+    flux\:sidebar {
+        width: 280px;
+        max-width: 85vw;
+    }
+
+    /* Sidebar content styling */
+    flux\:sidebar .sidebar-content {
+        padding: 1rem;
+        overflow-y: auto;
+        height: calc(100vh - 60px);
+    }
+}
+
+/* Tablet sidebar */
+@media (min-width: 768px) and (max-width: 1023px) {
+    flux\:sidebar {
+        width: 240px;
+    }
+}
+
+/* ==================== TABLET-SPECIFIC STYLES ==================== */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    /* Tablet grid layouts */
+    .grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .grid-cols-3 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .grid-cols-4 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Tablet card layouts */
+    .card-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Tablet form layouts */
+    .form-row {
+        flex-direction: row !important;
+        gap: 1rem !important;
+    }
+
+    .form-row .form-group {
+        flex: 1;
+    }
+
+    /* Tablet table styles */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table-stack-mobile thead {
+        display: table-header-group !important;
+    }
+
+    .table-stack-mobile tbody tr {
+        display: table-row !important;
+        margin-bottom: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+    }
+
+    .table-stack-mobile tbody td {
+        display: table-cell !important;
+        justify-content: flex-start !important;
+        padding: 0.75rem !important;
+        border-bottom: 1px solid #e5e7eb !important;
+    }
+
+    .dark .table-stack-mobile tbody td {
+        border-color: #374151 !important;
+    }
+
+    .table-stack-mobile tbody td::before {
+        display: none !important;
+    }
+
+    /* Tablet navigation */
+    .mobile-nav {
+        display: none !important;
+    }
+
+    body.has-mobile-nav {
+        padding-bottom: 0 !important;
+    }
+
+    /* Tablet modal styles */
+    flux\:modal,
+    .modal-dialog {
+        max-width: 700px !important;
+        margin: 2rem auto !important;
+    }
+
+    .modal-content {
+        max-height: calc(100vh - 4rem) !important;
+    }
+
+    /* Tablet spacing */
+    main {
+        padding: 1.5rem !important;
+    }
+
+    .container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+
+    /* Tablet typography */
+    h1 {
+        font-size: 2rem !important;
+    }
+
+    h2 {
+        font-size: 1.75rem !important;
+    }
+
+    h3 {
+        font-size: 1.5rem !important;
+    }
+
+    h4 {
+        font-size: 1.25rem !important;
+    }
+
+    /* Tablet button sizes */
+    .btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9375rem;
+    }
+
+    .btn-sm {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .btn-lg {
+        padding: 0.875rem 1.75rem;
+        font-size: 1rem;
+    }
+
+    /* Tablet card styles */
+    .card,
+    .panel,
+    flux\:card {
+        margin: 1rem 0;
+    }
+
+    .card-body,
+    .card-content {
+        padding: 1.5rem;
+    }
+
+    .card-header {
+        padding: 1rem 1.5rem;
+    }
+
+    .card-footer {
+        padding: 1rem 1.5rem;
+    }
+
+    /* Tablet form styles */
+    input,
+    select,
+    textarea,
+    flux\:input,
+    flux\:select,
+    flux\:textarea {
+        font-size: 1rem;
+    }
+
+    label {
+        font-size: 1rem;
+    }
+
+    /* Tablet dashboard cards */
+    .dashboard-card {
+        padding: 1.5rem;
+    }
+
+    .dashboard-card-value {
+        font-size: 2rem;
+    }
+
+    /* Tablet avatar sizes */
+    .avatar {
+        width: 48px;
+        height: 48px;
+    }
+
+    .avatar-sm {
+        width: 40px;
+        height: 40px;
+    }
+
+    .avatar-lg {
+        width: 64px;
+        height: 64px;
+    }
+
+    /* Tablet utility classes */
+    .hide-tablet {
+        display: none !important;
+    }
+
+    .show-tablet {
+        display: block !important;
+    }
+
+    .show-tablet-flex {
+        display: flex !important;
+    }
+
+    .show-tablet-inline {
+        display: inline !important;
+    }
+
+    .show-tablet-inline-flex {
+        display: inline-flex !important;
+    }
+
+    /* Tablet flex utilities */
+    .flex-col-tablet {
+        flex-direction: column !important;
+    }
+
+    .flex-row-tablet {
+        flex-direction: row !important;
+    }
+
+    .items-start-tablet {
+        align-items: flex-start !important;
+    }
+
+    .items-center-tablet {
+        align-items: center !important;
+    }
+
+    .justify-center-tablet {
+        justify-content: center !important;
+    }
+
+    .justify-between-tablet {
+        justify-content: space-between !important;
+    }
+
+    .gap-2-tablet {
+        gap: 0.5rem !important;
+    }
+
+    .gap-4-tablet {
+        gap: 1rem !important;
+    }
+
+    .gap-6-tablet {
+        gap: 1.5rem !important;
+    }
+
+    /* Tablet spacing utilities */
+    .p-4-tablet {
+        padding: 1rem !important;
+    }
+
+    .p-6-tablet {
+        padding: 1.5rem !important;
+    }
+
+    .m-4-tablet {
+        margin: 1rem !important;
+    }
+
+    .m-6-tablet {
+        margin: 1.5rem !important;
+    }
+
+    .mb-4-tablet {
+        margin-bottom: 1rem !important;
+    }
+
+    .mb-6-tablet {
+        margin-bottom: 1.5rem !important;
+    }
+
+    .mt-4-tablet {
+        margin-top: 1rem !important;
+    }
+
+    .mt-6-tablet {
+        margin-top: 1.5rem !important;
+    }
+
+    /* Tablet width utilities */
+    .w-full-tablet {
+        width: 100% !important;
+    }
+
+    .w-auto-tablet {
+        width: auto !important;
+    }
+
+    .max-w-full-tablet {
+        max-width: 100% !important;
+    }
+
+    /* Tablet text utilities */
+    .text-left-tablet {
+        text-align: left !important;
+    }
+
+    .text-center-tablet {
+        text-align: center !important;
+    }
+
+    .text-right-tablet {
+        text-align: right !important;
+    }
+}
+
+/* ==================== HEADER RESPONSIVENESS ==================== */
+
+@media (max-width: 640px) {
+    /* Compact header on mobile */
+    flux\:header {
+        padding: 0.5rem 1rem;
+    }
+
+    /* Hide navbar items on mobile */
+    flux\:navbar.max-lg\:hidden {
+        display: none !important;
+    }
+
+    /* Smaller logo on mobile */
+    .app-logo {
+        max-height: 32px;
+    }
+
+    /* Compact dropdown menus */
+    flux\:menu {
+        max-width: calc(100vw - 2rem);
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+
+    /* Header title truncation */
+    .header-title {
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 150px;
+    }
+
+    /* Hide header actions on mobile */
+    .header-actions-desktop {
+        display: none !important;
+    }
+}
+
+/* Tablet header */
+@media (min-width: 641px) and (max-width: 1023px) {
+    .header-title {
+        max-width: 250px;
+    }
+}
+
+/* ==================== FORM RESPONSIVENESS ==================== */
+
+@media (max-width: 640px) {
+    /* Full-width forms on mobile */
+    form {
+        width: 100%;
+    }
+
+    /* Stack form groups */
+    .form-group,
+    .form-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    /* Full-width inputs */
+    input,
+    select,
+    textarea,
+    flux\:input,
+    flux\:select,
+    flux\:textarea {
+        width: 100% !important;
+    }
+
+    /* Larger touch targets for form elements */
+    input[type="checkbox"],
+    input[type="radio"] {
+        min-width: 24px;
+        min-height: 24px;
+    }
+
+    /* Stack buttons on mobile */
+    .btn-group,
+    .flex.gap-2.buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-group > *,
+    .flex.gap-2.buttons > * {
+        width: 100%;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    /* Full-width buttons on mobile */
+    button[type="submit"],
+    .btn-primary,
+    .btn-block {
+        width: 100%;
+    }
+
+    /* Form labels */
+    label {
+        font-size: 0.875rem;
+    }
+
+    /* Input font size for iOS (prevents zoom) */
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+
+    /* Date input styling */
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"] {
+        min-height: 44px;
+    }
+}
+
+/* ==================== TABLE RESPONSIVENESS ==================== */
+
+/* Mobile table styles */
+@media (max-width: 768px) {
+    /* Hide less important columns on mobile */
+    .table-mobile-hide {
+        display: none !important;
+    }
+
+    /* Stack table rows on mobile */
+    .table-stack-mobile thead {
+        display: none;
+    }
+
+    .table-stack-mobile tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 1rem;
+    }
+
+    .dark .table-stack-mobile tbody tr {
+        border-color: #374151;
+    }
+
+    .table-stack-mobile tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .dark .table-stack-mobile tbody td {
+        border-color: #1f2937;
+    }
+
+    .table-stack-mobile tbody td:last-child {
+        border-bottom: none;
+    }
+
+    .table-stack-mobile tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 1rem;
+    }
+
+    /* Horizontal scrollable table */
+    .table-scroll-mobile {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Compact table on mobile */
+    .table-compact-mobile th,
+    .table-compact-mobile td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* ==================== CARD RESPONSIVENESS ==================== */
+
+@media (max-width: 640px) {
+    /* Full-width cards on mobile */
+    .card,
+    .panel,
+    flux\:card {
+        margin: 0.5rem 0;
+        border-radius: 0.5rem;
+    }
+
+    /* Stack card grids */
+    .card-grid,
+    .grid-cols-2,
+    .grid-cols-3,
+    .grid-cols-4 {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Compact card padding */
+    .card-body,
+    .card-content {
+        padding: 1rem;
+    }
+
+    /* Card header on mobile */
+    .card-header {
+        padding: 0.75rem 1rem;
+    }
+
+    /* Card footer on mobile */
+    .card-footer {
+        padding: 0.75rem 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    /* Dashboard cards */
+    .dashboard-card {
+        padding: 1rem;
+    }
+
+    .dashboard-card-value {
+        font-size: 1.5rem;
+    }
+}
+
+/* Two-column grid on larger phones */
+@media (min-width: 480px) and (max-width: 640px) {
+    .card-grid-mobile-2 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* ==================== MODAL RESPONSIVENESS ==================== */
+
+@media (max-width: 640px) {
+    /* Full-screen modals on mobile */
+    flux\:modal,
+    .modal-dialog {
+        margin: 0;
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 0;
+    }
+
+    /* Modal takes full height on mobile */
+    .modal-content {
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    /* Sticky modal header */
+    .modal-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: inherit;
+    }
+
+    /* Sticky modal footer */
+    .modal-footer {
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        background: inherit;
+    }
+
+    /* Modal sheet style (slides up from bottom) */
+    .modal-sheet {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-height: 90vh;
+        border-radius: 16px 16px 0 0;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+    }
+
+    .modal-sheet.open {
+        transform: translateY(0);
+    }
+
+    /* Modal content padding */
+    .modal-body {
+        padding: 1rem;
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+    }
+}
+
+/* Tablet modal */
+@media (min-width: 641px) and (max-width: 1023px) {
+    .modal-dialog {
+        max-width: 90%;
+        margin: 1rem;
+    }
+}
+
+/* ==================== NAVIGATION RESPONSIVENESS ==================== */
+
+@media (max-width: 640px) {
+    /* Bottom navigation for mobile */
+    .mobile-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 30;
+        background: white;
+        border-top: 1px solid #e5e7eb;
+        padding: 0.5rem;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .dark .mobile-nav {
+        background: #1c1917;
+        border-color: #374151;
+    }
+
+    .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.5rem;
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
+
+    .dark .mobile-nav-item {
+        color: #9ca3af;
+    }
+
+    .mobile-nav-item.active {
+        color: var(--color-accent, #6366f1);
+    }
+
+    .mobile-nav-item svg {
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-bottom: 0.25rem;
+    }
+
+    /* Add padding at bottom for mobile nav */
+    body.has-mobile-nav {
+        padding-bottom: 4rem;
+    }
+
+    /* Mobile tab bar */
+    .mobile-tab-bar {
+        display: flex;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .mobile-tab-bar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .mobile-tab-item {
+        flex: 0 0 auto;
+        padding: 0.75rem 1rem;
+        white-space: nowrap;
+    }
+}
+
+/* ==================== TYPOGRAPHY RESPONSIVENESS ==================== */
+
+@media (max-width: 640px) {
+    /* Smaller headings on mobile */
+    h1 {
+        font-size: 1.5rem !important;
+    }
+
+    h2 {
+        font-size: 1.25rem !important;
+    }
+
+    h3 {
+        font-size: 1.125rem !important;
+    }
+
+    h4 {
+        font-size: 1rem !important;
+    }
+
+    /* Adjust line height for readability */
+    p {
+        line-height: 1.6;
+    }
+
+    /* Smaller text for secondary content */
+    .text-sm-mobile {
+        font-size: 0.875rem;
+    }
+
+    /* Truncate long text */
+    .text-truncate-mobile {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 374px) {
+    h1 {
+        font-size: 1.25rem !important;
+    }
+
+    h2 {
+        font-size: 1.125rem !important;
+    }
+
+    h3 {
+        font-size: 1rem !important;
+    }
+}
+
+/* ==================== SPACING RESPONSIVENESS ==================== */
+
+@media (max-width: 640px) {
+    /* Reduce padding on mobile */
+    main {
+        padding: 1rem !important;
+    }
+
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    /* Reduce margins */
+    .mb-6,
+    .my-6 {
+        margin-bottom: 1rem !important;
+    }
+
+    .mt-6,
+    .my-6 {
+        margin-top: 1rem !important;
+    }
+
+    .gap-6 {
+        gap: 1rem !important;
+    }
+
+    /* Section spacing */
+    .section {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Page header spacing */
+    .page-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+    }
+}
+
+/* ==================== TOUCH INTERACTIONS ==================== */
+
+/* Larger touch targets */
+@media (pointer: coarse) {
+    button,
+    .btn,
+    a,
+    input[type="checkbox"],
+    input[type="radio"],
+    [role="button"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Increase spacing between interactive elements */
+    .btn-group button + button,
+    .btn-group .btn + .btn {
+        margin-left: 0.5rem;
+    }
+
+    /* Remove hover states on touch devices */
+    button:hover,
+    .btn:hover,
+    a:hover {
+        transform: none;
+        box-shadow: inherit;
+    }
+
+    /* Active states for touch */
+    button:active,
+    .btn:active,
+    a:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+    }
+
+    /* Touch feedback */
+    .touch-feedback {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .dark .touch-feedback {
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Active states for touch */
+@media (hover: none) {
+    button:active,
+    .btn:active,
+    a:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+    }
+
+    /* Remove hover effects */
+    .hover-lift:hover,
+    .card-hover:hover {
+        transform: none;
+        box-shadow: inherit;
+    }
+}
+
+/* ==================== LANDSCAPE ORIENTATION ==================== */
+
+@media (max-height: 500px) and (orientation: landscape) {
+    /* Compact header in landscape */
+    flux\:header {
+        padding: 0.25rem 1rem;
+    }
+
+    /* Reduce vertical spacing */
+    main {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    /* Smaller modals in landscape */
+    .modal-content {
+        max-height: 90vh;
+    }
+
+    /* Compact forms in landscape */
+    .form-group {
+        margin-bottom: 0.5rem;
+    }
+
+    /* Hide mobile nav in landscape */
+    .mobile-nav {
+        display: none;
+    }
+
+    body.has-mobile-nav {
+        padding-bottom: 0;
+    }
+}
+
+/* ==================== SAFE AREAS (NOTCH DEVICES) ==================== */
+
+@supports (padding: max(0px)) {
+    /* Safe area padding for notched devices */
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+
+    /* Bottom safe area for mobile nav */
+    .mobile-nav {
+        padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    }
+
+    /* Header safe area */
+    flux\:header {
+        padding-top: max(0.5rem, env(safe-area-inset-top));
+    }
+
+    /* Modal safe area */
+    .modal-sheet {
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+
+    /* Full screen content */
+    .fullscreen-content {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+}
+
+/* ==================== PRINT STYLES ==================== */
+
+@media print {
+    /* Hide navigation when printing */
+    flux\:sidebar,
+    flux\:header,
+    .mobile-nav,
+    .no-print {
+        display: none !important;
+    }
+
+    /* Full width content when printing */
+    main {
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+
+    /* Show links when printing */
+    a[href]::after {
+        content: " (" attr(href) ")";
+    }
+
+    /* Page breaks */
+    .page-break-before {
+        break-before: page;
+    }
+
+    .page-break-after {
+        break-after: page;
+    }
+
+    .avoid-page-break {
+        break-inside: avoid;
+    }
+}
+
+/* ==================== DARK MODE RESPONSIVENESS ==================== */
+
+@media (max-width: 640px) {
+    .dark flux\:sidebar {
+        background-color: #0c0a09 !important;
+    }
+
+    .dark .mobile-nav {
+        background-color: #0c0a09 !important;
+    }
+
+    /* Dark mode modal */
+    .dark .modal-content {
+        background-color: #171717;
+    }
+
+    /* Dark mode card */
+    .dark .card {
+        background-color: #1c1917;
+        border-color: #374151;
+    }
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+
+/* Hide on mobile */
+@media (max-width: 640px) {
+    .hide-mobile {
+        display: none !important;
+    }
+
+    /* Show on mobile only */
+    .show-mobile {
+        display: block !important;
+    }
+
+    .show-mobile-flex {
+        display: flex !important;
+    }
+
+    .show-mobile-inline {
+        display: inline !important;
+    }
+
+    .show-mobile-inline-flex {
+        display: inline-flex !important;
+    }
+}
+
+/* Hide on tablet */
+@media (min-width: 641px) and (max-width: 1023px) {
+    .hide-tablet {
+        display: none !important;
+    }
+
+    .show-tablet {
+        display: block !important;
+    }
+}
+
+/* Hide on desktop */
+@media (min-width: 1024px) {
+    .hide-desktop {
+        display: none !important;
+    }
+
+    .show-desktop {
+        display: block !important;
+    }
+}
+
+/* Show only on mobile */
+@media (min-width: 641px) {
+    .show-mobile-only {
+        display: none !important;
+    }
+}
+
+/* Show only on tablet */
+@media (max-width: 640px), (min-width: 1024px) {
+    .show-tablet-only {
+        display: none !important;
+    }
+}
+
+/* Show only on desktop */
+@media (max-width: 1023px) {
+    .show-desktop-only {
+        display: none !important;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 374px) {
+    .hide-xs {
+        display: none !important;
+    }
+
+    .show-xs {
+        display: block !important;
+    }
+}
+
+/* ==================== RESPONSIVE FLEX UTILITIES ==================== */
+
+@media (max-width: 640px) {
+    .flex-col-mobile {
+        flex-direction: column !important;
+    }
+
+    .flex-row-mobile {
+        flex-direction: row !important;
+    }
+
+    .items-start-mobile {
+        align-items: flex-start !important;
+    }
+
+    .items-center-mobile {
+        align-items: center !important;
+    }
+
+    .justify-center-mobile {
+        justify-content: center !important;
+    }
+
+    .justify-between-mobile {
+        justify-content: space-between !important;
+    }
+
+    .gap-0-mobile {
+        gap: 0 !important;
+    }
+
+    .gap-2-mobile {
+        gap: 0.5rem !important;
+    }
+
+    .gap-4-mobile {
+        gap: 1rem !important;
+    }
+}
+
+/* ==================== RESPONSIVE TEXT UTILITIES ==================== */
+
+@media (max-width: 640px) {
+    .text-left-mobile {
+        text-align: left !important;
+    }
+
+    .text-center-mobile {
+        text-align: center !important;
+    }
+
+    .text-right-mobile {
+        text-align: right !important;
+    }
+}
+
+/* ==================== RESPONSIVE SPACING UTILITIES ==================== */
+
+@media (max-width: 640px) {
+    .p-0-mobile {
+        padding: 0 !important;
+    }
+
+    .p-2-mobile {
+        padding: 0.5rem !important;
+    }
+
+    .p-4-mobile {
+        padding: 1rem !important;
+    }
+
+    .m-0-mobile {
+        margin: 0 !important;
+    }
+
+    .m-2-mobile {
+        margin: 0.5rem !important;
+    }
+
+    .m-4-mobile {
+        margin: 1rem !important;
+    }
+
+    .mt-0-mobile {
+        margin-top: 0 !important;
+    }
+
+    .mb-0-mobile {
+        margin-bottom: 0 !important;
+    }
+
+    .ml-0-mobile {
+        margin-left: 0 !important;
+    }
+
+    .mr-0-mobile {
+        margin-right: 0 !important;
+    }
+}
+
+/* ==================== RESPONSIVE WIDTH UTILITIES ==================== */
+
+@media (max-width: 640px) {
+    .w-full-mobile {
+        width: 100% !important;
+    }
+
+    .w-auto-mobile {
+        width: auto !important;
+    }
+
+    .max-w-full-mobile {
+        max-width: 100% !important;
+    }
+}
+
+/* ==================== PULL TO REFRESH ==================== */
+
+.pull-to-refresh {
+    position: relative;
+    overflow-y: auto;
+}
+
+.pull-to-refresh-indicator {
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: top 0.2s ease;
+}
+
+.pull-to-refresh-indicator.visible {
+    top: 10px;
+}
+
+/* ==================== SWIPE INDICATORS ==================== */
+
+.swipe-indicator {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .swipe-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem;
+        color: #9ca3af;
+        font-size: 0.75rem;
+    }
+
+    .swipe-indicator svg {
+        width: 1rem;
+        height: 1rem;
+        margin: 0 0.25rem;
+        animation: swipe-hint 2s ease-in-out infinite;
+    }
+}
+
+@keyframes swipe-hint {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(5px);
+    }
+}
+
+/* ==================== MOBILE LOADING STATES ==================== */
+
+@media (max-width: 640px) {
+    /* Full screen loading */
+    .loading-fullscreen {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .dark .loading-fullscreen {
+        background: rgba(0, 0, 0, 0.9);
+    }
+
+    /* Inline loading */
+    .loading-inline {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+}
+
+/* ==================== MOBILE KEYBOARD HANDLING ==================== */
+
+/* Adjust layout when virtual keyboard is open */
+@media (max-width: 640px) {
+    .keyboard-open {
+        /* Reduce height of scrollable areas */
+        overflow-y: auto;
+    }
+
+    .keyboard-open .fixed-bottom {
+        position: relative;
+    }
+
+    .keyboard-open .mobile-nav {
+        display: none;
+    }
+}
+
+/* ==================== ACCESSIBILITY ON MOBILE ==================== */
+
+@media (max-width: 640px) {
+    /* Larger focus indicators */
+    *:focus-visible {
+        outline-width: 3px;
+        outline-offset: 3px;
+    }
+
+    /* Ensure minimum contrast */
+    .text-muted {
+        color: #44403c !important;
+    }
+
+    .dark .text-muted {
+        color: #d6d3d1 !important;
+    }
+
+    /* Touch target indicator for debugging */
+    .debug-touch-targets * {
+        outline: 1px dashed rgba(255, 0, 0, 0.3);
+    }
+
+    .debug-touch-targets button,
+    .debug-touch-targets a,
+    .debug-touch-targets input {
+        outline: 2px solid rgba(0, 255, 0, 0.5);
+    }
+}

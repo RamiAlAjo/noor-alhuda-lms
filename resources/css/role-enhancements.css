@@ -1,0 +1,1326 @@
+/* ===========================================
+   NOOR LMS - Role-Specific Style Enhancements
+   Comprehensive styles for Admin, Teacher, and Student roles
+   =========================================== */
+
+/* ==================== ROLE-SPECIFIC GRADIENT BACKGROUNDS ==================== */
+
+/* Admin Dashboard Hero */
+.hero-admin {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-admin::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 70%
+    );
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Teacher Dashboard Hero */
+.hero-teacher {
+    background: linear-gradient(135deg, #10b981 0%, #14b8a6 50%, #06b6d4 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-teacher::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 70%
+    );
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Student Dashboard Hero */
+.hero-student {
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #d946ef 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-student::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 70%
+    );
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(-20px, 20px);
+    }
+}
+
+/* ==================== ENHANCED STAT CARDS ==================== */
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card-label {
+    font-size: 0.875rem;
+    opacity: 0.9;
+    margin-bottom: 0.25rem;
+}
+
+.stat-card-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+/* ==================== ENHANCED QUICK ACTION CARDS ==================== */
+
+.quick-action-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    border: 1px solid var(--color-neutral-200);
+    background: white;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow, border-color;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.quick-action-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.quick-action-card:hover::before {
+    opacity: 1;
+}
+
+/* Admin quick action colors */
+.quick-action-admin-blue::before {
+    background: linear-gradient(
+        135deg,
+        rgba(59, 130, 246, 0.08) 0%,
+        rgba(99, 102, 241, 0.08) 100%
+    );
+}
+
+.quick-action-admin-green::before {
+    background: linear-gradient(
+        135deg,
+        rgba(34, 197, 94, 0.08) 0%,
+        rgba(16, 185, 129, 0.08) 100%
+    );
+}
+
+.quick-action-admin-yellow::before {
+    background: linear-gradient(
+        135deg,
+        rgba(234, 179, 8, 0.08) 0%,
+        rgba(245, 158, 11, 0.08) 100%
+    );
+}
+
+.quick-action-admin-purple::before {
+    background: linear-gradient(
+        135deg,
+        rgba(168, 85, 247, 0.08) 0%,
+        rgba(236, 72, 153, 0.08) 100%
+    );
+}
+
+/* Teacher quick action colors */
+.quick-action-teacher-blue::before {
+    background: linear-gradient(
+        135deg,
+        rgba(59, 130, 246, 0.08) 0%,
+        rgba(14, 165, 233, 0.08) 100%
+    );
+}
+
+.quick-action-teacher-green::before {
+    background: linear-gradient(
+        135deg,
+        rgba(34, 197, 94, 0.08) 0%,
+        rgba(20, 184, 166, 0.08) 100%
+    );
+}
+
+.quick-action-teacher-purple::before {
+    background: linear-gradient(
+        135deg,
+        rgba(168, 85, 247, 0.08) 0%,
+        rgba(217, 70, 239, 0.08) 100%
+    );
+}
+
+.quick-action-teacher-orange::before {
+    background: linear-gradient(
+        135deg,
+        rgba(249, 115, 22, 0.08) 0%,
+        rgba(245, 158, 11, 0.08) 100%
+    );
+}
+
+/* Student quick action colors */
+.quick-action-student-blue::before {
+    background: linear-gradient(
+        135deg,
+        rgba(59, 130, 246, 0.08) 0%,
+        rgba(99, 102, 241, 0.08) 100%
+    );
+}
+
+.quick-action-student-green::before {
+    background: linear-gradient(
+        135deg,
+        rgba(34, 197, 94, 0.08) 0%,
+        rgba(16, 185, 129, 0.08) 100%
+    );
+}
+
+.quick-action-student-purple::before {
+    background: linear-gradient(
+        135deg,
+        rgba(168, 85, 247, 0.08) 0%,
+        rgba(236, 72, 153, 0.08) 100%
+    );
+}
+
+.quick-action-student-orange::before {
+    background: linear-gradient(
+        135deg,
+        rgba(249, 115, 22, 0.08) 0%,
+        rgba(245, 158, 11, 0.08) 100%
+    );
+}
+
+/* Dark mode quick action cards */
+.dark .quick-action-card {
+    background: var(--color-neutral-800);
+    border-color: var(--color-neutral-700);
+}
+
+.dark .quick-action-card:hover {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* ==================== ENHANCED ICON CONTAINERS ==================== */
+
+.icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.icon-container-sm {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.625rem;
+}
+
+.icon-container-lg {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 1rem;
+}
+
+/* Icon color variants */
+.icon-blue {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.icon-green {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.icon-purple {
+    background: rgba(168, 85, 247, 0.1);
+    color: #a855f7;
+}
+
+.icon-orange {
+    background: rgba(249, 115, 22, 0.1);
+    color: #f97316;
+}
+
+.icon-yellow {
+    background: rgba(234, 179, 8, 0.1);
+    color: #eab308;
+}
+
+.icon-red {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.icon-indigo {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.icon-teal {
+    background: rgba(20, 184, 166, 0.1);
+    color: #14b8a6;
+}
+
+.icon-violet {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+}
+
+.icon-pink {
+    background: rgba(236, 72, 153, 0.1);
+    color: #ec4899;
+}
+
+.dark .icon-blue {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+}
+
+.dark .icon-green {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.dark .icon-purple {
+    background: rgba(168, 85, 247, 0.2);
+    color: #c084fc;
+}
+
+.dark .icon-orange {
+    background: rgba(249, 115, 22, 0.2);
+    color: #fb923c;
+}
+
+.dark .icon-yellow {
+    background: rgba(234, 179, 8, 0.2);
+    color: #facc15;
+}
+
+.dark .icon-red {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.dark .icon-indigo {
+    background: rgba(99, 102, 241, 0.2);
+    color: #818cf8;
+}
+
+.dark .icon-teal {
+    background: rgba(20, 184, 166, 0.2);
+    color: #2dd4bf;
+}
+
+.dark .icon-violet {
+    background: rgba(139, 92, 246, 0.2);
+    color: #a78bfa;
+}
+
+.dark .icon-pink {
+    background: rgba(236, 72, 153, 0.2);
+    color: #f472b6;
+}
+
+/* ==================== ENHANCED CONTENT CARDS ==================== */
+
+.content-card {
+    border-radius: 1rem;
+    border: 1px solid var(--color-neutral-200);
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: box-shadow;
+}
+
+.content-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.content-card-header {
+    border-bottom: 1px solid var(--color-neutral-200);
+    padding: 1rem 1.5rem;
+}
+
+.content-card-body {
+    padding: 1.5rem;
+}
+
+.content-card-footer {
+    border-top: 1px solid var(--color-neutral-200);
+    padding: 1rem 1.5rem;
+}
+
+.dark .content-card {
+    background: var(--color-neutral-800);
+    border-color: var(--color-neutral-700);
+}
+
+.dark .content-card-header {
+    border-color: var(--color-neutral-700);
+}
+
+.dark .content-card-footer {
+    border-color: var(--color-neutral-700);
+}
+
+/* ==================== ENHANCED TABLE STYLES ==================== */
+
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.data-table thead {
+    background: var(--color-neutral-50);
+}
+
+.dark .data-table thead {
+    background: var(--color-neutral-800);
+}
+
+.data-table th {
+    padding: 0.875rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-neutral-500);
+    border-bottom: 1px solid var(--color-neutral-200);
+}
+
+.dark .data-table th {
+    color: var(--color-neutral-400);
+    border-color: var(--color-neutral-700);
+}
+
+.data-table td {
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+    color: var(--color-neutral-700);
+    border-bottom: 1px solid var(--color-neutral-100);
+}
+
+.dark .data-table td {
+    color: var(--color-neutral-300);
+    border-color: var(--color-neutral-700);
+}
+
+.data-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.data-table tbody tr:hover {
+    background: var(--color-neutral-50);
+}
+
+.dark .data-table tbody tr:hover {
+    background: var(--color-neutral-800);
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ==================== ENHANCED AVATAR STYLES ==================== */
+
+.avatar-initials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.avatar-initials-xs {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 0.625rem;
+}
+
+.avatar-initials-sm {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.75rem;
+}
+
+.avatar-initials-md {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 0.875rem;
+}
+
+.avatar-initials-lg {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1rem;
+}
+
+.avatar-initials-xl {
+    width: 4rem;
+    height: 4rem;
+    font-size: 1.25rem;
+}
+
+/* Avatar color variants */
+.avatar-indigo {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.avatar-green {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.avatar-purple {
+    background: rgba(168, 85, 247, 0.1);
+    color: #a855f7;
+}
+
+.avatar-orange {
+    background: rgba(249, 115, 22, 0.1);
+    color: #f97316;
+}
+
+.avatar-pink {
+    background: rgba(236, 72, 153, 0.1);
+    color: #ec4899;
+}
+
+.dark .avatar-indigo {
+    background: rgba(99, 102, 241, 0.2);
+    color: #818cf8;
+}
+
+.dark .avatar-green {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.dark .avatar-purple {
+    background: rgba(168, 85, 247, 0.2);
+    color: #c084fc;
+}
+
+.dark .avatar-orange {
+    background: rgba(249, 115, 22, 0.2);
+    color: #fb923c;
+}
+
+.dark .avatar-pink {
+    background: rgba(236, 72, 153, 0.2);
+    color: #f472b6;
+}
+
+/* ==================== ENHANCED STATUS BADGES ==================== */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.status-badge::before {
+    content: "";
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 9999px;
+    flex-shrink: 0;
+}
+
+.status-badge-success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+}
+
+.status-badge-success::before {
+    background: #22c55e;
+}
+
+.status-badge-warning {
+    background: rgba(234, 179, 8, 0.1);
+    color: #ca8a04;
+}
+
+.status-badge-warning::before {
+    background: #eab308;
+}
+
+.status-badge-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+.status-badge-danger::before {
+    background: #ef4444;
+}
+
+.status-badge-info {
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+}
+
+.status-badge-info::before {
+    background: #3b82f6;
+}
+
+.status-badge-neutral {
+    background: rgba(115, 115, 115, 0.1);
+    color: #525252;
+}
+
+.status-badge-neutral::before {
+    background: #737373;
+}
+
+.dark .status-badge-success {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.dark .status-badge-warning {
+    background: rgba(234, 179, 8, 0.2);
+    color: #facc15;
+}
+
+.dark .status-badge-danger {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.dark .status-badge-info {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+}
+
+.dark .status-badge-neutral {
+    background: rgba(115, 115, 115, 0.2);
+    color: #a3a3a3;
+}
+
+/* ==================== ENHANCED TIMELINE STYLES ==================== */
+
+.timeline-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-neutral-200);
+    transition: all 0.2s ease;
+}
+
+.timeline-item:hover {
+    background: var(--color-neutral-50);
+    border-color: var(--color-neutral-300);
+}
+
+.dark .timeline-item {
+    border-color: var(--color-neutral-700);
+}
+
+.dark .timeline-item:hover {
+    background: var(--color-neutral-800);
+    border-color: var(--color-neutral-600);
+}
+
+.timeline-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    flex-shrink: 0;
+}
+
+.timeline-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.timeline-title {
+    font-weight: 500;
+    color: var(--color-neutral-900);
+}
+
+.dark .timeline-title {
+    color: var(--color-neutral-100);
+}
+
+.timeline-meta {
+    font-size: 0.75rem;
+    color: var(--color-neutral-500);
+    margin-top: 0.25rem;
+}
+
+.dark .timeline-meta {
+    color: var(--color-neutral-400);
+}
+
+/* ==================== ENHANCED NOTIFICATION STYLES ==================== */
+
+.notification-item {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.notification-item:hover {
+    background: var(--color-neutral-50);
+}
+
+.dark .notification-item:hover {
+    background: var(--color-neutral-800);
+}
+
+.notification-item.unread {
+    background: rgba(139, 92, 246, 0.05);
+}
+
+.dark .notification-item.unread {
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.notification-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: var(--color-neutral-900);
+}
+
+.dark .notification-title {
+    color: var(--color-neutral-100);
+}
+
+.notification-body {
+    font-size: 0.8125rem;
+    color: var(--color-neutral-600);
+    margin-top: 0.125rem;
+}
+
+.dark .notification-body {
+    color: var(--color-neutral-400);
+}
+
+.notification-time {
+    font-size: 0.75rem;
+    color: var(--color-neutral-400);
+    margin-top: 0.25rem;
+}
+
+.dark .notification-time {
+    color: var(--color-neutral-500);
+}
+
+.notification-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: #8b5cf6;
+    flex-shrink: 0;
+    margin-top: 0.375rem;
+}
+
+/* ==================== ENHANCED EMPTY STATES ==================== */
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+.empty-state-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 9999px;
+    background: var(--color-neutral-100);
+    margin-bottom: 1rem;
+}
+
+.dark .empty-state-icon {
+    background: var(--color-neutral-800);
+}
+
+.empty-state-icon svg {
+    width: 2rem;
+    height: 2rem;
+    color: var(--color-neutral-400);
+}
+
+.dark .empty-state-icon svg {
+    color: var(--color-neutral-500);
+}
+
+.empty-state-title {
+    font-weight: 500;
+    color: var(--color-neutral-900);
+    margin-bottom: 0.25rem;
+}
+
+.dark .empty-state-title {
+    color: var(--color-neutral-100);
+}
+
+.empty-state-description {
+    font-size: 0.875rem;
+    color: var(--color-neutral-500);
+}
+
+.dark .empty-state-description {
+    color: var(--color-neutral-400);
+}
+
+/* ==================== ENHANCED SYSTEM STATUS ==================== */
+
+.system-status-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+}
+
+.system-status-item:not(:last-child) {
+    border-bottom: 1px solid var(--color-neutral-100);
+}
+
+.dark .system-status-item:not(:last-child) {
+    border-color: var(--color-neutral-700);
+}
+
+.system-status-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-neutral-600);
+}
+
+.dark .system-status-label {
+    color: var(--color-neutral-400);
+}
+
+.system-status-indicator {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+}
+
+.system-status-indicator.online {
+    background: #22c55e;
+}
+
+.system-status-indicator.offline {
+    background: #ef4444;
+}
+
+.system-status-indicator.warning {
+    background: #eab308;
+}
+
+.system-status-value {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.system-status-value.online {
+    color: #16a34a;
+}
+
+.system-status-value.offline {
+    color: #dc2626;
+}
+
+.system-status-value.warning {
+    color: #ca8a04;
+}
+
+.dark .system-status-value.online {
+    color: #4ade80;
+}
+
+.dark .system-status-value.offline {
+    color: #f87171;
+}
+
+.dark .system-status-value.warning {
+    color: #facc15;
+}
+
+/* ==================== ENHANCED QUICK LINKS ==================== */
+
+.quick-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.5rem;
+    color: var(--color-neutral-600);
+    transition: all 0.2s ease;
+}
+
+.quick-link:hover {
+    background: var(--color-neutral-100);
+    color: var(--color-neutral-900);
+}
+
+.dark .quick-link {
+    color: var(--color-neutral-400);
+}
+
+.dark .quick-link:hover {
+    background: var(--color-neutral-800);
+    color: var(--color-neutral-100);
+}
+
+.quick-link svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+}
+
+/* ==================== ENHANCED COURSE CARDS ==================== */
+
+.course-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-neutral-200);
+    padding: 1.25rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow, border-color;
+}
+
+.course-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-indigo-300);
+}
+
+.dark .course-card {
+    border-color: var(--color-neutral-700);
+}
+
+.dark .course-card:hover {
+    border-color: var(--color-indigo-600);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.course-card-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+.course-card-content {
+    padding-left: 0.75rem;
+}
+
+.course-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.course-card-title {
+    font-weight: 600;
+    color: var(--color-neutral-900);
+    transition: color 0.2s ease;
+}
+
+.course-card:hover .course-card-title {
+    color: #6366f1;
+}
+
+.dark .course-card-title {
+    color: var(--color-neutral-100);
+}
+
+.dark .course-card:hover .course-card-title {
+    color: #818cf8;
+}
+
+.course-card-subtitle {
+    font-size: 0.875rem;
+    color: var(--color-neutral-500);
+}
+
+.dark .course-card-subtitle {
+    color: var(--color-neutral-400);
+}
+
+.course-card-badge {
+    border-radius: 9999px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.dark .course-card-badge {
+    background: rgba(99, 102, 241, 0.2);
+    color: #818cf8;
+}
+
+.course-card-stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--color-neutral-500);
+}
+
+.dark .course-card-stats {
+    color: var(--color-neutral-400);
+}
+
+.course-card-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.course-card-stat svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* ==================== ENHANCED FORM ELEMENTS ==================== */
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-neutral-700);
+    margin-bottom: 0.375rem;
+}
+
+.dark .form-label {
+    color: var(--color-neutral-300);
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-neutral-300);
+    background: white;
+    color: var(--color-neutral-900);
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-input::placeholder {
+    color: var(--color-neutral-400);
+}
+
+.dark .form-input {
+    background: var(--color-neutral-800);
+    border-color: var(--color-neutral-600);
+    color: var(--color-neutral-100);
+}
+
+.dark .form-input:focus {
+    border-color: #818cf8;
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
+}
+
+.dark .form-input::placeholder {
+    color: var(--color-neutral-500);
+}
+
+.form-input-error {
+    border-color: #ef4444;
+}
+
+.form-input-error:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-input-success {
+    border-color: #22c55e;
+}
+
+.form-input-success:focus {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.form-hint {
+    font-size: 0.75rem;
+    color: var(--color-neutral-500);
+    margin-top: 0.25rem;
+}
+
+.dark .form-hint {
+    color: var(--color-neutral-400);
+}
+
+.form-error {
+    font-size: 0.75rem;
+    color: #dc2626;
+    margin-top: 0.25rem;
+}
+
+.dark .form-error {
+    color: #f87171;
+}
+
+/* ==================== ENHANCED BUTTON STYLES ==================== */
+
+.btn-role-admin {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.btn-role-admin:hover {
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-role-teacher {
+    background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.btn-role-teacher:hover {
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-role-student {
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.btn-role-student:hover {
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+    transform: translateY(-1px);
+}
+
+/* ==================== ENHANCED CHART CONTAINERS ==================== */
+
+.chart-container {
+    position: relative;
+    border-radius: 1rem;
+    border: 1px solid var(--color-neutral-200);
+    background: white;
+    padding: 1.5rem;
+}
+
+.dark .chart-container {
+    background: var(--color-neutral-800);
+    border-color: var(--color-neutral-700);
+}
+
+.chart-header {
+    margin-bottom: 1rem;
+}
+
+.chart-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-neutral-900);
+}
+
+.dark .chart-title {
+    color: var(--color-neutral-100);
+}
+
+.chart-canvas {
+    width: 100%;
+    height: 250px;
+}
+
+/* ==================== RESPONSIVE ADJUSTMENTS ==================== */
+
+@media (max-width: 768px) {
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-card-value {
+        font-size: 1.5rem;
+    }
+
+    .quick-action-card {
+        padding: 1rem;
+    }
+
+    .icon-container {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .icon-container-lg {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .content-card-body {
+        padding: 1rem;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 0.625rem 0.75rem;
+    }
+
+    .chart-canvas {
+        height: 200px;
+    }
+}
+
+@media (max-width: 640px) {
+    .hero-admin,
+    .hero-teacher,
+    .hero-student {
+        padding: 1.5rem;
+    }
+
+    .stat-card-value {
+        font-size: 1.25rem;
+    }
+
+    .quick-action-card {
+        padding: 0.875rem;
+    }
+
+    .course-card {
+        padding: 1rem;
+    }
+
+    .course-card-stats {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+}
+
+/* ==================== PRINT STYLES ==================== */
+
+@media print {
+    .hero-admin,
+    .hero-teacher,
+    .hero-student {
+        background: #f3f4f6 !important;
+        color: #000 !important;
+    }
+
+    .stat-card {
+        background: white !important;
+        border: 1px solid #e5e7eb !important;
+        box-shadow: none !important;
+    }
+
+    .quick-action-card,
+    .content-card,
+    .course-card,
+    .chart-container {
+        break-inside: avoid;
+    }
+}
