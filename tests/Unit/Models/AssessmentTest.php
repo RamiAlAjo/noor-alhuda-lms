@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Unit\Models;
+
 use App\Models\Assessment;
 use App\Models\AssessmentType;
 use App\Models\CourseOffering;

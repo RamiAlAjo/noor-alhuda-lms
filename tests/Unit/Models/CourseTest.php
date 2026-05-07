@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Unit\Models;
+
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Faculty;

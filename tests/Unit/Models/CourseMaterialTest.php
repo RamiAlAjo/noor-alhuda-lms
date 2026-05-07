@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Unit\Models;
+
 use App\Models\CourseMaterial;
 use App\Models\CourseOffering;
 use App\Models\User;

@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Models\Assessment;
 use App\Models\Course;
 use App\Models\CourseOffering;

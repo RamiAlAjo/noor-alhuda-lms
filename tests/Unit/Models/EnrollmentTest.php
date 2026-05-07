@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Course;
-use App\Models\CourseOffering;
+namespace Tests\Unit\Models;
+
 use App\Models\Enrollment;
 use App\Models\Semester;
 use App\Models\User;
