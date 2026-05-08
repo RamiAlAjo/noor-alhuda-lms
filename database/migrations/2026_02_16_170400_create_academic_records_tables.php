@@ -79,7 +79,7 @@ return new class extends Migration
             $table->integer('duration')->nullable();
             $table->timestamps();
 
-            $table->foreign('course_offering_id')->references('id')->on('course_offerings')->onDelete('cascade');
+            $table->foreign('course_offering_id')->references('id')->on('course_sections')->onDelete('cascade');
             $table->foreign('assessment_type_id')->references('id')->on('assessment_types')->onDelete('cascade');
         });
 

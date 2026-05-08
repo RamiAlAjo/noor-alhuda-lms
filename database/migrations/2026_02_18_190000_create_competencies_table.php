@@ -43,7 +43,7 @@ return new class extends Migration
 
             // Add foreign keys only if the referenced tables exist
             if (Schema::hasTable('course_offerings')) {
-                $table->foreign('course_offering_id')->references('id')->on('course_offerings')->onDelete('cascade');
+                $table->foreign('course_offering_id')->references('id')->on('course_sections')->onDelete('cascade');
             }
 
             if (Schema::hasTable('competencies')) {

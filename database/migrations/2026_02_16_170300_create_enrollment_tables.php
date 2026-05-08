@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('enrollments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('course_offering_id')->constrained('course_offerings')->onDelete('cascade');
+            $table->foreignId('course_offering_id')->constrained('course_sections')->onDelete('cascade');
             $table->foreignId('semester_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['pending', 'approved', 'rejected', 'dropped', 'completed'])->default('pending');
             $table->foreignId('approved_by')->nullable()->constrained('users')->onDelete('set null');
