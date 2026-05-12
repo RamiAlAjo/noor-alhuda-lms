@@ -534,7 +534,7 @@
                         <!-- Search -->
                         <flux:dropdown position="bottom" align="end" class="relative">
                             <flux:tooltip :content="__('Search')" position="bottom">
-                                <flux:button variant="ghost" size="sm" class="!h-10 navbar-icon-btn [&>svg]:size-5" icon="magnifying-glass" aria-label="{{ __('Search')" }}" />
+                                <flux:button variant="ghost" size="sm" class="!h-10 navbar-icon-btn [&>svg]:size-5" icon="magnifying-glass" aria-label="{{ __('Search') }}" />
                             </flux:tooltip>
 
                             <flux:menu class="w-96">
@@ -542,7 +542,7 @@
                                     <div class="relative">
                                         <input type="text"
                                             id="globalSearch"
-                                            placeholder="{{ __('Search anything...') }}"
+                                            placeholder="{{ __('Search users, courses, announcements...') }}"
                                             class="w-full pl-10 pr-4 py-2 bg-zinc-100 dark:bg-zinc-800 border-0 rounded-lg focus:ring-2 focus:ring-[var(--color-accent)] text-sm"
                                             autocomplete="off">
                                         <svg class="absolute ltr:left-3 rtl:right-3 top-2.5 w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -553,7 +553,8 @@
                                 </div>
                                 <div id="searchResults" class="max-h-64 overflow-y-auto border-t border-zinc-200 dark:border-zinc-700">
                                     <div class="p-4 text-center text-sm text-zinc-500">
-                                        <p>{{ __('Type to search...') }}</p>
+                                        <p class="mb-2">{{ __('Type to search...') }}</p>
+                                        <p class="text-xs text-zinc-400">{{ __('Search for users, courses, announcements, and more') }}</p>
                                     </div>
                                 </div>
                             </flux:menu>
