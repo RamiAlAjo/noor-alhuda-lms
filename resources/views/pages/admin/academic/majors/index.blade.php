@@ -24,7 +24,7 @@
                         <th class="px-6 py-3">{{ __('Department') }}</th>
                         <th class="px-6 py-3">{{ __('Faculty') }}</th>
                         <th class="px-6 py-3">{{ __('Degree') }}</th>
-                        <th class="px-6 py-3">{{ __('Years') }}</th>
+                        <th class="px-6 py-3">{{ __('Years of Study') }}</th>
                         <th class="px-6 py-3 text-right">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
@@ -238,7 +238,7 @@
                     </select>
                 </div>
                 <div>
-                    <label class="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">{{ __('Years') }}</label>
+                    <label class="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">{{ __('Years of Study') }}</label>
                     <input type="number" name="years" value="{{ $major->years }}" min="1" max="10" required
                         class="w-full rounded-xl border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-200 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white" />
                 </div>

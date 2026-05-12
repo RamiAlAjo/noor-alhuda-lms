@@ -16,6 +16,8 @@ class Major extends Model
         'code',
         'description',
         'description_ar',
+        'degree',
+        'years',
         'years_required',
         'credits_required',
     ];
@@ -36,5 +38,13 @@ class Major extends Model
     public function courses()
     {
         return $this->belongsToMany(Course::class);
+    }
+
+    /**
+     * Get the years attribute, fallback to years_required for backward compatibility.
+     */
+    public function getYearsAttribute()
+    {
+        return $this->attributes['years'] ?? $this->attributes['years_required'] ?? 4;
     }
 }
