@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="{{ session('flux_appearance', 'dark') }}"
-    dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}"
+    dir="{{ in_array(app()->getLocale(), ['ar', 'fa', 'ku']) ? 'rtl' : 'ltr' }}"
     {{ session('high_contrast') ? 'data-high-contrast-mode="true"' : '' }}
     {{ session('large_text') ? 'data-large-text-mode="true"' : '' }}
     {{ session('dyslexia_font') ? 'data-dyslexia-font-mode="true"' : '' }}

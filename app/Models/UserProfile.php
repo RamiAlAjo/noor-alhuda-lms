@@ -28,6 +28,7 @@ class UserProfile extends Model
         'bio',
         'personal_email',
         'social_links',
+        'locale',
         // Teacher-specific fields
         'cv',
         'department_id',

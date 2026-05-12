@@ -322,6 +322,15 @@
         const courseLabels = <?php echo json_encode($courseEnrollmentData['labels']); ?>;
         const courseData = <?php echo json_encode($courseEnrollmentData['data']); ?>;
 
+        // Translated labels
+        const chartLabels = {
+            revenue: '<?php echo __("Revenue ($ / JOD)"); ?>',
+            enrollments: '<?php echo __("Enrollments"); ?>',
+            students: '<?php echo __("Students"); ?>',
+            teachers: '<?php echo __("Teachers"); ?>',
+            admins: '<?php echo __("Admins"); ?>'
+        };
+
         // Common chart options
         const commonOptions = {
             responsive: true,
@@ -338,7 +347,7 @@
                     data: {
                         labels: enrollmentLabels,
                         datasets: [{
-                            label: 'Enrollments',
+                            label: chartLabels.enrollments,
                             data: enrollmentData,
                             borderColor: '#6366f1',
                             backgroundColor: 'rgba(99, 102, 241, 0.1)',
@@ -363,7 +372,7 @@
                     data: {
                         labels: revenueLabels,
                         datasets: [{
-                            label: 'Revenue ($ / JOD)',
+                            label: chartLabels.revenue,
                             data: revenueData,
                             backgroundColor: 'rgba(99, 102, 241, 0.8)',
                             borderRadius: 8
@@ -383,7 +392,7 @@
                 new Chart(userRolesCtx, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Students', 'Teachers', 'Admins'],
+                        labels: [chartLabels.students, chartLabels.teachers, chartLabels.admins],
                         datasets: [{
                             data: <?php echo json_encode([$userRolesData['students'], $userRolesData['teachers'], $userRolesData['admins']]); ?>,
                             backgroundColor: ['#6366f1', '#22c55e', '#f59e0b']
@@ -405,7 +414,7 @@
                     data: {
                         labels: courseLabels,
                         datasets: [{
-                            label: 'Enrollments',
+                            label: chartLabels.enrollments,
                             data: courseData,
                             backgroundColor: ['#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899'],
                             borderRadius: 8

@@ -90,7 +90,7 @@ class UserSetting extends Model
      */
     public function isRtl(): bool
     {
-        return in_array($this->locale, ['ar']);
+        return in_array($this->locale, ['ar', 'fa', 'ku']);
     }
 
     /**

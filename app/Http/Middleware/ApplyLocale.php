@@ -25,9 +25,9 @@ class ApplyLocale
         // 2. Check database for authenticated users
         elseif (Auth::check()) {
             $userId = Auth::id();
-            $profile = UserProfile::where('user_id', $userId)->first();
-            if ($profile && $profile->locale) {
-                $locale = $profile->locale;
+            $setting = \App\Models\UserSetting::where('user_id', $userId)->first();
+            if ($setting && $setting->locale) {
+                $locale = $setting->locale;
             }
         }
         // 3. Check cookie for guest users

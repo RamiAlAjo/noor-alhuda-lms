@@ -64,7 +64,7 @@ class UserSettingsController extends Controller
         // Save to database for authenticated users (persists across all pages and roles)
         if (Auth::check()) {
             $userId = Auth::id();
-            UserProfile::updateOrCreate(
+            \App\Models\UserSetting::updateOrCreate(
                 ['user_id' => $userId],
                 ['locale' => $lang]
             );
@@ -75,6 +75,10 @@ class UserSettingsController extends Controller
 
         // Force the locale to be applied immediately
         app()->setLocale($lang);
+
+        // Clear any cached translations or views
+        \Illuminate\Support\Facades\Cache::forget('translations');
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
 
         // Redirect back with cache prevention headers
         return back()->withHeaders([
