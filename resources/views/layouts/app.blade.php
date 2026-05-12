@@ -534,7 +534,7 @@
                         <!-- Search -->
                         <flux:dropdown position="bottom" align="end" class="relative">
                             <flux:tooltip :content="__('Search')" position="bottom">
-                                <flux:navbar.item class="!h-10 navbar-icon-btn [&>div>svg]:size-5" icon="magnifying-glass" :label="__('Search')" />
+                                <flux:button variant="ghost" size="sm" class="!h-10 navbar-icon-btn [&>svg]:size-5" icon="magnifying-glass" aria-label="{{ __('Search')" }}" />
                             </flux:tooltip>
 
                             <flux:menu class="w-96">
@@ -980,11 +980,17 @@
 
         // Global Search Functionality
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing search functionality...');
             const searchInput = document.getElementById('globalSearch');
             const searchResults = document.getElementById('searchResults');
             let searchTimeout;
 
-            if (!searchInput || !searchResults) return;
+            if (!searchInput || !searchResults) {
+                console.error('Search elements not found:', { searchInput: !!searchInput, searchResults: !!searchResults });
+                return;
+            }
+
+            console.log('Search elements found, initializing...');
 
             // Handle search input
             searchInput.addEventListener('input', function(e) {
@@ -1004,18 +1010,21 @@
             });
 
             let selectedIndex = -1;
-            let searchResults = [];
+            let searchResultItems = [];
 
             // Handle keyboard shortcuts
             document.addEventListener('keydown', function(e) {
                 // Cmd+K or Ctrl+K to focus search
                 if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
                     e.preventDefault();
-                    searchInput.focus();
-                    // Open dropdown if not already open
-                    const dropdown = searchInput.closest('[data-flux-dropdown]');
-                    if (dropdown) {
-                        dropdown.setAttribute('data-open', 'true');
+                    // Find the search button and click it to open dropdown
+                    const searchButton = document.querySelector('button[aria-label*="Search"]');
+                    if (searchButton) {
+                        searchButton.click();
+                        // Focus the input after a short delay to ensure dropdown is open
+                        setTimeout(() => searchInput.focus(), 100);
+                    } else {
+                        searchInput.focus();
                     }
                 }
 
@@ -1074,16 +1083,26 @@
                     </div>
                 `;
 
+                console.log('Performing search for:', query);
+
                 fetch(`{{ url('/api/search') }}?q=${encodeURIComponent(query)}&limit=8`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
                     }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Search response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    displayResults(data.results, query);
+                    console.log('Search results:', data);
+                    displayResults(data.results || [], query);
                 })
                 .catch(error => {
                     console.error('Search error:', error);
