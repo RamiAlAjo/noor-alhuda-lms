@@ -121,18 +121,16 @@ class CapacityDataCollector
         $lastYear = $currentYear - 1;
 
         $currentEnrollments = DB::table('enrollment_histories')
-            ->whereHas('course', function ($query) use ($departmentId) {
-                $query->where('department_id', $departmentId);
-            })
-            ->whereYear('enrollment_date', $currentYear)
-            ->sum('enrolled_count');
+            ->join('courses', 'enrollment_histories.course_id', '=', 'courses.id')
+            ->where('courses.department_id', $departmentId)
+            ->whereYear('enrollment_histories.enrollment_date', $currentYear)
+            ->sum('enrollment_histories.enrolled_count');
 
         $lastYearEnrollments = DB::table('enrollment_histories')
-            ->whereHas('course', function ($query) use ($departmentId) {
-                $query->where('department_id', $departmentId);
-            })
-            ->whereYear('enrollment_date', $lastYear)
-            ->sum('enrolled_count');
+            ->join('courses', 'enrollment_histories.course_id', '=', 'courses.id')
+            ->where('courses.department_id', $departmentId)
+            ->whereYear('enrollment_histories.enrollment_date', $lastYear)
+            ->sum('enrollment_histories.enrolled_count');
 
         if ($lastYearEnrollments === 0) {
             return 0;
@@ -162,6 +160,9 @@ class CapacityDataCollector
                 'enrollments' => $enrollments,
             ];
         }
+
+        return $data;
+    }
 
         return $data;
     }
