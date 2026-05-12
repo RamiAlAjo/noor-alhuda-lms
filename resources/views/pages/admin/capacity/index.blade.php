@@ -100,6 +100,32 @@
             </div>
         </div>
 
+        {{-- AI Efficiency Score --}}
+        <div class="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <svg class="h-8 w-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('AI Efficiency Score') }}</p>
+                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ number_format($stats['efficiency_score'] ?? 0, 1) }}%</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                        @if(($stats['efficiency_score'] ?? 0) >= 80)
+                            Excellent utilization
+                        @elseif(($stats['efficiency_score'] ?? 0) >= 60)
+                            Good utilization
+                        @elseif(($stats['efficiency_score'] ?? 0) >= 40)
+                            Needs improvement
+                        @else
+                            Poor utilization
+                        @endif
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <div class="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
@@ -111,6 +137,132 @@
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('Over Capacity') }}</p>
                     <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $stats['over_capacity'] }}</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- AI Insights Section --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {{-- AI Recommendations --}}
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+                    <svg class="inline w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    AI Recommendations
+                </h3>
+            </div>
+            <div class="p-6">
+                @if(!empty($aiRecommendations ?? []))
+                    <div class="space-y-4">
+                        @foreach($aiRecommendations ?? [] as $recommendation)
+                            <div class="border-l-4 {{ match($recommendation['priority']) {
+                                'high' => 'border-red-400',
+                                'medium' => 'border-yellow-400',
+                                'low' => 'border-green-400',
+                                default => 'border-gray-400'
+                            } }} pl-4 py-2">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white">
+                                            {{ $recommendation['title'] }}
+                                        </h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                            {{ $recommendation['description'] }}
+                                        </p>
+                                        <div class="flex items-center mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                            <span class="mr-3">Confidence: {{ number_format($recommendation['confidence'] * 100, 0) }}%</span>
+                                            <span class="capitalize">{{ $recommendation['priority'] }} priority</span>
+                                        </div>
+                                    </div>
+                                    @if(isset($recommendation['action_required']))
+                                        <button type="button" class="ml-3 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium">
+                                            {{ Str::limit($recommendation['action_required'], 20) }}
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-8">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No AI recommendations at this time</h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">The system is analyzing your capacity data for optimization opportunities.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- System Health & Performance --}}
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+                    <svg class="inline w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    System Health & Performance
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    {{-- Overall Health Score --}}
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Overall Health</span>
+                        <div class="flex items-center">
+                            <span class="text-sm font-semibold {{ ($analytics['system_status']['system_health']['score'] ?? 0) >= 80 ? 'text-green-600' : (($analytics['system_status']['system_health']['score'] ?? 0) >= 60 ? 'text-yellow-600' : 'text-red-600') }}">
+                                {{ number_format($analytics['system_status']['system_health']['score'] ?? 0, 1) }}%
+                            </span>
+                            <span class="ml-2 text-xs text-gray-500 dark:text-gray-400 capitalize">
+                                ({{ $analytics['system_status']['system_health']['status'] ?? 'unknown' }})
+                            </span>
+                        </div>
+                    </div>
+
+                    {{-- Data Quality --}}
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Data Quality</span>
+                        <span class="text-sm font-semibold {{ ($analytics['system_status']['data_quality_score'] ?? 0) >= 80 ? 'text-green-600' : (($analytics['system_status']['data_quality_score'] ?? 0) >= 60 ? 'text-yellow-600' : 'text-red-600') }}">
+                            {{ number_format($analytics['system_status']['data_quality_score'] ?? 0, 1) }}%
+                        </span>
+                    </div>
+
+                    {{-- Prediction Method --}}
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Prediction Method</span>
+                        <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                            {{ ucfirst(str_replace('_', ' ', $analytics['prediction_accuracy']['method'] ?? 'unknown')) }}
+                        </span>
+                    </div>
+
+                    {{-- ML Service Status --}}
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">ML Service</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $analytics['system_status']['ml_service_available'] ?? false ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' }}">
+                            {{ $analytics['system_status']['ml_service_available'] ?? false ? 'Available' : 'Unavailable' }}
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Performance Insights --}}
+                @if(!empty($analytics['performance_insights']['capacity_utilization']['insights'] ?? []))
+                    <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Key Insights</h4>
+                        <ul class="space-y-1">
+                            @foreach($analytics['performance_insights']['capacity_utilization']['insights'] ?? [] as $insight)
+                                <li class="text-xs text-gray-600 dark:text-gray-400 flex items-start">
+                                    <svg class="w-3 h-3 text-blue-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {{ $insight }}
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

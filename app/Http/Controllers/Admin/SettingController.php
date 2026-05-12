@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\SystemSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -11,36 +12,60 @@ use Illuminate\View\View;
 class SettingController extends Controller
 {
     /**
-     * Display general settings.
+     * Display system settings dashboard.
      */
     public function index(): View
     {
-        return view('pages.admin.settings.index');
+        $categories = [
+            'general' => SystemSetting::where('category', 'general')->where('is_editable', true)->get(),
+            'security' => SystemSetting::where('category', 'security')->where('is_editable', true)->get(),
+            'email' => SystemSetting::where('category', 'email')->where('is_editable', true)->get(),
+            'system' => SystemSetting::where('category', 'system')->where('is_editable', true)->get(),
+        ];
+
+        return view('pages.admin.settings.index', compact('categories'));
     }
 
     /**
-     * Update general settings.
+     * Update system settings.
      */
-    public function updateGeneral(Request $request)
+    public function updateSettings(Request $request)
     {
-        $request->validate([
-            'app_name' => 'required|string|max:255',
-            'app_name_ar' => 'nullable|string|max:255',
-            'app_description' => 'nullable|string',
-            'app_email' => 'nullable|email',
-            'app_phone' => 'nullable|string|max:20',
-            'app_address' => 'nullable|string',
-            'app_logo' => 'nullable|image|max:2048',
-        ]);
+        $settings = $request->except(['_token', '_method']);
 
-        // Save to .env or config
-        foreach ($request->only(['app_name', 'app_name_ar', 'app_description', 'app_email', 'app_phone', 'app_address']) as $key => $value) {
-            if ($value !== null) {
-                config(['settings.'.$key => $value]);
+        $updated = 0;
+        $errors = [];
+
+        foreach ($settings as $key => $value) {
+            try {
+                $setting = SystemSetting::where('key', $key)->where('is_editable', true)->first();
+
+                if ($setting) {
+                    // Handle file uploads
+                    if ($request->hasFile($key)) {
+                        $file = $request->file($key);
+                        $path = $file->store('settings', 'public');
+                        $value = $path;
+                        $setting->type = 'file';
+                    }
+
+                    SystemSetting::set($key, $value, ['type' => $setting->type]);
+                    $updated++;
+                }
+            } catch (\Exception $e) {
+                $errors[] = "Failed to update {$key}: {$e->getMessage()}";
             }
         }
 
-        return back()->with('success', __('lms::messages.settings_updated'));
+        $message = $updated > 0
+            ? __('Settings updated successfully') . " ({$updated} settings)"
+            : __('No settings were updated');
+
+        if (!empty($errors)) {
+            $message .= '. Errors: ' . implode(', ', $errors);
+        }
+
+        return back()->with('success', $message);
     }
 
     /**
@@ -198,16 +223,100 @@ class SettingController extends Controller
     }
 
     /**
+     * Toggle maintenance mode.
+     */
+    public function toggleMaintenance(Request $request)
+    {
+        $enabled = $request->boolean('maintenance_mode');
+        $message = $request->input('maintenance_message', 'System is under maintenance');
+
+        try {
+            if ($enabled) {
+                Artisan::call('down', ['--message' => $message]);
+                SystemSetting::set('maintenance_mode', true);
+            } else {
+                Artisan::call('up');
+                SystemSetting::set('maintenance_mode', false);
+            }
+
+            return back()->with('success', $enabled ? 'Maintenance mode enabled' : 'Maintenance mode disabled');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to toggle maintenance mode: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Create a database backup.
      */
     public function createBackup()
     {
         try {
-            Artisan::call('backup:run');
+            $filename = 'backup-' . date('Y-m-d-H-i-s') . '.sql';
+            $path = storage_path('app/backups/' . $filename);
 
-            return back()->with('success', __('lms::messages.backup_created'));
+            // Ensure backup directory exists
+            if (!File::exists(storage_path('app/backups'))) {
+                File::makeDirectory(storage_path('app/backups'), 0755, true);
+            }
+
+            // Simple backup command (you might want to use a more robust backup solution)
+            $command = sprintf(
+                'mysqldump -h%s -u%s -p%s %s > %s',
+                config('database.connections.mysql.host'),
+                config('database.connections.mysql.username'),
+                config('database.connections.mysql.password'),
+                config('database.connections.mysql.database'),
+                $path
+            );
+
+            exec($command, $output, $returnCode);
+
+            if ($returnCode === 0) {
+                return back()->with('success', 'Database backup created successfully: ' . $filename);
+            } else {
+                return back()->with('error', 'Backup failed with return code: ' . $returnCode);
+            }
         } catch (\Exception $e) {
-            return back()->with('error', __('lms::messages.backup_failed'));
+            return back()->with('error', 'Backup failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Test email configuration.
+     */
+    public function testEmail(Request $request)
+    {
+        $request->validate([
+            'test_email' => 'required|email',
+        ]);
+
+        try {
+            \Mail::raw('This is a test email from Noor Alhuda LMS settings.', function ($message) use ($request) {
+                $message->to($request->test_email)
+                        ->subject('Test Email from LMS Settings');
+            });
+
+            return back()->with('success', 'Test email sent successfully to ' . $request->test_email);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to send test email: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Clear all system caches.
+     */
+    public function clearAllCaches()
+    {
+        try {
+            Artisan::call('cache:clear');
+            Artisan::call('config:clear');
+            Artisan::call('view:clear');
+            Artisan::call('route:clear');
+            SystemSetting::clearCache();
+
+            return back()->with('success', 'All caches cleared successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to clear caches: ' . $e->getMessage());
         }
     }
 }

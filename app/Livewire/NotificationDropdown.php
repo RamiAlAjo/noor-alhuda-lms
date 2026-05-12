@@ -16,8 +16,17 @@ class NotificationDropdown extends Component
 
     public $soundEnabled = true;
 
+    public $pushEnabled = false;
+
+    public $searchTerm = '';
+
+    public $filterType = 'all';
+
+    public $showUnreadOnly = false;
+
+    public $lastChecked;
+
     protected $listeners = [
-        'echo-private:user.{userId},notification.sent' => 'handleNewNotification',
         'refreshNotifications' => 'loadNotifications',
     ];
 
@@ -25,6 +34,8 @@ class NotificationDropdown extends Component
     {
         $this->loadNotifications();
         $this->soundEnabled = Auth::user()->settings?->notification_sound ?? true;
+        $this->pushEnabled = Auth::user()->settings?->notification_push ?? false;
+        $this->lastChecked = now();
     }
 
     public function getUserIdProperty()
@@ -36,9 +47,25 @@ class NotificationDropdown extends Component
     {
         $user = Auth::user();
 
-        $this->notifications = $user->notifications()
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
+        $query = $user->notifications()->orderBy('created_at', 'desc');
+
+        // Apply filters
+        if ($this->showUnreadOnly) {
+            $query->unread();
+        }
+
+        if ($this->filterType !== 'all') {
+            $query->where('type', $this->filterType);
+        }
+
+        if ($this->searchTerm) {
+            $query->where(function ($q) {
+                $q->where('title', 'like', '%' . $this->searchTerm . '%')
+                  ->orWhere('content', 'like', '%' . $this->searchTerm . '%');
+            });
+        }
+
+        $this->notifications = $query->limit(20)
             ->get()
             ->map(function ($notification) {
                 // Get type-specific icon and color from the notification model
@@ -61,32 +88,70 @@ class NotificationDropdown extends Component
         $this->unreadCount = $user->notifications()->unread()->count();
     }
 
-    public function handleNewNotification($data)
+    public function updatedSearchTerm()
     {
-        // Add new notification to the beginning of the list
-        array_unshift($this->notifications, [
-            'id' => $data['id'],
-            'type' => $data['type'],
-            'title' => $data['title'],
-            'content' => $data['content'],
-            'link' => $data['link'] ?? null,
-            'is_read' => false,
-            'created_at' => $data['created_at'],
-            'icon' => $data['data']['icon'] ?? 'bell',
-            'color' => $data['data']['color'] ?? 'blue',
-        ]);
+        $this->loadNotifications();
+    }
 
-        // Keep only 10 notifications
-        $this->notifications = array_slice($this->notifications, 0, 10);
+    public function updatedFilterType()
+    {
+        $this->loadNotifications();
+    }
 
-        // Increment unread count
-        $this->unreadCount++;
+    public function updatedShowUnreadOnly()
+    {
+        $this->loadNotifications();
+    }
 
-        // Dispatch browser event for sound notification
-        $this->dispatch('notification-received', [
-            'soundEnabled' => $this->soundEnabled,
-            'title' => $data['title'],
-        ]);
+    public function checkForNewNotifications()
+    {
+        $user = Auth::user();
+
+        // Get new notifications since last check
+        $newNotifications = $user->notifications()
+            ->where('created_at', '>', $this->lastChecked)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        if ($newNotifications->isNotEmpty()) {
+            \Log::info('Found ' . $newNotifications->count() . ' new notifications for user ' . $user->id);
+
+            foreach ($newNotifications as $notification) {
+                // Add to the beginning of the list
+                array_unshift($this->notifications, [
+                    'id' => $notification->id,
+                    'type' => $notification->type,
+                    'type_label' => $notification->type_label,
+                    'title' => $notification->title,
+                    'content' => $notification->content,
+                    'link' => $notification->link,
+                    'is_read' => $notification->is_read,
+                    'created_at' => $notification->time_ago,
+                    'icon' => $notification->icon,
+                    'color' => $notification->color,
+                ]);
+
+                // Increment unread count if not read
+                if (!$notification->is_read) {
+                    $this->unreadCount++;
+                }
+
+                // Play sound for new notifications
+                if ($this->soundEnabled && !$notification->is_read) {
+                    $this->dispatch('notification-received', [
+                        'soundEnabled' => $this->soundEnabled,
+                        'pushEnabled' => $this->pushEnabled,
+                        'title' => $notification->title,
+                        'type' => $notification->type,
+                    ]);
+                }
+            }
+
+            // Keep only 10 notifications
+            $this->notifications = array_slice($this->notifications, 0, 10);
+        }
+
+        $this->lastChecked = now();
     }
 
     public function toggleDropdown()
@@ -179,6 +244,43 @@ class NotificationDropdown extends Component
 
         $this->dispatch('sound-toggled', ['enabled' => $this->soundEnabled]);
     }
+
+    public function togglePush()
+    {
+        $this->pushEnabled = ! $this->pushEnabled;
+
+        // Save to user settings
+        $user = Auth::user();
+        if ($user->settings) {
+            $user->settings->update(['notification_push' => $this->pushEnabled]);
+        }
+
+        $this->dispatch('push-toggled', ['enabled' => $this->pushEnabled]);
+    }
+
+    public function getNotificationStats()
+    {
+        $user = Auth::user();
+
+        return [
+            'total' => $user->notifications()->count(),
+            'unread' => $user->notifications()->unread()->count(),
+            'read' => $user->notifications()->where('is_read', true)->count(),
+            'by_type' => $user->notifications()
+                ->selectRaw('type, COUNT(*) as count')
+                ->groupBy('type')
+                ->pluck('count', 'type')
+                ->toArray(),
+            'this_week' => $user->notifications()
+                ->where('created_at', '>=', now()->startOfWeek())
+                ->count(),
+            'avg_per_day' => round($user->notifications()
+                ->where('created_at', '>=', now()->subDays(30))
+                ->count() / 30, 1),
+        ];
+    }
+
+
 
     public function render()
     {

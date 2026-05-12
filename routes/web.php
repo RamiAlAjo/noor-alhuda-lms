@@ -251,7 +251,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Settings
         Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings.index');
-        Route::put('/settings/general', [SettingController::class, 'updateGeneral'])->name('admin.settings.general');
+        Route::put('/settings', [SettingController::class, 'updateSettings'])->name('admin.settings.update');
+        Route::post('/settings/maintenance', [SettingController::class, 'toggleMaintenance'])->name('admin.settings.maintenance');
+        Route::post('/settings/test-email', [SettingController::class, 'testEmail'])->name('admin.settings.test-email');
+        Route::post('/settings/clear-all-caches', [SettingController::class, 'clearAllCaches'])->name('admin.settings.clear-all-caches');
         Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
         Route::put('/settings/theme', [SettingController::class, 'updateTheme'])->name('admin.settings.theme.update');
         Route::get('/settings/logs', [SettingController::class, 'logs'])->name('admin.settings.logs');
@@ -260,6 +263,73 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return redirect()->route('admin.settings.index');
         });
         Route::get('/settings/system-info', [SettingController::class, 'systemInfo'])->name('admin.settings.system-info');
+        Route::get('/settings/backups', [SettingController::class, 'backups'])->name('admin.settings.backups');
+        Route::post('/settings/backup', [SettingController::class, 'createBackup'])->name('admin.settings.backup');
+
+        // Bulk Notifications
+        Route::get('/notifications/bulk', [\App\Http\Controllers\Admin\BulkNotificationController::class, 'index'])->name('admin.notifications.bulk');
+        Route::post('/notifications/send', [\App\Http\Controllers\Admin\BulkNotificationController::class, 'send'])->name('admin.notifications.send');
+        Route::post('/notifications/preview', [\App\Http\Controllers\Admin\BulkNotificationController::class, 'preview'])->name('admin.notifications.preview');
+        Route::get('/notifications/analytics', [\App\Http\Controllers\Admin\BulkNotificationController::class, 'analytics'])->name('admin.notifications.analytics');
+
+        // User Notification Settings
+        Route::get('/settings/notifications', function () {
+            return view('pages.settings.notifications');
+        })->name('settings.notifications');
+        Route::put('/settings/notifications', function (\Illuminate\Http\Request $request) {
+            $request->validate([
+                'notification_email' => 'boolean',
+                'notification_push' => 'boolean',
+                'notification_grades' => 'boolean',
+                'notification_enrollment' => 'boolean',
+                'notification_payments' => 'boolean',
+                'notification_announcements' => 'boolean',
+                'notification_reminders' => 'boolean',
+            ]);
+
+            $user = auth()->user();
+            if ($user->settings) {
+                $user->settings->update($request->only([
+                    'notification_email', 'notification_push', 'notification_grades',
+                    'notification_enrollment', 'notification_payments', 'notification_announcements',
+                    'notification_reminders'
+                ]));
+            }
+
+            return back()->with('success', __('Notification preferences updated successfully.'));
+        })->name('settings.notifications.update');
+        Route::post('/settings/notifications/test', function (\Illuminate\Http\Request $request) {
+            $type = $request->input('type', 'push');
+            $user = auth()->user();
+
+            switch ($type) {
+                case 'push':
+                    \App\Models\Notification::createForUser(
+                        $user,
+                        'system',
+                        'Test Notification',
+                        'This is a test push notification to verify your settings.',
+                        route('dashboard')
+                    );
+                    break;
+                case 'email':
+                    \Mail::raw('This is a test email notification.', function ($message) use ($user) {
+                        $message->to($user->email)->subject('Test Email Notification');
+                    });
+                    break;
+                case 'sound':
+                    // Sound test is handled by frontend
+                    break;
+            }
+
+            return back()->with('success', ucfirst($type) . ' test completed.');
+        })->name('settings.notifications.test');
+
+        // User Notifications Page
+        Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'userIndex'])->name('notifications.index');
+        Route::patch('/notifications/{notification}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+        Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+        Route::delete('/notifications/{notification}', [\App\Http\Controllers\NotificationController::class, 'destroy'])->name('notifications.delete');
 
         // Activity Logs
         Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('admin.activity-logs.index');

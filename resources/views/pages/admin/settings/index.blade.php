@@ -44,75 +44,299 @@
 
         <h1 class="mt-4 text-3xl font-bold text-stone-900 dark:text-stone-100">{{ __('System Settings') }}</h1>
         <p class="mt-1 text-stone-500 dark:text-stone-400">{{ __('Manage system configuration and preferences for Noor Alhuda LMS') }}</p>
+
+        @if(session('success'))
+            <div class="mt-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-4">
+                <div class="flex items-center">
+                    <flux:icon.check-circle class="size-5 text-green-600 dark:text-green-400 mr-3" />
+                    <p class="text-sm font-medium text-green-800 dark:text-green-200">{{ session('success') }}</p>
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="mt-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
+                <div class="flex items-center">
+                    <flux:icon.exclamation-triangle class="size-5 text-red-600 dark:text-red-400 mr-3" />
+                    <p class="text-sm font-medium text-red-800 dark:text-red-200">{{ session('error') }}</p>
+                </div>
+            </div>
+        @endif
     </div>
 
-    <!-- Settings Cards -->
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <!-- Settings Categories -->
+    <div class="space-y-8">
         <!-- General Settings -->
-        <div class="group relative overflow-hidden rounded-xl border border-stone-200 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-stone-700 dark:bg-stone-800">
-            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
-            <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-blue-100 text-blue-600 transition-transform group-hover:scale-110 dark:bg-blue-900/30 dark:text-blue-400">
-                <flux:icon.cog-6-tooth class="size-7" />
+        @if($categories['general']->count() > 0)
+        <div class="rounded-xl border border-stone-200 bg-white p-6 dark:border-stone-700 dark:bg-stone-800">
+            <div class="mb-6 flex items-center gap-3">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/30">
+                    <flux:icon.cog-6-tooth class="size-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-stone-900 dark:text-stone-100">{{ __('General Settings') }}</h2>
+                    <p class="text-sm text-stone-500 dark:text-stone-400">{{ __('Basic application configuration and branding') }}</p>
+                </div>
             </div>
-            <h3 class="mb-2 text-lg font-semibold text-stone-900 dark:text-stone-100">{{ __('General Settings') }}</h3>
-            <p class="mb-4 text-sm text-stone-500 dark:text-stone-400">{{ __('Configure system name, timezone, language defaults, and basic preferences') }}</p>
-            <flux:button :href="route('admin.settings.index')" variant="ghost" size="sm" icon="chevron-right" icon:variant="end">
-                {{ __('Manage') }}
-            </flux:button>
-        </div>
 
-        <!-- Appearance -->
-        <div class="group relative overflow-hidden rounded-xl border border-stone-200 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-stone-700 dark:bg-stone-800">
-            <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
-            <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-purple-100 text-purple-600 transition-transform group-hover:scale-110 dark:bg-purple-900/30 dark:text-purple-400">
-                <flux:icon.paint-brush class="size-7" />
-            </div>
-            <h3 class="mb-2 text-lg font-semibold text-stone-900 dark:text-stone-100">{{ __('Appearance') }}</h3>
-            <p class="mb-4 text-sm text-stone-500 dark:text-stone-400">{{ __('Customize themes, colors, logos, and visual presentation') }}</p>
-            <flux:button :href="route('admin.settings.theme')" variant="ghost" size="sm" icon="chevron-right" icon:variant="end">
-                {{ __('Manage') }}
-            </flux:button>
-        </div>
+            <form method="POST" action="{{ route('admin.settings.update') }}" class="space-y-6">
+                @csrf
+                @method('PUT')
 
-        <!-- Security -->
-        <div class="group relative overflow-hidden rounded-xl border border-stone-200 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-stone-700 dark:bg-stone-800">
-            <div class="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
-            <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-red-100 text-red-600 transition-transform group-hover:scale-110 dark:bg-red-900/30 dark:text-red-400">
-                <flux:icon.shield-check class="size-7" />
-            </div>
-            <h3 class="mb-2 text-lg font-semibold text-stone-900 dark:text-stone-100">{{ __('Security') }}</h3>
-            <p class="mb-4 text-sm text-stone-500 dark:text-stone-400">{{ __('Password policies, two-factor auth, session management') }}</p>
-            <flux:button :href="route('profile.edit')" variant="ghost" size="sm" icon="chevron-right" icon:variant="end">
-                {{ __('Manage') }}
-            </flux:button>
-        </div>
+                <div class="grid gap-4 md:grid-cols-2">
+                    @foreach($categories['general'] as $setting)
+                        <div class="space-y-2">
+                            <flux:label for="{{ $setting->key }}">{{ $setting->label }}</flux:label>
+                            @if($setting->type === 'boolean')
+                                <flux:checkbox name="{{ $setting->key }}" :checked="$setting->value" />
+                            @elseif($setting->type === 'select' && $setting->options)
+                                <flux:select name="{{ $setting->key }}">
+                                    @foreach($setting->options as $option)
+                                        <option value="{{ $option }}" {{ $setting->value == $option ? 'selected' : '' }}>{{ $option }}</option>
+                                    @endforeach
+                                </flux:select>
+                            @else
+                                <flux:input name="{{ $setting->key }}" value="{{ $setting->value }}" />
+                            @endif
+                            @if($setting->description)
+                                <p class="text-xs text-stone-500 dark:text-stone-400">{{ $setting->description }}</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
 
-        <!-- System Info -->
-        <div class="group relative overflow-hidden rounded-xl border border-stone-200 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-stone-700 dark:bg-stone-800">
-            <div class="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
-            <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-yellow-100 text-yellow-600 transition-transform group-hover:scale-110 dark:bg-yellow-900/30 dark:text-yellow-400">
-                <flux:icon.cpu-chip class="size-7" />
+                <flux:button type="submit" variant="primary">
+                    {{ __('Save General Settings') }}
+                </flux:button>
+            </form>
+        </div>
+        @endif
+
+        <!-- Security Settings -->
+        @if($categories['security']->count() > 0)
+        <div class="rounded-xl border border-stone-200 bg-white p-6 dark:border-stone-700 dark:bg-stone-800">
+            <div class="mb-6 flex items-center gap-3">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-red-100 dark:bg-red-900/30">
+                    <flux:icon.shield-check class="size-6 text-red-600 dark:text-red-400" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-stone-900 dark:text-stone-100">{{ __('Security Settings') }}</h2>
+                    <p class="text-sm text-stone-500 dark:text-stone-400">{{ __('Password policies and authentication settings') }}</p>
+                </div>
             </div>
-            <h3 class="mb-2 text-lg font-semibold text-stone-900 dark:text-stone-100">{{ __('System Info') }}</h3>
-            <p class="mb-4 text-sm text-stone-500 dark:text-stone-400">{{ __('View system information, PHP version, and database details') }}</p>
-            <flux:button :href="route('admin.settings.system-info')" variant="ghost" size="sm" icon="chevron-right" icon:variant="end">
-                {{ __('View') }}
-            </flux:button>
+
+            <form method="POST" action="{{ route('admin.settings.update') }}" class="space-y-6">
+                @csrf
+                @method('PUT')
+
+                <div class="grid gap-4 md:grid-cols-2">
+                    @foreach($categories['security'] as $setting)
+                        <div class="space-y-2">
+                            <flux:label for="{{ $setting->key }}">{{ $setting->label }}</flux:label>
+                            @if($setting->type === 'boolean')
+                                <flux:checkbox name="{{ $setting->key }}" :checked="$setting->value" />
+                            @elseif($setting->type === 'integer')
+                                <flux:input type="number" name="{{ $setting->key }}" value="{{ $setting->value }}" />
+                            @else
+                                <flux:input name="{{ $setting->key }}" value="{{ $setting->value }}" />
+                            @endif
+                            @if($setting->description)
+                                <p class="text-xs text-stone-500 dark:text-stone-400">{{ $setting->description }}</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+
+                <flux:button type="submit" variant="primary">
+                    {{ __('Save Security Settings') }}
+                </flux:button>
+            </form>
+        </div>
+        @endif
+
+        <!-- Email Settings -->
+        @if($categories['email']->count() > 0)
+        <div class="rounded-xl border border-stone-200 bg-white p-6 dark:border-stone-700 dark:bg-stone-800">
+            <div class="mb-6 flex items-center gap-3">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-100 dark:bg-green-900/30">
+                    <flux:icon.envelope class="size-6 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-stone-900 dark:text-stone-100">{{ __('Email Settings') }}</h2>
+                    <p class="text-sm text-stone-500 dark:text-stone-400">{{ __('SMTP configuration and email settings') }}</p>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ route('admin.settings.update') }}" class="space-y-6">
+                @csrf
+                @method('PUT')
+
+                <div class="grid gap-4 md:grid-cols-2">
+                    @foreach($categories['email'] as $setting)
+                        <div class="space-y-2">
+                            <flux:label for="{{ $setting->key }}">{{ $setting->label }}</flux:label>
+                            @if($setting->type === 'select' && $setting->options)
+                                <flux:select name="{{ $setting->key }}">
+                                    @foreach($setting->options as $option)
+                                        <option value="{{ $option }}" {{ $setting->value == $option ? 'selected' : '' }}>{{ $option }}</option>
+                                    @endforeach
+                                </flux:select>
+                            @elseif($setting->type === 'integer')
+                                <flux:input type="number" name="{{ $setting->key }}" value="{{ $setting->value }}" />
+                            @else
+                                <flux:input name="{{ $setting->key }}" value="{{ $setting->value }}" type="{{ $setting->key === 'mail_password' ? 'password' : 'text' }}" />
+                            @endif
+                            @if($setting->description)
+                                <p class="text-xs text-stone-500 dark:text-stone-400">{{ $setting->description }}</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="flex gap-4">
+                    <flux:button type="submit" variant="primary">
+                        {{ __('Save Email Settings') }}
+                    </flux:button>
+
+                    <form method="POST" action="{{ route('admin.settings.test-email') }}" class="inline">
+                        @csrf
+                        <flux:input name="test_email" placeholder="test@example.com" class="mr-2" />
+                        <flux:button type="submit" variant="outline">
+                            {{ __('Test Email') }}
+                        </flux:button>
+                    </form>
+                </div>
+            </form>
+        </div>
+        @endif
+
+        <!-- System Settings -->
+        @if($categories['system']->count() > 0)
+        <div class="rounded-xl border border-stone-200 bg-white p-6 dark:border-stone-700 dark:bg-stone-800">
+            <div class="mb-6 flex items-center gap-3">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-100 dark:bg-purple-900/30">
+                    <flux:icon.cpu-chip class="size-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-stone-900 dark:text-stone-100">{{ __('System Settings') }}</h2>
+                    <p class="text-sm text-stone-500 dark:text-stone-400">{{ __('System maintenance, caching, and backup settings') }}</p>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ route('admin.settings.update') }}" class="space-y-6">
+                @csrf
+                @method('PUT')
+
+                <div class="grid gap-4 md:grid-cols-2">
+                    @foreach($categories['system'] as $setting)
+                        @if($setting->key !== 'maintenance_mode')
+                        <div class="space-y-2">
+                            <flux:label for="{{ $setting->key }}">{{ $setting->label }}</flux:label>
+                            @if($setting->type === 'boolean')
+                                <flux:checkbox name="{{ $setting->key }}" :checked="$setting->value" />
+                            @elseif($setting->type === 'select' && $setting->options)
+                                <flux:select name="{{ $setting->key }}">
+                                    @foreach($setting->options as $option)
+                                        <option value="{{ $option }}" {{ $setting->value == $option ? 'selected' : '' }}>{{ $option }}</option>
+                                    @endforeach
+                                </flux:select>
+                            @else
+                                <flux:input name="{{ $setting->key }}" value="{{ $setting->value }}" />
+                            @endif
+                            @if($setting->description)
+                                <p class="text-xs text-stone-500 dark:text-stone-400">{{ $setting->description }}</p>
+                            @endif
+                        </div>
+                        @endif
+                    @endforeach
+                </div>
+
+                <flux:button type="submit" variant="primary">
+                    {{ __('Save System Settings') }}
+                </flux:button>
+            </form>
+
+            <!-- Maintenance Mode -->
+            <div class="mt-8 border-t border-stone-200 pt-6 dark:border-stone-700">
+                <h3 class="text-lg font-semibold text-stone-900 dark:text-stone-100 mb-4">{{ __('Maintenance Mode') }}</h3>
+                <form method="POST" action="{{ route('admin.settings.maintenance') }}" class="space-y-4">
+                    @csrf
+                    <div class="flex items-center gap-4">
+                        <flux:checkbox name="maintenance_mode" :checked="\App\Models\SystemSetting::get('maintenance_mode', false)" />
+                        <div>
+                            <flux:label for="maintenance_mode">{{ __('Enable Maintenance Mode') }}</flux:label>
+                            <p class="text-sm text-stone-500 dark:text-stone-400">{{ __('Put the application in maintenance mode') }}</p>
+                        </div>
+                    </div>
+                    <flux:textarea name="maintenance_message" :label="__('Maintenance Message')" rows="2" placeholder="The system is currently under maintenance. Please try again later.">
+{{ \App\Models\SystemSetting::get('maintenance_message', 'The system is currently under maintenance. Please try again later.') }}
+                    </flux:textarea>
+                    <flux:button type="submit" variant="outline">
+                        {{ __('Toggle Maintenance Mode') }}
+                    </flux:button>
+                </form>
+            </div>
+        </div>
+        @endif
+
+        <!-- Backup Management -->
+        <div class="rounded-xl border border-stone-200 bg-white p-6 dark:border-stone-700 dark:bg-stone-800">
+            <div class="mb-6 flex items-center gap-3">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-900/30">
+                    <flux:icon.archive-box class="size-6 text-indigo-600 dark:text-indigo-400" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-stone-900 dark:text-stone-100">{{ __('Backup Management') }}</h2>
+                    <p class="text-sm text-stone-500 dark:text-stone-400">{{ __('Create and manage database backups') }}</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <form method="POST" action="{{ route('admin.settings.backup') }}" class="inline-block">
+                    @csrf
+                    <flux:button type="submit" variant="primary" icon="archive-box">
+                        {{ __('Create Database Backup') }}
+                    </flux:button>
+                </form>
+
+                <p class="text-sm text-stone-600 dark:text-stone-400">
+                    {{ __('Backups are stored in') }} <code>storage/app/backups/</code>
+                </p>
+            </div>
         </div>
     </div>
 
     <!-- Quick Actions -->
     <div class="mt-8 rounded-xl border border-stone-200 bg-stone-50 p-6 dark:border-stone-700 dark:bg-stone-800/50">
         <h2 class="mb-4 text-lg font-semibold text-stone-900 dark:text-stone-100">{{ __('Quick Actions') }}</h2>
-        <div class="flex flex-wrap gap-3">
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <form method="POST" action="{{ route('admin.settings.clear-cache') }}">
                 @csrf
-                <flux:button type="submit" variant="outline" icon="arrow-path">
+                <flux:button type="submit" variant="outline" icon="arrow-path" class="w-full">
                     {{ __('Clear Cache') }}
                 </flux:button>
             </form>
-            <flux:button :href="route('admin.settings.logs')" variant="outline" icon="document-text">
+
+            <form method="POST" action="{{ route('admin.settings.clear-all-caches') }}">
+                @csrf
+                <flux:button type="submit" variant="outline" icon="bolt" class="w-full">
+                    {{ __('Clear All Caches') }}
+                </flux:button>
+            </form>
+
+            <form method="POST" action="{{ route('admin.settings.backup') }}">
+                @csrf
+                <flux:button type="submit" variant="outline" icon="archive-box" class="w-full">
+                    {{ __('Create Backup') }}
+                </flux:button>
+            </form>
+
+            <flux:button :href="route('admin.settings.logs')" variant="outline" icon="document-text" class="w-full">
                 {{ __('View Logs') }}
+            </flux:button>
+
+            <flux:button :href="route('admin.settings.backups')" variant="outline" icon="archive-box" class="w-full">
+                {{ __('Manage Backups') }}
             </flux:button>
         </div>
     </div>

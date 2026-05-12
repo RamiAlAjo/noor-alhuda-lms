@@ -7,6 +7,7 @@
     x-on:notification-received.window="handleNotification($event)"
     x-on:click.away="isOpen = false"
     x-on:keydown.escape.window="isOpen = false"
+    x-init="console.log('Notification dropdown initialized'); $wire.checkForNewNotifications(); setInterval(() => { console.log('Checking for new notifications...'); $wire.checkForNewNotifications(); }, 10000)"
     class="relative"
 >
     <!-- Notification Bell Button -->
@@ -37,17 +38,17 @@
     </flux:tooltip>
 
     <!-- Dropdown Panel -->
-    <div
-        id="notifications-dropdown"
-        x-show="isOpen"
-        x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0 scale-95"
-        x-transition:enter-end="opacity-100 scale-100"
-        x-transition:leave="transition ease-in duration-75"
-        x-transition:leave-start="opacity-100 scale-100"
-        x-transition:leave-end="opacity-0 scale-95"
-        x-cloak
-        x-trap.noscroll="isOpen"
+        <div
+            x-show="isOpen"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-75"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            x-cloak
+            x-trap.noscroll="isOpen"
+            class="w-96 max-w-sm"
         class="absolute end-0 mt-2 w-80 sm:w-96 rounded-xl shadow-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 z-50 overflow-hidden"
         role="menu"
         aria-orientation="vertical"
@@ -68,6 +69,44 @@
                         @endif
                     </p>
                 </div>
+                <!-- Search and Filters -->
+                <div class="mb-4 space-y-3">
+                    <!-- Search -->
+                    <div class="relative">
+                        <flux:input
+                            wire:model.live.debounce.300ms="searchTerm"
+                            placeholder="{{ __('Search notifications...') }}"
+                            class="w-full pl-9 pr-4 py-2 text-sm border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <flux:icon name="magnifying-glass" class="absolute left-3 top-2.5 size-4 text-zinc-400" />
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="flex items-center gap-2">
+                        <select
+                            wire:model.live="filterType"
+                            class="flex-1 text-sm border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 px-3 py-1 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                            <option value="all">{{ __('All Types') }}</option>
+                            <option value="grade">{{ __('Grades') }}</option>
+                            <option value="enrollment">{{ __('Enrollment') }}</option>
+                            <option value="payment">{{ __('Payments') }}</option>
+                            <option value="announcement">{{ __('Announcements') }}</option>
+                            <option value="reminder">{{ __('Reminders') }}</option>
+                            <option value="system">{{ __('System') }}</option>
+                        </select>
+
+                        <label class="flex items-center gap-1 text-sm">
+                            <input
+                                type="checkbox"
+                                wire:model.live="showUnreadOnly"
+                                class="rounded border-zinc-300 dark:border-zinc-600 text-blue-600 focus:ring-blue-500"
+                            />
+                            {{ __('Unread') }}
+                        </label>
+                    </div>
+                </div>
+
                 <div class="flex items-center gap-2">
                     <!-- Sound Toggle -->
                     <button
@@ -82,16 +121,18 @@
                         <flux:icon name="speaker-x-mark" class="size-4 text-zinc-500" x-show="!soundEnabled" aria-hidden="true" />
                     </button>
 
-                    @if($unreadCount > 0)
-                        <button
-                            type="button"
-                            x-on:click="$wire.markAllAsRead()"
-                            class="text-xs text-[var(--color-accent)] hover:underline font-medium focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] rounded px-1"
-                            aria-label="{{ __('Mark all as read') }}"
-                        >
-                            {{ __('Mark all read') }}
-                        </button>
-                    @endif
+                    <!-- Push Notification Toggle -->
+                    <button
+                        type="button"
+                        x-on:click="$wire.togglePush()"
+                        class="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                        x-bind:title="pushEnabled ? '{{ __('Disable push notifications') }}' : '{{ __('Enable push notifications') }}'"
+                        x-bind:aria-label="pushEnabled ? '{{ __('Disable push notifications') }}' : '{{ __('Enable push notifications') }}'"
+                        x-bind:aria-pressed="pushEnabled"
+                    >
+                        <flux:icon name="bell-alert" class="size-4 text-zinc-500" x-show="pushEnabled" aria-hidden="true" />
+                        <flux:icon name="bell-slash" class="size-4 text-zinc-500" x-show="!pushEnabled" aria-hidden="true" />
+                    </button>
                 </div>
             </div>
         </div>
@@ -225,17 +266,114 @@
     <div id="notificationSound" style="display: none;"></div>
 
     <script>
+        let pushSubscription = null;
+
+        // Register service worker for push notifications
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(function(registration) {
+                    console.log('Service Worker registered successfully:', registration.scope);
+
+                    // Check if push is supported
+                    if ('PushManager' in window) {
+                        registration.pushManager.getSubscription()
+                            .then(function(subscription) {
+                                if (subscription) {
+                                    pushSubscription = subscription;
+                                    console.log('Already subscribed to push notifications');
+                                } else {
+                                    console.log('Not subscribed to push notifications');
+                                }
+                            });
+                    }
+                })
+                .catch(function(error) {
+                    console.log('Service Worker registration failed:', error);
+                });
+        }
+
+        // Request push notification permission
+        async function requestPushPermission() {
+            if (!('Notification' in window)) {
+                console.log('This browser does not support notifications');
+                return false;
+            }
+
+            if (Notification.permission === 'granted') {
+                return true;
+            }
+
+            if (Notification.permission !== 'denied') {
+                const permission = await Notification.permission;
+                if (permission === 'granted') {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Show browser notification (fallback for when service worker isn't available)
+        function showBrowserNotification(title, options = {}) {
+            if (Notification.permission === 'granted') {
+                try {
+                    const notification = new Notification(title, {
+                        body: options.body || 'You have a new notification',
+                        icon: options.icon || '/favicon.ico',
+                        badge: options.badge || '/favicon.ico',
+                        tag: options.tag || 'noor-notification',
+                        requireInteraction: options.requireInteraction || false,
+                        silent: options.silent || false,
+                        ...options
+                    });
+
+                    notification.onclick = function() {
+                        window.focus();
+                        if (options.url) {
+                            window.location.href = options.url;
+                        }
+                        notification.close();
+                    };
+
+                    // Auto-close after 5 seconds if not requiring interaction
+                    if (!options.requireInteraction) {
+                        setTimeout(() => notification.close(), 5000);
+                    }
+                } catch (e) {
+                    console.log('Browser notification failed:', e.message);
+                }
+            }
+        }
+
         function handleNotification(event) {
-            const { soundEnabled, title } = event.detail;
+            console.log('Notification received:', event.detail);
+
+            const { soundEnabled, title, type, pushEnabled } = event.detail;
 
             // Play sound if enabled
             if (soundEnabled) {
-                playNotificationSound();
+                console.log('Playing notification sound for type:', type);
+                playNotificationSound(type || 'default');
+            } else {
+                console.log('Sound disabled');
+            }
+
+            // Show browser notification if push is enabled
+            if (pushEnabled && Notification.permission === 'granted') {
+                console.log('Showing browser notification');
+                showBrowserNotification(title, {
+                    body: 'You have a new notification from Noor LMS',
+                    icon: '/favicon.ico',
+                    url: window.location.href,
+                    tag: `noor-${type}`,
+                    requireInteraction: type === 'announcement' || type === 'system'
+                });
             }
 
             // Show toast notification
             this.showToasts.push({
                 title: title,
+                type: type,
                 visible: true
             });
 
@@ -248,8 +386,8 @@
             }, 5000);
         }
 
-        // Web Audio API notification sound
-        function playNotificationSound() {
+        // Enhanced Web Audio API notification sounds with different types
+        function playNotificationSound(type = 'default') {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioContext.createOscillator();
@@ -258,17 +396,70 @@
                 oscillator.connect(gainNode);
                 gainNode.connect(audioContext.destination);
 
-                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+                // Different sound patterns for different notification types
+                switch (type) {
+                    case 'grade':
+                        // Success sound - pleasant ascending tone
+                        oscillator.frequency.setValueAtTime(523, audioContext.currentTime); // C5
+                        oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.1); // E5
+                        oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.2); // G5
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.4);
+                        break;
 
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    case 'reminder':
+                        // Reminder sound - gentle pulsing
+                        oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4
+                        oscillator.frequency.setValueAtTime(440, audioContext.currentTime + 0.15);
+                        oscillator.frequency.setValueAtTime(440, audioContext.currentTime + 0.3);
+                        gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.05, audioContext.currentTime + 0.1);
+                        gainNode.gain.setValueAtTime(0.15, audioContext.currentTime + 0.15);
+                        gainNode.gain.setValueAtTime(0.05, audioContext.currentTime + 0.25);
+                        gainNode.gain.setValueAtTime(0.15, audioContext.currentTime + 0.3);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.5);
+                        break;
 
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.3);
+                    case 'announcement':
+                        // Announcement sound - clear and attention-grabbing
+                        oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // A5
+                        oscillator.frequency.setValueAtTime(660, audioContext.currentTime + 0.1); // E5
+                        oscillator.frequency.setValueAtTime(880, audioContext.currentTime + 0.2); // A5
+                        gainNode.gain.setValueAtTime(0.25, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.3);
+                        break;
+
+                    default:
+                        // Default notification sound
+                        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                        oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.3);
+                }
+
+                console.log(`Playing ${type} notification sound`);
             } catch (e) {
-                // Fallback: no sound if Web Audio API is not supported
-                console.log('Notification sound not available');
+                console.log('Notification sound not available:', e.message);
+                // Fallback: try to play system notification sound if available
+                try {
+                    if ('Notification' in window && Notification.permission === 'granted') {
+                        new Notification('New Notification', {
+                            body: 'You have a new notification',
+                            icon: '/favicon.ico',
+                            silent: false
+                        });
+                    }
+                } catch (fallbackError) {
+                    console.log('Fallback notification failed:', fallbackError.message);
+                }
             }
         }
     </script>

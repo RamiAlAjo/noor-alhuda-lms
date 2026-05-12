@@ -183,4 +183,40 @@ class Notification extends Model
     {
         return $this->created_at->greaterThan(now()->subHour());
     }
+
+    /**
+     * Get notification preferences for a user
+     */
+    public static function getUserPreferences(int $userId): array
+    {
+        $settings = \App\Models\UserSetting::where('user_id', $userId)->first();
+
+        return [
+            'email_notifications' => $settings?->notification_email ?? true,
+            'push_notifications' => $settings?->notification_push ?? true,
+            'sound_notifications' => $settings?->notification_sound ?? true,
+            'grade_notifications' => $settings?->notification_grades ?? true,
+            'enrollment_notifications' => $settings?->notification_enrollment ?? true,
+            'payment_notifications' => $settings?->notification_payments ?? true,
+            'announcement_notifications' => $settings?->notification_announcements ?? true,
+            'reminder_notifications' => $settings?->notification_reminders ?? true,
+        ];
+    }
+
+    /**
+     * Check if user wants this type of notification
+     */
+    public static function userWantsNotification(int $userId, string $type): bool
+    {
+        $preferences = self::getUserPreferences($userId);
+
+        return match ($type) {
+            'grade' => $preferences['grade_notifications'],
+            'enrollment' => $preferences['enrollment_notifications'],
+            'payment' => $preferences['payment_notifications'],
+            'announcement' => $preferences['announcement_notifications'],
+            'reminder' => $preferences['reminder_notifications'],
+            default => true, // Allow other types by default
+        };
+    }
 }

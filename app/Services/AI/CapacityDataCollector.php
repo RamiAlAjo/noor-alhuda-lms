@@ -164,9 +164,6 @@ class CapacityDataCollector
         return $data;
     }
 
-        return $data;
-    }
-
     /**
      * Collect all courses with their current metrics
      */
@@ -190,7 +187,7 @@ class CapacityDataCollector
     }
 
     /**
-     * Get capacity utilization statistics
+     * Get enhanced capacity utilization statistics with AI insights
      */
     public function getCapacityStats(int $semesterId): array
     {
@@ -205,15 +202,18 @@ class CapacityDataCollector
 
         $underUtilized = $offerings->filter(function ($o) {
             $rate = $o->max_students > 0 ? ($o->enrolled_count / $o->max_students) * 100 : 0;
-
             return $rate < 30;
         })->count();
 
         $optimal = $offerings->filter(function ($o) {
             $rate = $o->max_students > 0 ? ($o->enrolled_count / $o->max_students) * 100 : 0;
-
             return $rate >= 50 && $rate <= 85;
         })->count();
+
+        // Enhanced metrics
+        $efficiencyScore = $this->calculateEfficiencyScore($offerings);
+        $bottleneckAnalysis = $this->analyzeBottlenecks($offerings);
+        $utilizationDistribution = $this->calculateUtilizationDistribution($offerings);
 
         return [
             'total_offerings' => $offerings->count(),
@@ -223,6 +223,106 @@ class CapacityDataCollector
             'overcapacity_count' => $overCapacity,
             'underutilized_count' => $underUtilized,
             'optimal_count' => $optimal,
+            'efficiency_score' => $efficiencyScore,
+            'bottleneck_analysis' => $bottleneckAnalysis,
+            'utilization_distribution' => $utilizationDistribution,
         ];
+    }
+
+    /**
+     * Calculate efficiency score based on optimal utilization ranges
+     */
+    private function calculateEfficiencyScore($offerings): float
+    {
+        if ($offerings->isEmpty()) {
+            return 0;
+        }
+
+        $totalScore = 0;
+        $count = 0;
+
+        foreach ($offerings as $offering) {
+            $utilization = $offering->max_students > 0
+                ? ($offering->enrolled_count / $offering->max_students) * 100
+                : 0;
+
+            // Score based on how close to optimal range (50-85%)
+            if ($utilization >= 50 && $utilization <= 85) {
+                $score = 100; // Perfect
+            } elseif ($utilization >= 40 && $utilization <= 95) {
+                $score = 80; // Good
+            } elseif ($utilization >= 30 && $utilization <= 100) {
+                $score = 60; // Acceptable
+            } elseif ($utilization >= 20 && $utilization <= 110) {
+                $score = 40; // Poor
+            } else {
+                $score = 20; // Very poor
+            }
+
+            $totalScore += $score;
+            $count++;
+        }
+
+        return $count > 0 ? $totalScore / $count : 0;
+    }
+
+    /**
+     * Analyze capacity bottlenecks
+     */
+    private function analyzeBottlenecks($offerings): array
+    {
+        $bottlenecks = $offerings->filter(function ($o) {
+            return $o->enrolled_count >= $o->max_students;
+        });
+
+        $criticalBottlenecks = $bottlenecks->filter(function ($o) {
+            return $o->enrolled_count > $o->max_students;
+        });
+
+        return [
+            'total_bottlenecks' => $bottlenecks->count(),
+            'critical_bottlenecks' => $criticalBottlenecks->count(),
+            'bottleneck_percentage' => $offerings->count() > 0 ? ($bottlenecks->count() / $offerings->count()) * 100 : 0,
+            'avg_over_capacity' => $criticalBottlenecks->avg(function ($o) {
+                return $o->max_students > 0 ? (($o->enrolled_count - $o->max_students) / $o->max_students) * 100 : 0;
+            }) ?? 0,
+        ];
+    }
+
+    /**
+     * Calculate utilization distribution across ranges
+     */
+    private function calculateUtilizationDistribution($offerings): array
+    {
+        $ranges = [
+            '0-20' => 0,
+            '21-40' => 0,
+            '41-60' => 0,
+            '61-80' => 0,
+            '81-100' => 0,
+            '101+' => 0,
+        ];
+
+        foreach ($offerings as $offering) {
+            $utilization = $offering->max_students > 0
+                ? ($offering->enrolled_count / $offering->max_students) * 100
+                : 0;
+
+            if ($utilization <= 20) {
+                $ranges['0-20']++;
+            } elseif ($utilization <= 40) {
+                $ranges['21-40']++;
+            } elseif ($utilization <= 60) {
+                $ranges['41-60']++;
+            } elseif ($utilization <= 80) {
+                $ranges['61-80']++;
+            } elseif ($utilization <= 100) {
+                $ranges['81-100']++;
+            } else {
+                $ranges['101+']++;
+            }
+        }
+
+        return $ranges;
     }
 }

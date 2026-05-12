@@ -27,6 +27,7 @@ class EnrollmentHistorySeeder extends Seeder
                 'course_id' => $offering->course_id,
                 'enrolled_count' => $approvedCount,
                 'drop_count' => $droppedCount,
+                'max_capacity' => $offering->max_students,
                 'enrollment_date' => now()->toDateString(),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -40,10 +41,15 @@ class EnrollmentHistorySeeder extends Seeder
                 $historicalEnrolled = max(0, $approvedCount - rand(0, 5));
                 $historicalDropped = max(0, min($historicalEnrolled, rand(0, 2)));
 
+                // Use same capacity or slightly different for historical data
+                $historicalCapacity = $offering->max_students + rand(-5, 5);
+                $historicalCapacity = max(10, $historicalCapacity); // Minimum capacity of 10
+
                 \DB::table('enrollment_histories')->insert([
                     'course_id' => $offering->course_id,
                     'enrolled_count' => $historicalEnrolled,
                     'drop_count' => $historicalDropped,
+                    'max_capacity' => $historicalCapacity,
                     'enrollment_date' => $historicalDate->toDateString(),
                     'created_at' => now(),
                     'updated_at' => now(),

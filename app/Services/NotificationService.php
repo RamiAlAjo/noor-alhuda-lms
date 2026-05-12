@@ -25,7 +25,7 @@ class NotificationService
     ];
 
     /**
-     * Send a notification to a specific user.
+     * Send a notification to a specific user with enhanced features and retry logic.
      */
     public function sendToUser(
         User $user,
@@ -33,8 +33,27 @@ class NotificationService
         string $title,
         string $content,
         ?string $link = null,
-        ?array $data = null
+        ?array $data = null,
+        bool $forceEmail = false,
+        int $maxRetries = 3
     ): Notification {
+        // Check user preferences
+        if (!Notification::userWantsNotification($user->id, $type)) {
+            // Create notification but don't send it
+            return Notification::create([
+                'user_id' => $user->id,
+                'type' => $type,
+                'title' => $title,
+                'content' => $content,
+                'link' => $link,
+                'data' => array_merge($data ?? [], [
+                    'icon' => self::TYPES[$type]['icon'] ?? 'bell',
+                    'color' => self::TYPES[$type]['color'] ?? 'blue',
+                    'suppressed' => true, // Mark as suppressed due to user preferences
+                ]),
+            ]);
+        }
+
         $notification = Notification::create([
             'user_id' => $user->id,
             'type' => $type,
@@ -44,11 +63,40 @@ class NotificationService
             'data' => array_merge($data ?? [], [
                 'icon' => self::TYPES[$type]['icon'] ?? 'bell',
                 'color' => self::TYPES[$type]['color'] ?? 'blue',
+                'retry_count' => 0,
             ]),
         ]);
 
-        // Broadcast the notification
-        broadcast(new NotificationSent($notification));
+        // Try to broadcast the notification with retry logic
+        $broadcastSuccess = false;
+        for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
+            try {
+                broadcast(new NotificationSent($notification));
+                $broadcastSuccess = true;
+                break;
+            } catch (\Exception $e) {
+                \Log::warning("Notification broadcasting failed (attempt {$attempt}/{$maxRetries}): " . $e->getMessage());
+
+                if ($attempt < $maxRetries) {
+                    sleep(1); // Wait 1 second before retry
+                }
+            }
+        }
+
+        // Update retry count in notification data
+        if (!$broadcastSuccess) {
+            $notification->update([
+                'data' => array_merge($notification->data ?? [], [
+                    'broadcast_failed' => true,
+                    'retry_count' => $maxRetries,
+                ])
+            ]);
+        }
+
+        // Send email fallback for important notifications
+        if ($this->shouldSendEmail($type) || $forceEmail) {
+            $this->sendEmailNotification($user, $notification);
+        }
 
         return $notification;
     }
@@ -99,10 +147,31 @@ class NotificationService
     }
 
     /**
-     * Send a grade notification to a student.
+     * Send a grade notification to a student using template.
      */
     public function sendGradeNotification(User $student, string $courseName, string $assessmentName, $grade): Notification
     {
+        $template = \App\Models\NotificationTemplate::getByKey('grade_posted');
+
+        if ($template) {
+            $variables = [
+                'student_name' => $student->name,
+                'course_name' => $courseName,
+                'assessment_name' => $assessmentName,
+                'grade' => $grade,
+            ];
+
+            return $this->sendToUser(
+                $student,
+                'grade',
+                $template->render(['course_name' => $courseName, 'assessment_name' => $assessmentName, 'grade' => $grade]),
+                $template->render($variables),
+                route('student.grades'),
+                array_merge($variables, ['template_used' => true])
+            );
+        }
+
+        // Fallback to original method
         return $this->sendToUser(
             $student,
             'grade',
@@ -239,5 +308,148 @@ class NotificationService
         return Notification::where('is_read', true)
             ->where('read_at', '<', now()->subDays($daysOld))
             ->delete();
+    }
+
+    /**
+     * Determine if email fallback should be sent for this notification type.
+     */
+    private function shouldSendEmail(string $type): bool
+    {
+        $importantTypes = ['grade', 'payment', 'system', 'warning'];
+        return in_array($type, $importantTypes);
+    }
+
+    /**
+     * Send email notification fallback.
+     */
+    private function sendEmailNotification(User $user, Notification $notification): void
+    {
+        try {
+            // Check if user wants email notifications
+            $preferences = Notification::getUserPreferences($user->id);
+            if (!$preferences['email_notifications']) {
+                return;
+            }
+
+            \Mail::send([], [], function ($message) use ($user, $notification) {
+                $message->to($user->email)
+                        ->subject('Noor LMS: ' . $notification->title)
+                        ->html(
+                            view('emails.notification', [
+                                'user' => $user,
+                                'notification' => $notification,
+                            ])->render()
+                        );
+            });
+
+            \Log::info("Email notification sent to {$user->email} for notification {$notification->id}");
+        } catch (\Exception $e) {
+            \Log::error("Failed to send email notification: {$e->getMessage()}");
+        }
+    }
+
+    /**
+     * Get notification analytics.
+     */
+    public function getAnalytics(\DateTime $startDate = null, \DateTime $endDate = null): array
+    {
+        $startDate = $startDate ?? now()->subDays(30);
+        $endDate = $endDate ?? now();
+
+        $query = Notification::whereBetween('created_at', [$startDate, $endDate]);
+
+        return [
+            'total_sent' => $query->count(),
+            'by_type' => $query->selectRaw('type, COUNT(*) as count')
+                              ->groupBy('type')
+                              ->pluck('count', 'type')
+                              ->toArray(),
+            'read_rate' => $query->count() > 0
+                         ? ($query->where('is_read', true)->count() / $query->count()) * 100
+                         : 0,
+            'avg_time_to_read' => $this->calculateAverageTimeToRead($startDate, $endDate),
+            'top_senders' => $this->getTopSenders($startDate, $endDate),
+        ];
+    }
+
+    /**
+     * Calculate average time to read notifications.
+     */
+    private function calculateAverageTimeToRead(\DateTime $startDate, \DateTime $endDate): ?float
+    {
+        $notifications = Notification::whereBetween('created_at', [$startDate, $endDate])
+                                   ->whereNotNull('read_at')
+                                   ->get();
+
+        if ($notifications->isEmpty()) {
+            return null;
+        }
+
+        $totalTime = 0;
+        foreach ($notifications as $notification) {
+            $totalTime += $notification->read_at->diffInMinutes($notification->created_at);
+        }
+
+        return $totalTime / $notifications->count();
+    }
+
+    /**
+     * Get top notification senders.
+     */
+    private function getTopSenders(\DateTime $startDate, \DateTime $endDate): array
+    {
+        // This would require tracking who sent notifications
+        // For now, return types as proxy
+        return Notification::whereBetween('created_at', [$startDate, $endDate])
+                          ->selectRaw('type, COUNT(*) as count')
+                          ->groupBy('type')
+                          ->orderBy('count', 'desc')
+                          ->limit(5)
+                          ->pluck('count', 'type')
+                          ->toArray();
+    }
+
+    /**
+     * Send bulk notifications to administrators.
+     */
+    public function sendToAdmins(
+        string $type,
+        string $title,
+        string $content,
+        ?string $link = null,
+        ?array $data = null
+    ): int {
+        $admins = User::role('admin')->get();
+        $count = 0;
+
+        foreach ($admins as $admin) {
+            $this->sendToUser($admin, $type, $title, $content, $link, $data);
+            $count++;
+        }
+
+        return $count;
+    }
+
+    /**
+     * Send bulk notifications to all users with a specific role.
+     */
+    public function sendBulkToRole(
+        string $role,
+        string $type,
+        string $title,
+        string $content,
+        ?string $link = null,
+        ?array $data = null,
+        array $excludeUserIds = []
+    ): int {
+        $users = User::role($role)->whereNotIn('id', $excludeUserIds)->get();
+        $count = 0;
+
+        foreach ($users as $user) {
+            $this->sendToUser($user, $type, $title, $content, $link, $data);
+            $count++;
+        }
+
+        return $count;
     }
 }

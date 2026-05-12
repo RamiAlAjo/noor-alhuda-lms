@@ -330,6 +330,61 @@ class FeatureEngineering
     }
 
     /**
+     * Calculate enrollment velocity for a course
+     */
+    public function calculateEnrollmentVelocity(int $courseId): float
+    {
+        return DB::table('enrollment_histories')
+            ->where('course_id', $courseId)
+            ->where('enrollment_date', '>=', now()->subDays(30))
+            ->avg('enrolled_count') ?? 0;
+    }
+
+    /**
+     * Get historical trend for a course
+     */
+    public function getHistoricalTrend(int $courseId): float
+    {
+        $enrollments = DB::table('enrollment_histories')
+            ->where('course_id', $courseId)
+            ->orderBy('enrollment_date')
+            ->pluck('enrolled_count')
+            ->take(12)
+            ->toArray();
+
+        if (count($enrollments) < 3) {
+            return 0;
+        }
+
+        // Simple trend calculation: compare first half vs second half
+        $mid = (int) (count($enrollments) / 2);
+        $firstHalf = array_slice($enrollments, 0, $mid);
+        $secondHalf = array_slice($enrollments, $mid);
+
+        $firstAvg = array_sum($firstHalf) / count($firstHalf);
+        $secondAvg = array_sum($secondHalf) / count($secondHalf);
+
+        return $firstAvg > 0 ? ($secondAvg - $firstAvg) / $firstAvg : 0;
+    }
+
+    /**
+     * Get department statistics
+     */
+    public function getDepartmentStats(int $departmentId): array
+    {
+        $stats = DB::table('enrollment_histories')
+            ->join('courses', 'enrollment_histories.course_id', '=', 'courses.id')
+            ->where('courses.department_id', $departmentId)
+            ->selectRaw('AVG(enrollment_histories.enrolled_count) as avg_enrollment, COUNT(*) as total_records')
+            ->first();
+
+        return [
+            'avg_enrollment' => (float) ($stats->avg_enrollment ?? 0),
+            'total_records' => (int) ($stats->total_records ?? 0),
+        ];
+    }
+
+    /**
      * Get all features with default values for fallback
      */
     public function getDefaultFeatures(): array
