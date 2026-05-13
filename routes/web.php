@@ -405,6 +405,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/courses', [TeacherCourseController::class, 'index'])->name('teacher.courses.index');
         Route::get('/courses/{section}', [TeacherCourseController::class, 'show'])->name('teacher.courses.show');
         Route::get('/courses/{section}/students', [TeacherCourseController::class, 'students'])->name('teacher.courses.students');
+        Route::get('/students/{studentId}', [TeacherCourseController::class, 'showStudent'])->name('teacher.students.show');
         Route::get('/courses/{section}/attendance', [TeacherCourseController::class, 'attendance'])->name('teacher.courses.attendance');
         Route::post('/courses/{section}/attendance', [TeacherCourseController::class, 'storeAttendance'])->name('teacher.courses.attendance.store');
         Route::get('/courses/{section}/attendance/bulk', [TeacherCourseController::class, 'bulkAttendance'])->name('teacher.courses.attendance.bulk');
@@ -514,6 +515,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/courses/{offering}/grades', [StudentCourseController::class, 'grades'])->name('student.courses.grades');
         Route::get('/courses/{offering}/attendance', [StudentCourseController::class, 'attendance'])->name('student.courses.attendance');
         Route::get('/courses/{offering}/participants', [StudentCourseController::class, 'participants'])->name('student.courses.participants');
+        Route::post('/courses/bulk-export', [StudentCourseController::class, 'bulkExport'])->name('student.courses.bulk-export');
 
         // Student Fees
         Route::get('/fees', [StudentPaymentController::class, 'fees'])->name('student.fees.index');

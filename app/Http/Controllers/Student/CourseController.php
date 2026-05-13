@@ -435,4 +435,76 @@ class CourseController extends Controller
 
         return view('pages.student.courses.materials', compact('offering', 'enrollment', 'materials'));
     }
+
+    /**
+     * Bulk export course data.
+     */
+    public function bulkExport(Request $request)
+    {
+        $request->validate([
+            'courses' => 'required|array|min:1',
+            'courses.*' => 'integer|exists:enrollments,id',
+        ]);
+
+        $student = auth()->user();
+        $courseIds = $request->courses;
+
+        // Verify ownership
+        $enrollments = Enrollment::where('student_id', $student->id)
+            ->whereIn('id', $courseIds)
+            ->with(['offering.course', 'offering.semester'])
+            ->get();
+
+        if ($enrollments->isEmpty()) {
+            return back()->with('error', __('No valid courses selected'));
+        }
+
+        // Generate CSV content
+        $csvContent = $this->generateCoursesCsv($enrollments);
+
+        // Return CSV download
+        $filename = 'student_courses_'.now()->format('Y-m-d_H-i-s').'.csv';
+
+        return response($csvContent)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
+    }
+
+    /**
+     * Generate CSV content for courses.
+     */
+    private function generateCoursesCsv($enrollments): string
+    {
+        $csv = fopen('php://temp', 'r+');
+
+        // Headers
+        fputcsv($csv, [
+            'Course Code',
+            'Course Name',
+            'Section',
+            'Semester',
+            'Status',
+            'Credits',
+            'Teacher',
+        ]);
+
+        // Data
+        foreach ($enrollments as $enrollment) {
+            fputcsv($csv, [
+                $enrollment->offering->course->code ?? '',
+                $enrollment->offering->course->name ?? '',
+                $enrollment->offering->section_name ?? '',
+                $enrollment->offering->semester->name ?? '',
+                $enrollment->status,
+                $enrollment->offering->course->credits ?? 0,
+                $enrollment->offering->teacher->full_name ?? '',
+            ]);
+        }
+
+        rewind($csv);
+        $content = stream_get_contents($csv);
+        fclose($csv);
+
+        return $content;
+    }
 }

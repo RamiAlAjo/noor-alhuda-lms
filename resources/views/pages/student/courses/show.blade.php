@@ -146,6 +146,66 @@
                 </div>
             </div>
 
+            <!-- Course Progress & Grades -->
+            <div class="grid gap-4 md:grid-cols-2">
+                <!-- Progress Overview -->
+                <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+                    <h3 class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">{{ __('Progress Overview') }}</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-neutral-500 dark:text-neutral-400">{{ __('Course Completion') }}</span>
+                                <span class="font-medium text-neutral-900 dark:text-neutral-100">{{ $enrollment->progress ?? 0 }}%</span>
+                            </div>
+                            <div class="h-2 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700">
+                                <div class="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all" style="width: {{ $enrollment->progress ?? 0 }}%"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 pt-2">
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $attendance->where('status', 'present')->count() ?? 0 }}</p>
+                                <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ __('Present') }}</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $attendance->count() ?? 0 }}</p>
+                                <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ __('Total Classes') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grade Progress -->
+                <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+                    <h3 class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">{{ __('Grade Progress') }}</h3>
+                    <div class="space-y-4">
+                        @php
+                            $courseGrades = $upcomingAssessments->where('offering_id', $offering->id);
+                            $completedAssessments = $courseGrades->where('is_completed', true);
+                            $averageGrade = $completedAssessments->avg('student_grade.percentage') ?? 0;
+                        @endphp
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-neutral-500 dark:text-neutral-400">{{ __('Current Average') }}</span>
+                                <span class="font-medium text-neutral-900 dark:text-neutral-100">{{ number_format($averageGrade, 1) }}%</span>
+                            </div>
+                            <div class="h-2 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700">
+                                <div class="h-full rounded-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all" style="width: {{ $averageGrade }}%"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 pt-2">
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ $completedAssessments->count() }}</p>
+                                <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ __('Completed') }}</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ $upcomingAssessments->count() }}</p>
+                                <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ __('Total Assessments') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Weekly Content - Collapsible -->
             <div class="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-800" x-data="{ open: true }">
                 <button @click="open = !open" class="flex w-full items-center justify-between border-b border-neutral-200 px-6 py-4 dark:border-neutral-700">
@@ -567,6 +627,14 @@
                             </svg>
                         </div>
                         <span class="font-medium">{{ __('Participants') }}</span>
+                    </a>
+                    <a href="{{ route('messages.index') }}?course={{ $offering->id }}" class="flex items-center gap-3 rounded-lg p-3 text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700">
+                        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                        </div>
+                        <span class="font-medium">{{ __('Course Messages') }}</span>
                     </a>
                 </div>
             </div>

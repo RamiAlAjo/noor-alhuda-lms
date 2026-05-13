@@ -166,6 +166,22 @@ class DashboardController extends Controller
     {
         $teacher = auth()->user();
 
+        // Handle bulk student selection from query parameters
+        $selectedStudents = [];
+        if (request()->has('students')) {
+            $studentIds = explode(',', request('students'));
+            $selectedStudents = \App\Models\User::whereIn('id', $studentIds)
+                ->whereHas('roles', function ($q) {
+                    $q->where('name', 'student');
+                })
+                ->whereHas('enrollments', function ($q) use ($teacher) {
+                    $q->whereHas('offering', function ($q2) use ($teacher) {
+                        $q2->where('teacher_id', $teacher->id);
+                    });
+                })
+                ->get();
+        }
+
         // Get conversations involving the teacher and students from their courses
         $conversations = Conversation::whereHas('participants', function ($query) use ($teacher) {
             $query->where('user_id', $teacher->id);
@@ -200,6 +216,6 @@ class DashboardController extends Controller
             ->with('course')
             ->get();
 
-        return view('pages.teacher.messages', compact('conversations', 'courses'));
+        return view('pages.teacher.messages', compact('conversations', 'courses', 'selectedStudents'));
     }
 }

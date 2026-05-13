@@ -34,7 +34,7 @@
                 <flux:button href="{{ route('teacher.dashboard') }}" variant="outline">
                     {{ __('Back to Dashboard') }}
                 </flux:button>
-                <flux:button href="{{ route('messages.create') }}" variant="primary">
+                <flux:button href="{{ route('messages.create') . (isset($selectedStudents) && $selectedStudents->count() > 0 ? '?students=' . $selectedStudents->pluck('id')->join(',') : '') }}" variant="primary">
                     {{ __('New Message') }}
                 </flux:button>
             </div>

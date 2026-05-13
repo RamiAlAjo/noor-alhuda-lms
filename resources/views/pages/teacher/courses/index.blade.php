@@ -238,10 +238,10 @@
                 <div class="mb-4 flex items-start justify-between">
                     <div>
                         <h3 class="text-lg font-bold text-neutral-900 dark:text-neutral-100">{{ $section->course?->name ?? __('Unknown Course') }}</h3>
-                        <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ $section->course?->code ?? '' }} - {{ $section->name }}</p>
+                        <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ $section->course?->code ?? '' }} - {{ $section->section_name }}</p>
                     </div>
                         <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
-                            {{ $section->semester?->localized_name ?? __('Active') }}
+                            {{ $section->semester?->name ?? __('Active') }}
                         </span>
                 </div>
 

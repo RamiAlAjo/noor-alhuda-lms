@@ -1,9 +1,115 @@
-<x-app-layout>
-    <x-slot name="title">{{ __('My Quizzes') }}</x-slot>
+<x-layouts::app :title="__('My Quizzes')">
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100">{{ __('My Quizzes') }}</h1>
+            <p class="mt-1 text-neutral-500 dark:text-neutral-400">{{ __('View and take your assigned quizzes') }}</p>
+        </div>
+    </div>
 
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-neutral-900 dark:text-white">{{ __('My Quizzes') }}</h1>
-        <p class="text-neutral-600 dark:text-neutral-400">{{ __('View and take your assigned quizzes') }}</p>
+    <!-- Progress Stats -->
+    <div class="mb-6 grid gap-4 md:grid-cols-4">
+        <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+            <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Total Quizzes') }}</p>
+                    <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">{{ $quizzes->count() }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+            <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Completed') }}</p>
+                    <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">{{ $quizzes->where('attempts_count', '>', 0)->count() }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+            <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Pending') }}</p>
+                    <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">{{ $quizzes->where('attempts_count', 0)->count() }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+            <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6-6" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Average Score') }}</p>
+                    <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">
+                        @php
+                            $avgScore = $quizzes->where('attempts_count', '>', 0)->avg('best_score') ?? 0;
+                        @endphp
+                        {{ number_format($avgScore, 1) }}%
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="mb-6 rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+        <form method="GET" class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div class="flex flex-1 gap-4">
+                <!-- Search -->
+                <div class="relative flex-1 max-w-md">
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="{{ __('Search quizzes...') }}"
+                        class="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2 pl-10 text-neutral-900 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100"
+                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-2.5 size-5 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+
+                <!-- Status Filter -->
+                <select
+                    name="status"
+                    class="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-neutral-900 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100"
+                >
+                    <option value="">{{ __('All Quizzes') }}</option>
+                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>{{ __('Not Started') }}</option>
+                    <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>{{ __('Completed') }}</option>
+                    <option value="overdue" {{ request('status') === 'overdue' ? 'selected' : '' }}>{{ __('Overdue') }}</option>
+                </select>
+            </div>
+
+            <div class="flex gap-2">
+                <flux:button type="submit" variant="primary">
+                    {{ __('Filter') }}
+                </flux:button>
+
+                @if(request()->anyFilled(['search', 'status']))
+                <flux:button :href="route('student.quizzes.index')" variant="ghost">
+                    {{ __('Clear') }}
+                </flux:button>
+                @endif
+            </div>
+        </form>
     </div>
 
     @if($quizzes->count() > 0)

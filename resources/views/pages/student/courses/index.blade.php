@@ -163,10 +163,40 @@
         </div>
     </div>
 
+    <!-- Bulk Actions (when courses are selected) -->
+    <div id="bulk-actions" class="mb-6 hidden rounded-xl border border-neutral-200 bg-blue-50 p-4 dark:border-neutral-700 dark:bg-blue-900/20">
+        <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-blue-900 dark:text-blue-100">
+                <span id="selected-count">0</span> {{ __('courses selected') }}
+            </span>
+            <div class="flex gap-2">
+                <flux:button size="sm" variant="outline" onclick="clearSelection()">
+                    {{ __('Clear Selection') }}
+                </flux:button>
+                <flux:button size="sm" variant="primary" onclick="bulkExport()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    {{ __('Export Data') }}
+                </flux:button>
+            </div>
+        </div>
+    </div>
+
     <!-- Course Cards Grid -->
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         @forelse($enrollments as $enrollment)
         <div class="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-800">
+            <!-- Selection Checkbox -->
+            <div class="absolute right-4 top-4 z-10">
+                <input
+                    type="checkbox"
+                    class="course-checkbox size-4 rounded border-neutral-300 text-violet-600 focus:ring-violet-500 dark:border-neutral-600 dark:bg-neutral-700"
+                    value="{{ $enrollment->id }}"
+                    onchange="updateBulkActions()"
+                >
+            </div>
+
             <!-- Gradient Bar -->
             <div class="h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500"></div>
 
@@ -261,4 +291,59 @@
         </div>
         @endforelse
     </div>
+
+    <script>
+        function updateBulkActions() {
+            const checkboxes = document.querySelectorAll('.course-checkbox:checked');
+            const bulkActions = document.getElementById('bulk-actions');
+            const selectedCount = document.getElementById('selected-count');
+
+            if (checkboxes.length > 0) {
+                bulkActions.classList.remove('hidden');
+                selectedCount.textContent = checkboxes.length;
+            } else {
+                bulkActions.classList.add('hidden');
+            }
+        }
+
+        function clearSelection() {
+            document.querySelectorAll('.course-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateBulkActions();
+        }
+
+        function bulkExport() {
+            const selectedCourses = Array.from(document.querySelectorAll('.course-checkbox:checked')).map(cb => cb.value);
+
+            if (selectedCourses.length === 0) {
+                alert('{{ __("Please select at least one course") }}');
+                return;
+            }
+
+            // Create form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("student.courses.bulk-export") }}';
+
+            // Add CSRF token
+            const csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = '_token';
+            csrfToken.value = '{{ csrf_token() }}';
+            form.appendChild(csrfToken);
+
+            // Add selected courses
+            selectedCourses.forEach(courseId => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'courses[]';
+                input.value = courseId;
+                form.appendChild(input);
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
 </x-layouts::app>

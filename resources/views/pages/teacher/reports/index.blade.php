@@ -61,9 +61,17 @@
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
                 {{ __('lms.class_performance') }}: {{ $report['offering']->course?->name ?? __('Course') }}
             </h2>
-            <a href="{{ route('teacher.reports.export-class-performance', $offeringId) }}" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                {{ __('lms.export_csv') }}
-            </a>
+            <div class="flex gap-2">
+                <a href="{{ route('teacher.reports.export-class-performance', $offeringId) }}" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                    {{ __('lms.export_csv') }}
+                </a>
+                <a href="{{ route('teacher.reports.export-class-performance', ['offering_id' => $offeringId, 'format' => 'pdf']) }}" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                    {{ __('Export PDF') }}
+                </a>
+                <a href="{{ route('teacher.reports.student-progress', $offeringId) }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    {{ __('Student Progress') }}
+                </a>
+            </div>
         </div>
 
         <!-- Summary Stats -->

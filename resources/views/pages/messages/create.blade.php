@@ -23,14 +23,23 @@
                     <div class="mb-6">
                         <div class="flex gap-4">
                             <label class="flex items-center">
-                                <input type="radio" name="message_type" value="direct" {{ request('type') !== 'group' ? 'checked' : '' }} class="mr-2" onchange="toggleMessageType()">
+                                <input type="radio" name="message_type" value="direct" {{ request('type') !== 'group' && !isset($recipients) ? 'checked' : '' }} class="mr-2" onchange="toggleMessageType()" {{ isset($recipients) ? 'disabled' : '' }}>
                                 <span class="text-sm font-medium">{{ __('Direct Message') }}</span>
                             </label>
                             <label class="flex items-center">
-                                <input type="radio" name="message_type" value="group" {{ request('type') === 'group' ? 'checked' : '' }} class="mr-2" onchange="toggleMessageType()">
+                                <input type="radio" name="message_type" value="group" {{ request('type') === 'group' || isset($recipients) ? 'checked' : '' }} class="mr-2" onchange="toggleMessageType()" {{ isset($recipients) ? 'disabled' : '' }}>
                                 <span class="text-sm font-medium">{{ __('Group Conversation') }}</span>
                             </label>
                         </div>
+                        @if(isset($recipients) && $recipients->count() > 0)
+                        <div class="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                            <p class="text-sm text-blue-800 dark:text-blue-200">
+                                <strong>{{ __('Selected Recipients:') }}</strong>
+                                {{ $recipients->pluck('full_name')->join(', ') }}
+                                <input type="hidden" name="selected_students" value="{{ $recipients->pluck('id')->join(',') }}">
+                            </p>
+                        </div>
+                        @endif
                     </div>
 
                     <!-- Direct Message Form -->

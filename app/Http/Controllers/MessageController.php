@@ -87,13 +87,23 @@ class MessageController extends Controller
     {
         $userId = $request->get('user_id');
         $conversationId = $request->get('conversation_id');
+        $studentIds = $request->get('students') ? explode(',', $request->get('students')) : null;
 
         $recipient = null;
+        $recipients = collect();
         $conversation = null;
         $templates = MessageTemplate::getAvailableForUser(Auth::id());
 
         if ($userId) {
             $recipient = \App\Models\User::findOrFail($userId);
+        }
+
+        if ($studentIds) {
+            $recipients = \App\Models\User::whereIn('id', $studentIds)
+                ->whereHas('roles', function ($q) {
+                    $q->where('name', 'student');
+                })
+                ->get();
         }
 
         if ($conversationId) {
@@ -104,7 +114,7 @@ class MessageController extends Controller
             }
         }
 
-        return view('pages.messages.create', compact('recipient', 'conversation', 'templates'));
+        return view('pages.messages.create', compact('recipient', 'recipients', 'conversation', 'templates'));
     }
 
     /**
@@ -117,6 +127,7 @@ class MessageController extends Controller
             'message' => 'nullable|string',
             'subject' => 'nullable|string|max:255',
             'receiver_id' => 'nullable|exists:users,id',
+            'selected_students' => 'nullable|string',
             'conversation_id' => 'nullable|exists:conversations,id',
             'template_id' => 'nullable|exists:message_templates,id',
             'attachments.*' => 'nullable|file|max:10240', // 10MB max
@@ -164,6 +175,22 @@ class MessageController extends Controller
                     // Reply in existing conversation
                     $message = $this->messageService->sendMessage(
                         $request->conversation_id,
+                        $messageContent,
+                        $options
+                    );
+                } elseif ($request->filled('selected_students')) {
+                    // Create group conversation with selected students
+                    $studentIds = explode(',', $request->selected_students);
+                    $participantIds = array_merge([$user->id], $studentIds);
+
+                    $conversation = $this->messageService->createConversation(
+                        $participantIds,
+                        $request->subject ?: __('Group Message'),
+                        $user->id
+                    );
+
+                    $message = $this->messageService->sendMessage(
+                        $conversation->id,
                         $messageContent,
                         $options
                     );

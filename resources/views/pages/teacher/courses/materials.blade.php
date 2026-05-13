@@ -294,4 +294,67 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Drag and drop functionality for file upload
+        const fileDropZone = document.getElementById('fileDropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileDropZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        // Highlight drop zone when item is dragged over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileDropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileDropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        // Handle dropped files
+        fileDropZone.addEventListener('drop', handleDrop, false);
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight(e) {
+            fileDropZone.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+        }
+
+        function unhighlight(e) {
+            fileDropZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length > 0) {
+                fileInput.files = files;
+                // Update the visual feedback
+                const fileName = files[0].name;
+                const uploadText = fileDropZone.querySelector('.upload-text');
+                if (uploadText) {
+                    uploadText.textContent = `Selected: ${fileName}`;
+                }
+            }
+        }
+
+        // File input change handler
+        fileInput.addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name;
+            if (fileName) {
+                const uploadText = fileDropZone.querySelector('.upload-text');
+                if (uploadText) {
+                    uploadText.textContent = `Selected: ${fileName}`;
+                }
+            }
+        });
+    </script>
 </x-layouts::app>

@@ -77,6 +77,93 @@
         </div>
     </div>
 
+    <!-- Grade Analytics -->
+    <div class="mb-6 grid gap-6 lg:grid-cols-2">
+        <!-- Grade Distribution -->
+        <div class="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+            <div class="border-b border-neutral-200 px-6 py-4 dark:border-neutral-700">
+                <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{{ __('Grade Distribution') }}</h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-3">
+                    @php
+                        $gradeRanges = [
+                            'A' => ['min' => 90, 'count' => 0, 'color' => 'bg-green-500'],
+                            'B' => ['min' => 80, 'count' => 0, 'color' => 'bg-blue-500'],
+                            'C' => ['min' => 70, 'count' => 0, 'color' => 'bg-yellow-500'],
+                            'D' => ['min' => 60, 'count' => 0, 'color' => 'bg-orange-500'],
+                            'F' => ['min' => 0, 'count' => 0, 'color' => 'bg-red-500'],
+                        ];
+
+                        foreach ($enrollments as $enrollment) {
+                            $avgGrade = $enrollment->grades->avg('percentage') ?? 0;
+                            foreach ($gradeRanges as $letter => $range) {
+                                if ($avgGrade >= $range['min']) {
+                                    $gradeRanges[$letter]['count']++;
+                                    break;
+                                }
+                            }
+                        }
+
+                        $maxCount = max(array_column($gradeRanges, 'count')) ?: 1;
+                    @endphp
+
+                    @foreach($gradeRanges as $letter => $data)
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 text-center font-semibold text-neutral-900 dark:text-neutral-100">{{ $letter }}</span>
+                            <div class="flex-1 bg-neutral-200 rounded-full h-2 dark:bg-neutral-700">
+                                <div class="h-2 rounded-full {{ $data['color'] }}" style="width: {{ ($data['count'] / $maxCount) * 100 }}%"></div>
+                            </div>
+                        </div>
+                        <span class="text-sm font-medium text-neutral-600 dark:text-neutral-400 w-8 text-center">{{ $data['count'] }}</span>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
+        <!-- Class Performance -->
+        <div class="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+            <div class="border-b border-neutral-200 px-6 py-4 dark:border-neutral-700">
+                <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{{ __('Class Performance') }}</h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    @php
+                        $classAverage = $enrollments->map(fn($e) => $e->grades->avg('percentage') ?? 0)->avg() ?? 0;
+                        $highestGrade = $enrollments->map(fn($e) => $e->grades->max('percentage') ?? 0)->max() ?? 0;
+                        $lowestGrade = $enrollments->map(fn($e) => $e->grades->min('percentage') ?? 0)->filter()->min() ?? 0;
+                        $gradedStudents = $enrollments->filter(fn($e) => $e->grades->count() > 0)->count();
+                    @endphp
+
+                    <div class="text-center">
+                        <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{{ number_format($classAverage, 1) }}%</p>
+                        <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Class Average') }}</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 pt-4">
+                        <div class="text-center">
+                            <p class="text-xl font-bold text-green-600 dark:text-green-400">{{ number_format($highestGrade, 1) }}%</p>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ __('Highest') }}</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-xl font-bold text-red-600 dark:text-red-400">{{ $lowestGrade > 0 ? number_format($lowestGrade, 1) . '%' : '--' }}</p>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ __('Lowest') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-neutral-200 dark:border-neutral-700">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-neutral-600 dark:text-neutral-400">{{ __('Graded Students') }}</span>
+                            <span class="font-medium text-neutral-900 dark:text-neutral-100">{{ $gradedStudents }}/{{ $enrollments->count() }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
         <!-- Grades Table -->
         <div class="rounded-xl border border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800 shadow-sm overflow-hidden">
             <div class="border-b border-neutral-200 px-6 py-4 dark:border-neutral-700">

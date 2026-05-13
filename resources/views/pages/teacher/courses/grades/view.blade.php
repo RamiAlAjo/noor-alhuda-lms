@@ -11,7 +11,7 @@
                         <nav class="flex text-sm text-gray-300">
                             <a href="{{ route('teacher.courses.index') }}" class="hover:text-white">{{ __('teacher.courses.index') }}</a>
                             <span class="mx-2">/</span>
-                            <a href="{{ route('teacher.courses.show', $section) }}" class="hover:text-white">{{ $section->course?->name . ' - ' . $section->name }}</a>
+                            <a href="{{ route('teacher.courses.show', $section) }}" class="hover:text-white">{{ $section->course?->name . ' - ' . $section->section_name }}</a>
                             <span class="mx-2">/</span>
                             <a href="{{ route('teacher.courses.grades', $section) }}" class="hover:text-white">{{ __('Grades') }}</a>
                             <span class="mx-2">/</span>

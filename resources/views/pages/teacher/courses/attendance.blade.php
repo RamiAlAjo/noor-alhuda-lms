@@ -3,7 +3,7 @@
     <div class="mb-8 flex items-center justify-between">
         <div>
             <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100">{{ __('Attendance') }}</h1>
-            <p class="mt-1 text-neutral-500 dark:text-neutral-400">{{ $section->course?->name ?? __('Course') }} - {{ __('Section') }} {{ $section->sectionNumber }}</p>
+            <p class="mt-1 text-neutral-500 dark:text-neutral-400">{{ $section->course?->name ?? __('Course') }} - {{ __('Section') }} {{ $section->section_name }}</p>
         </div>
         <div class="flex items-center gap-3">
             <flux:button :href="route('teacher.courses.attendance.bulk', $section)" variant="primary">
@@ -17,6 +17,12 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 {{ __('Calendar View') }}
+            </flux:button>
+            <flux:button variant="secondary" onclick="quickMarkToday()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                {{ __('Mark Today') }}
             </flux:button>
             <flux:button :href="route('teacher.courses.show', $section)" variant="ghost">
                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -117,7 +123,35 @@
                     :value="now()->format('Y-m-d')"
                     required
                 />
+                @error('date')
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
             </div>
+
+            @if ($errors->has('attendance') || $errors->has('attendance.*'))
+                <div class="mb-6 rounded-md bg-red-50 p-4 dark:bg-red-900/20">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800 dark:text-red-200">There were errors saving attendance:</h3>
+                            <div class="mt-2 text-sm text-red-700 dark:text-red-300">
+                                <ul role="list" class="list-disc list-inside space-y-1">
+                                    @foreach ($errors->get('attendance') as $error)
+                                        <li>{{ $error[0] }}</li>
+                                    @endforeach
+                                    @foreach ($errors->get('attendance.*') as $error)
+                                        <li>{{ $error[0] }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <div class="overflow-x-auto">
                 <table class="w-full">
@@ -183,6 +217,49 @@
                 </flux:button>
             </div>
             @endif
+
+            @if (session('error'))
+                <div class="mt-6 rounded-md bg-red-50 p-4 dark:bg-red-900/20">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800 dark:text-red-200">Error saving attendance</h3>
+                            <div class="mt-2 text-sm text-red-700 dark:text-red-300">
+                                <p>{{ session('error') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </form>
     </div>
+
+    <script>
+        function quickMarkToday() {
+            // Set today's date in the date input
+            const dateInput = document.querySelector('input[name="date"]');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+
+            // Auto-mark all students as present
+            const radioButtons = document.querySelectorAll('input[type="radio"][value="present"]');
+            radioButtons.forEach(radio => {
+                radio.checked = true;
+            });
+
+            // Scroll to form and highlight submit button
+            const form = document.querySelector('form');
+            form.scrollIntoView({ behavior: 'smooth' });
+
+            const submitButton = document.querySelector('button[type="submit"]');
+            submitButton.classList.add('animate-pulse', 'bg-green-600', 'hover:bg-green-700');
+            setTimeout(() => {
+                submitButton.classList.remove('animate-pulse', 'bg-green-600', 'hover:bg-green-700');
+            }, 2000);
+        }
+    </script>
 </x-layouts::app>

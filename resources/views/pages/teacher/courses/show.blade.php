@@ -41,9 +41,9 @@
         <div>
             <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100">{{ $section->course?->name ?? __('Unknown Course') }}</h1>
             <p class="mt-1 text-neutral-500 dark:text-neutral-400">
-                {{ __('Section') }} {{ $section->sectionNumber }}
+                {{ __('Section') }} {{ $section->section_name }}
                 @if($section->semester)
-                    - {{ $section->semester->localized_name }}
+                    - {{ $section->semester->name }}
                     @if($section->semester->academicYear)
                         {{ $section->semester->academicYear->name }}
                     @endif

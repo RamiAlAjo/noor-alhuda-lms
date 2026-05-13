@@ -10,6 +10,7 @@ use App\Models\CourseSection;
 use App\Models\Question;
 use App\Models\StudentAnswer;
 use App\Models\StudentGrade;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -148,17 +149,50 @@ class CourseController extends Controller
 
         $section->load(['course', 'enrollments.student']);
 
-        // Get attendance data for the current month
+        // Get attendance data for the current month - optimized to reduce memory usage
         $currentMonth = now()->startOfMonth();
         $endOfMonth = now()->endOfMonth();
 
-        $attendanceRecords = \App\Models\Attendance::where('course_offering_id', $section->id)
+        // Get daily attendance summaries instead of individual records
+        $attendanceSummaries = \App\Models\Attendance::selectRaw('date, status, COUNT(*) as count')
+            ->where('course_offering_id', $section->id)
             ->whereBetween('date', [$currentMonth, $endOfMonth])
-            ->with('student')
+            ->groupBy('date', 'status')
             ->get()
-            ->groupBy(['date', 'student_id']);
+            ->groupBy('date');
 
-        return view('pages.teacher.courses.attendance.calendar', compact('section', 'attendanceRecords', 'currentMonth', 'endOfMonth'));
+        // Get enrolled student count
+        $enrolledCount = $section->enrollments()->where('status', 'approved')->count();
+
+        // Pre-calculate calendar data to avoid complex date manipulation in view
+        $calendarData = [];
+        $firstDayOfMonth = $currentMonth->copy()->startOfMonth();
+        $lastDayOfMonth = $currentMonth->copy()->endOfMonth();
+        $startDate = $firstDayOfMonth->copy()->startOfWeek();
+        $endDate = $lastDayOfMonth->copy()->endOfWeek();
+
+        $currentDate = $startDate->copy();
+        $maxIterations = 50; // Safety limit
+        $iterations = 0;
+
+        while ($currentDate->lte($endDate) && $iterations < $maxIterations) {
+            $dateString = $currentDate->toDateString();
+            $isCurrentMonth = $currentDate->month === $currentMonth->month;
+            $isToday = $currentDate->isToday();
+
+            $calendarData[] = [
+                'date' => $currentDate->copy(),
+                'dateString' => $dateString,
+                'isCurrentMonth' => $isCurrentMonth,
+                'isToday' => $isToday,
+                'day' => $currentDate->day,
+            ];
+
+            $currentDate->addDay();
+            $iterations++;
+        }
+
+        return view('pages.teacher.courses.attendance.calendar', compact('section', 'attendanceSummaries', 'currentMonth', 'calendarData', 'enrolledCount'));
     }
 
     /**
@@ -174,25 +208,41 @@ class CourseController extends Controller
             'attendance.*' => 'required|in:present,absent,excused,late',
         ]);
 
-        foreach ($request->attendance as $enrollmentId => $status) {
-            // Get enrollment to find student_id
-            $enrollment = \App\Models\Enrollment::find($enrollmentId);
-            if (! $enrollment) {
-                continue;
-            }
+        try {
+            foreach ($request->attendance as $enrollmentId => $status) {
+                // Get enrollment to find student_id
+                $enrollment = \App\Models\Enrollment::find($enrollmentId);
+                if (! $enrollment) {
+                    \Log::warning("Enrollment not found: {$enrollmentId}");
 
-            Attendance::updateOrCreate(
-                [
-                    'enrollment_id' => $enrollmentId,
-                    'date' => $request->date,
-                ],
-                [
-                    'student_id' => $enrollment->student_id,
-                    'course_offering_id' => $section->id,
-                    'status' => $status,
-                    'notes' => $request->input('notes.'.$enrollmentId) ?? null,
-                ]
-            );
+                    continue;
+                }
+
+                // Verify enrollment belongs to this section
+                if ($enrollment->course_offering_id !== $section->id) {
+                    \Log::warning("Enrollment {$enrollmentId} does not belong to section {$section->id}");
+
+                    continue;
+                }
+
+                Attendance::updateOrCreate(
+                    [
+                        'enrollment_id' => $enrollmentId,
+                        'date' => $request->date,
+                    ],
+                    [
+                        'student_id' => $enrollment->student_id,
+                        'course_offering_id' => $section->id,
+                        'status' => $status,
+                        'notes' => $request->input('notes.'.$enrollmentId) ?? null,
+                        'marked_by' => auth()->id(),
+                    ]
+                );
+            }
+        } catch (\Exception $e) {
+            \Log::error('Attendance saving failed: '.$e->getMessage());
+
+            return back()->with('error', 'Failed to save attendance: '.$e->getMessage());
         }
 
         return back()->with('success', __('lms::messages.attendance_saved'));
@@ -215,10 +265,10 @@ class CourseController extends Controller
 
         // Apply status filter
         if ($status) {
-            $enrollments = $enrollments->where('status', $status);
+            $enrollments = $enrollments->where('enrollments.status', $status);
         } else {
             // Default to approved only
-            $enrollments = $enrollments->where('status', 'approved');
+            $enrollments = $enrollments->where('enrollments.status', 'approved');
         }
 
         // Apply search filter
@@ -649,5 +699,34 @@ class CourseController extends Controller
         $assessment->load(['questions.options']);
 
         return view('pages.teacher.courses.assessments.preview', compact('section', 'assessment'));
+    }
+
+    /**
+     * Show student profile for teacher.
+     */
+    public function showStudent(int $studentId): View
+    {
+        $student = User::findOrFail($studentId);
+
+        // Load student data
+        $student->load([
+            'profile',
+            'enrollments.offering.course',
+            'enrollments.offering.semester',
+            'grades.assessment.offering.course',
+        ]);
+
+        // Get courses taught by this teacher that the student is enrolled in
+        $teacherSections = auth()->user()->taughtCourses;
+        $sharedCourses = $student->enrollments->filter(function ($enrollment) use ($teacherSections) {
+            return $teacherSections->contains('id', $enrollment->course_offering_id);
+        });
+
+        // Only allow viewing if teacher teaches at least one course with this student
+        if ($sharedCourses->isEmpty()) {
+            abort(403, 'You can only view profiles of students in your courses.');
+        }
+
+        return view('pages.teacher.students.show', compact('student', 'sharedCourses'));
     }
 }
