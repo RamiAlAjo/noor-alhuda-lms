@@ -238,6 +238,61 @@ class ReportController extends Controller
             $classAverages[$assessment->id] = $classGrades->avg('grade');
         }
 
+        // Get attendance data
+        $totalClasses = \App\Models\Attendance::where('course_offering_id', $offeringId)->distinct('date')->count();
+        $studentAttendance = \App\Models\Attendance::where('course_offering_id', $offeringId)
+            ->where('student_id', $studentId)
+            ->where('status', 'present')
+            ->count();
+        $attendanceRate = $totalClasses > 0 ? ($studentAttendance / $totalClasses) * 100 : 0;
+
+        // Get assignment trends (last 10 assessments)
+        $recentAssessments = $assessments->take(-10);
+        $gradeTrend = [];
+        foreach ($recentAssessments as $assessment) {
+            $grade = $grades->get($assessment->id);
+            $gradeTrend[] = [
+                'assessment' => $assessment->title,
+                'date' => $assessment->created_at->format('M j'),
+                'grade' => $grade ? $grade->grade : null,
+            ];
+        }
+
+        // Calculate performance percentile
+        $studentGrade = $overallProgress;
+        $allStudentGrades = collect();
+        $enrolledStudents = Enrollment::where('course_offering_id', $offeringId)
+            ->where('status', 'approved')
+            ->pluck('student_id');
+
+        foreach ($enrolledStudents as $enrolledStudentId) {
+            $studentGrades = StudentGrade::where('student_id', $enrolledStudentId)
+                ->whereIn('assessment_id', $assessments->pluck('id'))
+                ->get();
+
+            if ($studentGrades->count() > 0) {
+                $totalStudentWeight = 0;
+                $earnedStudentWeight = 0;
+
+                foreach ($studentGrades as $grade) {
+                    $assessment = $assessments->find($grade->assessment_id);
+                    $weight = $assessment ? ($assessment->weight ?? 1) : 1;
+                    $totalStudentWeight += $weight;
+                    $earnedStudentWeight += ($grade->grade / 100) * $weight;
+                }
+
+                $studentProgress = $totalStudentWeight > 0 ? ($earnedStudentWeight / $totalStudentWeight) * 100 : 0;
+                $allStudentGrades->push($studentProgress);
+            }
+        }
+
+        $percentile = 0;
+        if ($allStudentGrades->count() > 0) {
+            $sortedGrades = $allStudentGrades->sort();
+            $rank = $sortedGrades->filter(fn($grade) => $grade <= $studentGrade)->count();
+            $percentile = ($rank / $sortedGrades->count()) * 100;
+        }
+
         return [
             'offering' => $offering,
             'student' => $student,
@@ -248,6 +303,10 @@ class ReportController extends Controller
             'overall_progress' => $overallProgress,
             'total_weight' => $totalWeight,
             'earned_weight' => $earnedWeight,
+            'attendance_rate' => $attendanceRate,
+            'total_classes' => $totalClasses,
+            'grade_trend' => $gradeTrend,
+            'percentile' => round($percentile, 1),
             'class_averages' => $classAverages,
         ];
     }

@@ -33,7 +33,7 @@
         </div>
 
         <!-- Quick Stats -->
-        <div class="mt-6 grid grid-cols-3 gap-4 md:grid-cols-5">
+        <div class="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
             <div class="rounded-xl bg-white/20 backdrop-blur-sm p-4">
                 <p class="text-sm text-emerald-100">{{ __('My Courses') }}</p>
                 <p class="text-2xl font-bold">{{ $courses->count() }}</p>
@@ -53,6 +53,10 @@
             <div class="rounded-xl bg-white/20 backdrop-blur-sm p-4">
                 <p class="text-sm text-emerald-100">{{ __('Materials') }}</p>
                 <p class="text-2xl font-bold">{{ $courses->sum(fn($c) => $c->materials->count()) }}</p>
+            </div>
+            <div class="rounded-xl bg-white/20 backdrop-blur-sm p-4">
+                <p class="text-sm text-emerald-100">{{ __('Assessments') }}</p>
+                <p class="text-2xl font-bold">{{ $courses->sum(fn($c) => $c->assessments->count()) }}</p>
             </div>
         </div>
     </div>
@@ -76,10 +80,37 @@
             <div class="relative">
                 <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400">
                     <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
                 <h3 class="font-semibold text-neutral-900 dark:text-neutral-100">{{ __('Attendance') }}</h3>
+                <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ __('Take attendance for your classes') }}</p>
+            </div>
+        </a>
+
+        <a href="{{ route('teacher.quizzes.all') }}" class="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white p-5 transition-all hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-800 hover:border-purple-300 dark:hover:border-purple-700">
+            <div class="absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 opacity-0 transition-opacity group-hover:opacity-100 dark:from-purple-900/20 dark:to-pink-900/20"></div>
+            <div class="relative">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-neutral-900 dark:text-neutral-100">{{ __('Quizzes & Tests') }}</h3>
+                <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ __('Create and manage assessments') }}</p>
+            </div>
+        </a>
+
+        <a href="{{ route('teacher.reports.index') }}" class="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white p-5 transition-all hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-800 hover:border-orange-300 dark:hover:border-orange-700">
+            <div class="absolute inset-0 bg-gradient-to-br from-orange-50 to-amber-50 opacity-0 transition-opacity group-hover:opacity-100 dark:from-orange-900/20 dark:to-amber-900/20"></div>
+            <div class="relative">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 text-orange-600 dark:bg-orange-900 dark:text-orange-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-neutral-900 dark:text-neutral-100">{{ __('Reports & Analytics') }}</h3>
+                <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ __('View student progress and analytics') }}</p>
             </div>
         </a>
 
@@ -175,6 +206,109 @@
                 <p class="mt-1 text-neutral-500 dark:text-neutral-400">{{ __('Contact your administrator to get courses assigned') }}</p>
             </div>
             @endforelse
+        </div>
+    </div>
+
+    <!-- Upcoming Deadlines & Recent Activity -->
+    <div class="mt-8 grid gap-6 lg:grid-cols-2">
+        <!-- Upcoming Assessments -->
+        <div class="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+            <div class="border-b border-neutral-200 px-6 py-4 dark:border-neutral-700">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{{ __('Upcoming Deadlines') }}</h2>
+                    <flux:button size="sm" variant="ghost" :href="route('teacher.quizzes.all')">
+                        {{ __('View All') }}
+                    </flux:button>
+                </div>
+            </div>
+
+            <div class="p-6">
+                @if($upcomingAssessments->count() > 0)
+                    <div class="space-y-4">
+                        @foreach($upcomingAssessments as $assessment)
+                        <div class="flex items-start gap-4 p-4 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                            <div class="flex-shrink-0">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-neutral-900 dark:text-neutral-100">{{ $assessment->title }}</h3>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                                    {{ $assessment->offering->course->name }} - {{ $assessment->offering->name }}
+                                </p>
+                                <p class="text-sm text-neutral-500 dark:text-neutral-500 mt-1">
+                                    Due: {{ $assessment->due_date->format('M j, Y') }} at {{ $assessment->due_date->format('g:i A') }}
+                                </p>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-8">
+                        <div class="flex justify-center mb-4">
+                            <div class="rounded-full bg-neutral-100 p-3 dark:bg-neutral-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-6 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100">{{ __('No upcoming deadlines') }}</h3>
+                        <p class="text-neutral-500 dark:text-neutral-400">{{ __('All caught up!') }}</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Recent Announcements -->
+        <div class="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+            <div class="border-b border-neutral-200 px-6 py-4 dark:border-neutral-700">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100">{{ __('Recent Announcements') }}</h2>
+                    <flux:button size="sm" variant="ghost" :href="route('teacher.courses.index')">
+                        {{ __('Create') }}
+                    </flux:button>
+                </div>
+            </div>
+
+            <div class="p-6">
+                @if($recentAnnouncements->count() > 0)
+                    <div class="space-y-4">
+                        @foreach($recentAnnouncements as $announcement)
+                        <div class="flex items-start gap-4 p-4 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                            <div class="flex-shrink-0">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-neutral-900 dark:text-neutral-100">{{ $announcement->title }}</h3>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2">{{ Str::limit($announcement->content, 100) }}</p>
+                                <p class="text-sm text-neutral-500 dark:text-neutral-500 mt-1">
+                                    {{ $announcement->created_at->diffForHumans() }}
+                                </p>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-8">
+                        <div class="flex justify-center mb-4">
+                            <div class="rounded-full bg-neutral-100 p-3 dark:bg-neutral-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-6 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-medium text-neutral-900 dark:text-neutral-100">{{ __('No recent announcements') }}</h3>
+                        <p class="text-neutral-500 dark:text-neutral-400">{{ __('Create an announcement to keep students informed') }}</p>
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
 </x-layouts::app>

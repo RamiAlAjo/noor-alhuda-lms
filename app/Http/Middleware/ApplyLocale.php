@@ -34,6 +34,13 @@ class ApplyLocale
         elseif ($request->cookie('locale')) {
             $locale = $request->cookie('locale');
         }
+        // 4. Check browser language for new users (fallback to Arabic for Arabic speakers)
+        elseif ($request->header('Accept-Language')) {
+            $acceptLang = $request->header('Accept-Language');
+            if (str_contains($acceptLang, 'ar')) {
+                $locale = 'ar';
+            }
+        }
 
         // Apply locale if valid
         $allowedLocales = ['en', 'ar', 'fr', 'tr', 'zh', 'fa', 'id', 'ku', 'hy'];

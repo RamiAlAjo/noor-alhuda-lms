@@ -187,6 +187,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Get user's conversations.
+     */
+    public function conversations(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\Conversation::class, 'conversation_participants')
+                    ->withPivot('joined_at', 'last_read_at', 'is_admin', 'is_muted')
+                    ->withTimestamps();
+    }
+
+    /**
      * Get notifications for this user.
      */
     public function notifications(): HasMany
@@ -399,6 +409,29 @@ class User extends Authenticatable
     public function scopeAdmins($query)
     {
         return $query->role('admin');
+    }
+
+    /**
+     * Check if user is online (based on recent activity).
+     */
+    public function isOnline(): bool
+    {
+        // Check if user has been active in the last 5 minutes
+        $lastActivity = \Cache::get("user:{$this->id}:last_activity");
+
+        if (!$lastActivity) {
+            return false;
+        }
+
+        return \Carbon\Carbon::parse($lastActivity)->diffInMinutes(now()) < 5;
+    }
+
+    /**
+     * Update user's last activity timestamp.
+     */
+    public function updateLastActivity(): void
+    {
+        \Cache::put("user:{$this->id}:last_activity", now(), 300); // 5 minutes
     }
 
     /**

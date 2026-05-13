@@ -650,13 +650,39 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
 
         // Messages
+        // Enhanced Messaging System
         Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+
+        // Conversations
+        Route::get('/messages/conversation/{conversation}', [MessageController::class, 'showConversation'])->name('messages.conversation');
+        Route::post('/messages/conversation', [MessageController::class, 'createConversation'])->name('messages.conversation.create');
+        Route::patch('/messages/conversation/{conversation}/read', [MessageController::class, 'markConversationAsRead'])->name('messages.conversation.read');
+        Route::patch('/messages/conversation/{conversation}/archive', [MessageController::class, 'archiveConversation'])->name('messages.conversation.archive');
+        Route::patch('/messages/conversation/{conversation}/unarchive', [MessageController::class, 'unarchiveConversation'])->name('messages.conversation.unarchive');
+        Route::post('/messages/conversation/{conversation}/send', [MessageController::class, 'sendMessage'])->name('messages.send');
+        Route::get('/messages/conversation/{conversation}/search', [MessageController::class, 'searchConversation'])->name('messages.conversation.search');
+
+        // Messages
         Route::get('/messages/create', [MessageController::class, 'create'])->name('messages.create');
         Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
         Route::get('/messages/{message}', [MessageController::class, 'show'])->name('messages.show');
         Route::patch('/messages/{message}/read', [MessageController::class, 'markAsRead'])->name('messages.markAsRead');
+        Route::patch('/messages/{message}/star', [MessageController::class, 'toggleStar'])->name('messages.toggleStar');
+        Route::post('/messages/{message}/reaction', [MessageController::class, 'addReaction'])->name('messages.addReaction');
+        Route::delete('/messages/{message}/reaction', [MessageController::class, 'removeReaction'])->name('messages.removeReaction');
+        Route::patch('/messages/{message}/pin', [MessageController::class, 'pinMessage'])->name('messages.pin');
+        Route::patch('/messages/{message}/unpin', [MessageController::class, 'unpinMessage'])->name('messages.unpin');
+        Route::post('/messages/conversation/{conversation}/typing/start', [MessageController::class, 'startTyping'])->name('messages.typing.start');
+        Route::post('/messages/conversation/{conversation}/typing/stop', [MessageController::class, 'stopTyping'])->name('messages.typing.stop');
         Route::patch('/messages/read-all', [MessageController::class, 'markAllAsRead'])->name('messages.markAllAsRead');
         Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+
+        // Search and Templates
+        Route::get('/messages/search', [MessageController::class, 'search'])->name('messages.search');
+        Route::get('/messages/templates', [MessageController::class, 'getTemplates'])->name('messages.templates');
+
+        // API endpoints for real-time messaging
+        Route::post('/api/messages/send', [MessageController::class, 'apiSendMessage'])->name('api.messages.send');
 
         // Notifications API
         Route::prefix('api/notifications')->middleware('throttle:60,1')->group(function () {

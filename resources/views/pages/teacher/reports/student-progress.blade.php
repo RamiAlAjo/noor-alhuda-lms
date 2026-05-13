@@ -90,22 +90,36 @@
         </div>
 
         <!-- Overall Progress -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                <p class="text-sm text-blue-600 dark:text-blue-400">{{ __('lms.overall_progress') }}</p>
-                <p class="text-2xl font-bold text-blue-900 dark:text-blue-100">{{ number_format($report['overall_progress'], 2) }}%</p>
+                <p class="text-sm text-blue-600 dark:text-blue-400">{{ __('Overall Progress') }}</p>
+                <p class="text-2xl font-bold text-blue-900 dark:text-blue-100">{{ number_format($report['overall_progress'], 1) }}%</p>
             </div>
             <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-                <p class="text-sm text-green-600 dark:text-green-400">{{ __('lms.earned_weight') }}</p>
-                <p class="text-2xl font-bold text-green-900 dark:text-green-100">{{ number_format($report['earned_weight'], 2) }} / {{ number_format($report['total_weight'], 2) }}</p>
+                <p class="text-sm text-green-600 dark:text-green-400">{{ __('Grade Weight') }}</p>
+                <p class="text-2xl font-bold text-green-900 dark:text-green-100">{{ number_format($report['earned_weight'], 1) }} / {{ number_format($report['total_weight'], 1) }}</p>
             </div>
             <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-                <p class="text-sm text-purple-600 dark:text-purple-400">{{ __('lms.assessments_completed') }}</p>
-                <p class="text-2xl font-bold text-purple-900 dark:text-purple-100">
-                    {{ $report['grades']->count() }} / {{ $report['assessments']->count() }}
-                </p>
+                <p class="text-sm text-purple-600 dark:text-purple-400">{{ __('Attendance Rate') }}</p>
+                <p class="text-2xl font-bold text-purple-900 dark:text-purple-100">{{ number_format($report['attendance_rate'], 1) }}%</p>
+                <p class="text-xs text-purple-600 dark:text-purple-400">{{ $report['total_classes'] }} classes</p>
+            </div>
+            <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg">
+                <p class="text-sm text-orange-600 dark:text-orange-400">{{ __('Class Percentile') }}</p>
+                <p class="text-2xl font-bold text-orange-900 dark:text-orange-100">{{ $report['percentile'] }}%</p>
+                <p class="text-xs text-orange-600 dark:text-orange-400">{{ $report['percentile'] >= 75 ? 'Above Average' : ($report['percentile'] >= 50 ? 'Average' : 'Below Average') }}</p>
             </div>
         </div>
+
+        <!-- Grade Trend Chart -->
+        @if(count($report['grade_trend']) > 1)
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ __('Grade Trend (Last 10 Assessments)') }}</h3>
+            <div class="h-64">
+                <canvas id="gradeTrendChart"></canvas>
+            </div>
+        </div>
+        @endif
 
         <!-- Assessment Progress Table -->
         <div>
@@ -150,5 +164,58 @@
             </div>
         </div>
     </div>
+    @endif
+
+    @if($report && count($report['grade_trend']) > 1)
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('gradeTrendChart').getContext('2d');
+            const gradeTrendData = @json($report['grade_trend']);
+
+            const labels = gradeTrendData.map(item => item.assessment.length > 20 ? item.assessment.substring(0, 20) + '...' : item.assessment);
+            const grades = gradeTrendData.map(item => item.grade);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '{{ __("Student Grade") }}',
+                        data: grades,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: '{{ __("Grade (%)") }}'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: '{{ __("Assessment") }}'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        });
+    </script>
     @endif
 </x-layouts::app>
