@@ -289,7 +289,7 @@ class ReportController extends Controller
         $percentile = 0;
         if ($allStudentGrades->count() > 0) {
             $sortedGrades = $allStudentGrades->sort();
-            $rank = $sortedGrades->filter(fn($grade) => $grade <= $studentGrade)->count();
+            $rank = $sortedGrades->filter(fn ($grade) => $grade <= $studentGrade)->count();
             $percentile = ($rank / $sortedGrades->count()) * 100;
         }
 

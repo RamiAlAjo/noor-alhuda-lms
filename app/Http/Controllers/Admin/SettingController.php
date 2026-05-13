@@ -58,11 +58,11 @@ class SettingController extends Controller
         }
 
         $message = $updated > 0
-            ? __('Settings updated successfully') . " ({$updated} settings)"
+            ? __('Settings updated successfully')." ({$updated} settings)"
             : __('No settings were updated');
 
-        if (!empty($errors)) {
-            $message .= '. Errors: ' . implode(', ', $errors);
+        if (! empty($errors)) {
+            $message .= '. Errors: '.implode(', ', $errors);
         }
 
         return back()->with('success', $message);
@@ -241,7 +241,7 @@ class SettingController extends Controller
 
             return back()->with('success', $enabled ? 'Maintenance mode enabled' : 'Maintenance mode disabled');
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to toggle maintenance mode: ' . $e->getMessage());
+            return back()->with('error', 'Failed to toggle maintenance mode: '.$e->getMessage());
         }
     }
 
@@ -251,11 +251,11 @@ class SettingController extends Controller
     public function createBackup()
     {
         try {
-            $filename = 'backup-' . date('Y-m-d-H-i-s') . '.sql';
-            $path = storage_path('app/backups/' . $filename);
+            $filename = 'backup-'.date('Y-m-d-H-i-s').'.sql';
+            $path = storage_path('app/backups/'.$filename);
 
             // Ensure backup directory exists
-            if (!File::exists(storage_path('app/backups'))) {
+            if (! File::exists(storage_path('app/backups'))) {
                 File::makeDirectory(storage_path('app/backups'), 0755, true);
             }
 
@@ -272,12 +272,12 @@ class SettingController extends Controller
             exec($command, $output, $returnCode);
 
             if ($returnCode === 0) {
-                return back()->with('success', 'Database backup created successfully: ' . $filename);
+                return back()->with('success', 'Database backup created successfully: '.$filename);
             } else {
-                return back()->with('error', 'Backup failed with return code: ' . $returnCode);
+                return back()->with('error', 'Backup failed with return code: '.$returnCode);
             }
         } catch (\Exception $e) {
-            return back()->with('error', 'Backup failed: ' . $e->getMessage());
+            return back()->with('error', 'Backup failed: '.$e->getMessage());
         }
     }
 
@@ -293,12 +293,12 @@ class SettingController extends Controller
         try {
             \Mail::raw('This is a test email from Noor Alhuda LMS settings.', function ($message) use ($request) {
                 $message->to($request->test_email)
-                        ->subject('Test Email from LMS Settings');
+                    ->subject('Test Email from LMS Settings');
             });
 
-            return back()->with('success', 'Test email sent successfully to ' . $request->test_email);
+            return back()->with('success', 'Test email sent successfully to '.$request->test_email);
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to send test email: ' . $e->getMessage());
+            return back()->with('error', 'Failed to send test email: '.$e->getMessage());
         }
     }
 
@@ -316,7 +316,7 @@ class SettingController extends Controller
 
             return back()->with('success', 'All caches cleared successfully');
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to clear caches: ' . $e->getMessage());
+            return back()->with('error', 'Failed to clear caches: '.$e->getMessage());
         }
     }
 }

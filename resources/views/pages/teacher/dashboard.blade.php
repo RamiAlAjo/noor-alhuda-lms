@@ -88,6 +88,19 @@
             </div>
         </a>
 
+        <a href="{{ route('teacher.calendar') }}" class="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white p-5 transition-all hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-800 hover:border-orange-300 dark:hover:border-orange-700">
+            <div class="absolute inset-0 bg-gradient-to-br from-orange-50 to-red-50 opacity-0 transition-opacity group-hover:opacity-100 dark:from-orange-900/20 dark:to-red-900/20"></div>
+            <div class="relative">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 text-orange-600 dark:bg-orange-900 dark:text-orange-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-neutral-900 dark:text-neutral-100">{{ __('Calendar') }}</h3>
+                <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ __('View schedules and deadlines') }}</p>
+            </div>
+        </a>
+
         <a href="{{ route('teacher.quizzes.all') }}" class="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white p-5 transition-all hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-800 hover:border-purple-300 dark:hover:border-purple-700">
             <div class="absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 opacity-0 transition-opacity group-hover:opacity-100 dark:from-purple-900/20 dark:to-pink-900/20"></div>
             <div class="relative">
@@ -98,6 +111,19 @@
                 </div>
                 <h3 class="font-semibold text-neutral-900 dark:text-neutral-100">{{ __('Quizzes & Tests') }}</h3>
                 <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ __('Create and manage assessments') }}</p>
+            </div>
+        </a>
+
+        <a href="{{ route('teacher.messages') }}" class="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white p-5 transition-all hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-800 hover:border-cyan-300 dark:hover:border-cyan-700">
+            <div class="absolute inset-0 bg-gradient-to-br from-cyan-50 to-blue-50 opacity-0 transition-opacity group-hover:opacity-100 dark:from-cyan-900/20 dark:to-blue-900/20"></div>
+            <div class="relative">
+                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-100 text-cyan-600 dark:bg-cyan-900 dark:text-cyan-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-neutral-900 dark:text-neutral-100">{{ __('Messages') }}</h3>
+                <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ __('Communicate with students') }}</p>
             </div>
         </a>
 
@@ -167,7 +193,7 @@
                             </p>
                         </div>
                         <span class="rounded-full bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300">
-                            {{ $section->semester?->name ?? '' }}
+                            {{ $section->semester?->localized_name ?? '' }}
                         </span>
                     </div>
 
@@ -240,7 +266,10 @@
                                     {{ $assessment->offering->course->name }} - {{ $assessment->offering->name }}
                                 </p>
                                 <p class="text-sm text-neutral-500 dark:text-neutral-500 mt-1">
-                                    Due: {{ $assessment->due_date->format('M j, Y') }} at {{ $assessment->due_date->format('g:i A') }}
+                                    {{ __('Due: :date at :time', [
+                                        'date' => $assessment->due_date->locale(app()->getLocale())->isoFormat('MMM D, YYYY'),
+                                        'time' => $assessment->due_date->format('g:i A')
+                                    ]) }}
                                 </p>
                             </div>
                         </div>

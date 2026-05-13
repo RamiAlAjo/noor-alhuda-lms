@@ -55,4 +55,4 @@ class StudentFeeFactory extends Factory
             ];
         });
     }
-};
+}

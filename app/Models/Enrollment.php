@@ -253,11 +253,12 @@ class Enrollment extends Model
      */
     public function getDurationInDays(): ?int
     {
-        if (!$this->enrolled_at) {
+        if (! $this->enrolled_at) {
             return null;
         }
 
         $endDate = $this->completed_at ?? $this->dropped_at ?? now();
+
         return $this->enrolled_at->diffInDays($endDate);
     }
 
@@ -266,7 +267,7 @@ class Enrollment extends Model
      */
     public function hasPassed(): bool
     {
-        if (!$this->final_grade) {
+        if (! $this->final_grade) {
             return false;
         }
 

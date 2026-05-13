@@ -3,7 +3,6 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Fee;
-use App\Models\Payment;
 use App\Models\StudentFee;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

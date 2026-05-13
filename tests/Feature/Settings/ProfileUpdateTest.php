@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\User;
-use Livewire\Livewire;
 
 test('profile page is displayed', function () {
     $this->actingAs($user = User::factory()->create());
@@ -28,5 +27,3 @@ test('profile information can be updated', function () {
     expect($user->email)->toEqual('test@example.com');
     expect($user->email_verified_at)->toBeNull();
 });
-
-

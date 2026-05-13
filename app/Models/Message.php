@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
 
 class Message extends Model
@@ -59,17 +59,24 @@ class Message extends Model
      * Message types
      */
     const TYPE_TEXT = 'text';
+
     const TYPE_SYSTEM = 'system';
+
     const TYPE_TEMPLATE = 'template';
+
     const TYPE_SCHEDULED = 'scheduled';
+
     const TYPE_BULK = 'bulk';
 
     /**
      * Priority levels
      */
     const PRIORITY_LOW = 'low';
+
     const PRIORITY_NORMAL = 'normal';
+
     const PRIORITY_HIGH = 'high';
+
     const PRIORITY_URGENT = 'urgent';
 
     /**
@@ -131,8 +138,8 @@ class Message extends Model
             foreach ($this->mentions as $userId) {
                 $user = \App\Models\User::find($userId);
                 if ($user) {
-                    $mention = '@' . $user->name;
-                    $highlighted = '<span class="bg-blue-100 text-blue-800 px-1 py-0.5 rounded text-xs font-medium dark:bg-blue-900 dark:text-blue-200">@' . $user->name . '</span>';
+                    $mention = '@'.$user->name;
+                    $highlighted = '<span class="bg-blue-100 text-blue-800 px-1 py-0.5 rounded text-xs font-medium dark:bg-blue-900 dark:text-blue-200">@'.$user->name.'</span>';
                     $content = str_replace($mention, $highlighted, $content);
                 }
             }
@@ -155,8 +162,8 @@ class Message extends Model
     public function recipients(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'message_recipients', 'message_id', 'user_id')
-                    ->withPivot('is_read', 'read_at', 'delivered_at')
-                    ->withTimestamps();
+            ->withPivot('is_read', 'read_at', 'delivered_at')
+            ->withTimestamps();
     }
 
     /**
@@ -189,9 +196,9 @@ class Message extends Model
     public function scopeInbox($query, $userId)
     {
         return $query->where('receiver_id', $userId)
-                    ->where('is_deleted', false)
-                    ->where('is_archived', false)
-                    ->orderBy('created_at', 'desc');
+            ->where('is_deleted', false)
+            ->where('is_archived', false)
+            ->orderBy('created_at', 'desc');
     }
 
     /**
@@ -200,8 +207,8 @@ class Message extends Model
     public function scopeSent($query, $userId)
     {
         return $query->where('sender_id', $userId)
-                    ->where('is_deleted', false)
-                    ->orderBy('created_at', 'desc');
+            ->where('is_deleted', false)
+            ->orderBy('created_at', 'desc');
     }
 
     /**
@@ -226,7 +233,7 @@ class Message extends Model
     public function scopeScheduled($query)
     {
         return $query->whereNotNull('scheduled_at')
-                    ->where('sent_at', null);
+            ->where('sent_at', null);
     }
 
     /**
@@ -235,7 +242,7 @@ class Message extends Model
     public function scopeExpired($query)
     {
         return $query->whereNotNull('expires_at')
-                    ->where('expires_at', '<', now());
+            ->where('expires_at', '<', now());
     }
 
     /**
@@ -243,7 +250,7 @@ class Message extends Model
      */
     public function markAsRead(): void
     {
-        if (!$this->is_read) {
+        if (! $this->is_read) {
             $this->update([
                 'is_read' => true,
                 'read_at' => now(),
@@ -275,7 +282,7 @@ class Message extends Model
      */
     public function toggleStar(): void
     {
-        $this->update(['is_starred' => !$this->is_starred]);
+        $this->update(['is_starred' => ! $this->is_starred]);
     }
 
     /**
@@ -283,7 +290,7 @@ class Message extends Model
      */
     public function toggleArchive(): void
     {
-        $this->update(['is_archived' => !$this->is_archived]);
+        $this->update(['is_archived' => ! $this->is_archived]);
     }
 
     /**
@@ -305,11 +312,11 @@ class Message extends Model
         $reactions = $this->reactions ?? [];
         $userId = $user->id;
 
-        if (!isset($reactions[$emoji])) {
+        if (! isset($reactions[$emoji])) {
             $reactions[$emoji] = [];
         }
 
-        if (!in_array($userId, $reactions[$emoji])) {
+        if (! in_array($userId, $reactions[$emoji])) {
             $reactions[$emoji][] = $userId;
             $this->update(['reactions' => $reactions]);
         }
@@ -324,7 +331,7 @@ class Message extends Model
         $userId = $user->id;
 
         if (isset($reactions[$emoji])) {
-            $reactions[$emoji] = array_filter($reactions[$emoji], fn($id) => $id != $userId);
+            $reactions[$emoji] = array_filter($reactions[$emoji], fn ($id) => $id != $userId);
 
             if (empty($reactions[$emoji])) {
                 unset($reactions[$emoji]);
@@ -395,7 +402,7 @@ class Message extends Model
      */
     public function hasAttachments(): bool
     {
-        return !empty($this->attachments) || $this->messageAttachments()->exists();
+        return ! empty($this->attachments) || $this->messageAttachments()->exists();
     }
 
     /**
@@ -405,6 +412,7 @@ class Message extends Model
     {
         $count = count($this->attachments ?? []);
         $count += $this->messageAttachments()->count();
+
         return $count;
     }
 
@@ -465,6 +473,7 @@ class Message extends Model
             return true;
         } catch (\Exception $e) {
             \Log::error("Failed to send message {$this->id}: {$e->getMessage()}");
+
             return false;
         }
     }
@@ -484,7 +493,7 @@ class Message extends Model
                     'receiver' => $receiver,
                 ], function ($message) use ($receiver) {
                     $message->to($receiver->email)
-                            ->subject("New message from {$this->sender->name}: {$this->subject}");
+                        ->subject("New message from {$this->sender->name}: {$this->subject}");
                 });
             }
         } catch (\Exception $e) {

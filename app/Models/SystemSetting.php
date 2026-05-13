@@ -39,6 +39,7 @@ class SystemSetting extends Model
             3600, // 1 hour
             function () use ($key, $default) {
                 $setting = static::where('key', $key)->first();
+
                 return $setting ? static::castValue($setting) : $default;
             }
         );
@@ -68,6 +69,7 @@ class SystemSetting extends Model
             return true;
         } catch (\Exception $e) {
             Log::error("Failed to update system setting {$key}: {$e->getMessage()}");
+
             return false;
         }
     }

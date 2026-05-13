@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\Assessment;
-use App\Models\CourseOffering;
 use App\Models\Enrollment;
 use App\Models\User;
 use App\Services\NotificationService;
@@ -105,10 +104,10 @@ class SendAutomatedNotifications extends Command
         $this->info('Checking for assignments due soon...');
 
         $assessments = Assessment::where('due_date', '>', now())
-                                ->where('due_date', '<=', now()->addDays(3))
-                                ->where('is_published', true)
-                                ->with(['courseOffering.course', 'courseOffering.enrollments.student'])
-                                ->get();
+            ->where('due_date', '<=', now()->addDays(3))
+            ->where('is_published', true)
+            ->with(['courseOffering.course', 'courseOffering.enrollments.student'])
+            ->get();
 
         $count = 0;
 
@@ -119,7 +118,7 @@ class SendAutomatedNotifications extends Command
                 if ($enrollment->status === 'approved') {
                     $count++;
 
-                    if (!$dryRun) {
+                    if (! $dryRun) {
                         $this->notificationService->sendToUser(
                             $enrollment->student,
                             'reminder',
@@ -139,6 +138,7 @@ class SendAutomatedNotifications extends Command
         }
 
         $this->line("Found {$count} assessments due soon notifications to send");
+
         return $count;
     }
 
@@ -150,9 +150,9 @@ class SendAutomatedNotifications extends Command
         $this->info('Checking for overdue assessments...');
 
         $assessments = Assessment::where('due_date', '<', now())
-                                ->where('is_published', true)
-                                ->with(['courseOffering.course', 'courseOffering.enrollments.student'])
-                                ->get();
+            ->where('is_published', true)
+            ->with(['courseOffering.course', 'courseOffering.enrollments.student'])
+            ->get();
 
         $count = 0;
 
@@ -161,14 +161,14 @@ class SendAutomatedNotifications extends Command
                 if ($enrollment->status === 'approved') {
                     // Check if student has submitted this assessment
                     $hasSubmitted = \DB::table('student_answers')
-                                      ->where('assessment_id', $assessment->id)
-                                      ->where('student_id', $enrollment->student_id)
-                                      ->exists();
+                        ->where('assessment_id', $assessment->id)
+                        ->where('student_id', $enrollment->student_id)
+                        ->exists();
 
-                    if (!$hasSubmitted) {
+                    if (! $hasSubmitted) {
                         $count++;
 
-                        if (!$dryRun) {
+                        if (! $dryRun) {
                             $this->notificationService->sendToUser(
                                 $enrollment->student,
                                 'reminder',
@@ -188,6 +188,7 @@ class SendAutomatedNotifications extends Command
         }
 
         $this->line("Found {$count} overdue assessment notifications to send");
+
         return $count;
     }
 
@@ -200,13 +201,13 @@ class SendAutomatedNotifications extends Command
 
         // Find enrollments where the semester end date has passed and student hasn't been notified recently
         $completedEnrollments = Enrollment::whereHas('courseOffering.semester', function ($query) {
-                                        $query->where('end_date', '<', now())
-                                              ->where('is_active', true);
-                                    })
-                                    ->where('status', 'approved')
-                                    ->where('completed_at', '>', now()->subDays(30)) // Completed within last 30 days
-                                    ->with(['courseOffering.course', 'courseOffering.semester', 'student'])
-                                    ->get();
+            $query->where('end_date', '<', now())
+                ->where('is_active', true);
+        })
+            ->where('status', 'approved')
+            ->where('completed_at', '>', now()->subDays(30)) // Completed within last 30 days
+            ->with(['courseOffering.course', 'courseOffering.semester', 'student'])
+            ->get();
 
         // Filter out students who have already been notified about this course completion
         $completedEnrollments = $completedEnrollments->filter(function ($enrollment) {
@@ -214,10 +215,10 @@ class SendAutomatedNotifications extends Command
                 ->where('user_id', $enrollment->student_id)
                 ->where('type', 'course_completion')
                 ->where('created_at', '>', now()->subDays(30))
-                ->where('content', 'like', '%' . $enrollment->courseOffering->course->name . '%')
+                ->where('content', 'like', '%'.$enrollment->courseOffering->course->name.'%')
                 ->exists();
 
-            return !$recentNotification;
+            return ! $recentNotification;
         });
 
         $count = 0;
@@ -225,7 +226,7 @@ class SendAutomatedNotifications extends Command
         foreach ($completedEnrollments as $enrollment) {
             $count++;
 
-            if (!$dryRun) {
+            if (! $dryRun) {
                 $this->notificationService->sendToUser(
                     $enrollment->student,
                     'success',
@@ -241,6 +242,7 @@ class SendAutomatedNotifications extends Command
         }
 
         $this->line("Found {$count} course completion notifications to send");
+
         return $count;
     }
 
@@ -251,10 +253,10 @@ class SendAutomatedNotifications extends Command
     {
         $this->info('Checking for enrollment deadlines...');
 
-            $semesters = \App\Models\Semester::where('enrollment_end_date', '>', now())
-                                       ->where('enrollment_end_date', '<=', now()->addDays(7))
-                                       ->where('is_active', true)
-                                       ->get();
+        $semesters = \App\Models\Semester::where('enrollment_end_date', '>', now())
+            ->where('enrollment_end_date', '<=', now()->addDays(7))
+            ->where('is_active', true)
+            ->get();
 
         $count = 0;
 
@@ -263,21 +265,21 @@ class SendAutomatedNotifications extends Command
 
             // Get students who haven't enrolled in this semester yet
             $enrolledStudentIds = Enrollment::where('semester_id', $semester->id)
-                                          ->pluck('student_id')
-                                          ->toArray();
+                ->pluck('student_id')
+                ->toArray();
 
             $studentsToNotify = User::role('student')
-                                  ->whereNotIn('id', $enrolledStudentIds)
-                                  ->get();
+                ->whereNotIn('id', $enrolledStudentIds)
+                ->get();
 
             foreach ($studentsToNotify as $student) {
                 $count++;
 
-                if (!$dryRun) {
+                if (! $dryRun) {
                     $this->notificationService->sendToUser(
                         $student,
                         'reminder',
-                        "Enrollment Deadline Approaching",
+                        'Enrollment Deadline Approaching',
                         "The enrollment deadline for {$semester->name} is in {$daysLeft} day(s). Please complete your course enrollment before the deadline.",
                         route('student.enrollment.index'),
                         [
@@ -291,6 +293,7 @@ class SendAutomatedNotifications extends Command
         }
 
         $this->line("Found {$count} enrollment deadline notifications to send");
+
         return $count;
     }
 
@@ -312,6 +315,7 @@ class SendAutomatedNotifications extends Command
             ->delete();
 
         $this->line("Cleaned up {$deleted} old notifications");
+
         return $deleted;
     }
 }

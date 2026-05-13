@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -98,7 +97,7 @@ class UserSettingsController extends Controller
             $baseTheme = $request->input('base_theme');
             $allowedBaseThemes = [
                 'default-light', 'default-dark', 'cyberpunk-neon', 'cyberpunk-dark',
-                'synthwave', 'midnight', 'dracula', 'nord'
+                'synthwave', 'midnight', 'dracula', 'nord',
             ];
 
             if (in_array($baseTheme, $allowedBaseThemes)) {

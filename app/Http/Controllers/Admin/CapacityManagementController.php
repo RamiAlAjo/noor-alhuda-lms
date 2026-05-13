@@ -671,7 +671,7 @@ class CapacityManagementController extends Controller
             $recommendations[] = 'Data quality needs improvement. Ensure all enrollment records include capacity information.';
         }
 
-        if (!$systemStatus['ml_service_available']) {
+        if (! $systemStatus['ml_service_available']) {
             $recommendations[] = 'ML service is unavailable. Currently using rule-based predictions with reduced accuracy.';
         }
 

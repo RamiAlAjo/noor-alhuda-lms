@@ -45,8 +45,8 @@
         </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="mb-6 grid gap-4 md:grid-cols-3">
+    <!-- Enhanced Stats Cards -->
+    <div class="mb-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
             <div class="flex items-center gap-3">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900 dark:text-emerald-400">
@@ -57,6 +57,9 @@
                 <div>
                     <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Total Sections') }}</p>
                     <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">{{ $sections->count() }}</p>
+                    @if($sections->count() > 0)
+                        <p class="text-xs text-emerald-600 dark:text-emerald-400">{{ __('Active') }}: {{ $sections->where('is_active', true)->count() }}</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -70,6 +73,9 @@
                 <div>
                     <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Total Students') }}</p>
                     <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">{{ $sections->sum(fn($s) => $s->enrollments->count()) }}</p>
+                    @if($sections->sum(fn($s) => $s->enrollments->count()) > 0)
+                        <p class="text-xs text-blue-600 dark:text-blue-400">{{ __('Enrolled') }}: {{ $sections->sum(fn($s) => $s->enrollments->where('status', 'approved')->count()) }}</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -83,7 +89,139 @@
                 <div>
                     <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Active Assessments') }}</p>
                     <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">{{ $sections->sum(fn($s) => $s->assessments->count()) }}</p>
+                    @php
+                        $upcomingAssessments = $sections->flatMap->assessments->where('due_date', '>=', now())->count();
+                    @endphp
+                    @if($upcomingAssessments > 0)
+                        <p class="text-xs text-purple-600 dark:text-purple-400">{{ __('Due soon') }}: {{ $upcomingAssessments }}</p>
+                    @endif
                 </div>
+            </div>
+        </div>
+        <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+            <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 text-orange-600 dark:bg-orange-900 dark:text-orange-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Avg Class Grade') }}</p>
+                    @php
+                        $totalGrades = $sections->flatMap->enrollments->flatMap->grades;
+                        $avgGrade = $totalGrades->count() > 0 ? round($totalGrades->avg('percentage'), 1) : null;
+                    @endphp
+                    <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">{{ $avgGrade ? $avgGrade . '%' : '-' }}</p>
+                    @if($avgGrade)
+                        <p class="text-xs text-orange-600 dark:text-orange-400">{{ __('Pass rate') }}: {{ $totalGrades->where('passed', true)->count() }}/{{ $totalGrades->count() }}</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity & Quick Actions -->
+    <div class="mb-6 grid gap-6 lg:grid-cols-3">
+        <!-- Quick Actions -->
+        <div class="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800">
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{{ __('Quick Actions') }}</h3>
+            <div class="space-y-3">
+                <a href="{{ route('teacher.calendar') }}" class="flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-700 transition-colors">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400">
+                        <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-medium text-neutral-900 dark:text-neutral-100">{{ __('View Calendar') }}</p>
+                        <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Course schedules & deadlines') }}</p>
+                    </div>
+                </a>
+                <a href="{{ route('teacher.messages') }}" class="flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-700 transition-colors">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400">
+                        <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-medium text-neutral-900 dark:text-neutral-100">{{ __('Messages') }}</p>
+                        <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Communicate with students') }}</p>
+                    </div>
+                </a>
+                <a href="{{ route('teacher.appeals.index') }}" class="flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-700 transition-colors">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-400">
+                        <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-medium text-neutral-900 dark:text-neutral-100">{{ __('Grade Appeals') }}</p>
+                        <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Review student appeals') }}</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="lg:col-span-2 rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800">
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{{ __('Recent Activity') }}</h3>
+            <div class="space-y-4">
+                @php
+                    $recentActivities = collect();
+                    // Get recent assessments due
+                    $upcomingAssessments = $sections->flatMap->assessments->where('due_date', '>=', now())->sortBy('due_date')->take(3);
+                    foreach($upcomingAssessments as $assessment) {
+                        $recentActivities->push([
+                            'type' => 'assessment_due',
+                            'title' => $assessment->title,
+                            'description' => $assessment->courseOffering->course->name . ' - ' . $assessment->courseOffering->section_name,
+                            'date' => $assessment->due_date,
+                            'icon' => 'document-text',
+                            'color' => 'blue'
+                        ]);
+                    }
+                    // Get recent enrollments
+                    $recentEnrollments = $sections->flatMap->enrollments->where('created_at', '>=', now()->subDays(7))->sortByDesc('created_at')->take(2);
+                    foreach($recentEnrollments as $enrollment) {
+                        $recentActivities->push([
+                            'type' => 'new_enrollment',
+                            'title' => 'New enrollment',
+                            'description' => $enrollment->student->name . ' in ' . $enrollment->offering->course->name,
+                            'date' => $enrollment->created_at,
+                            'icon' => 'user-plus',
+                            'color' => 'green'
+                        ]);
+                    }
+                    $recentActivities = $recentActivities->sortByDesc('date')->take(5);
+                @endphp
+
+                @forelse($recentActivities as $activity)
+                <div class="flex items-start gap-3">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-{{ $activity['color'] }}-100 text-{{ $activity['color'] }}-600 dark:bg-{{ $activity['color'] }}-900 dark:text-{{ $activity['color'] }}-400">
+                        @if($activity['icon'] === 'document-text')
+                            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        @elseif($activity['icon'] === 'user-plus')
+                            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                        @endif
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-medium text-neutral-900 dark:text-neutral-100">{{ $activity['title'] }}</p>
+                        <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ $activity['description'] }}</p>
+                        <p class="text-xs text-neutral-400 dark:text-neutral-500">{{ $activity['date']->diffForHumans() }}</p>
+                    </div>
+                </div>
+                @empty
+                <div class="text-center py-8">
+                    <svg class="mx-auto h-12 w-12 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                    <p class="mt-2 text-sm text-neutral-500 dark:text-neutral-400">{{ __('No recent activity') }}</p>
+                </div>
+                @endforelse
             </div>
         </div>
     </div>
@@ -102,9 +240,9 @@
                         <h3 class="text-lg font-bold text-neutral-900 dark:text-neutral-100">{{ $section->course?->name ?? __('Unknown Course') }}</h3>
                         <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ $section->course?->code ?? '' }} - {{ $section->name }}</p>
                     </div>
-                    <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
-                        {{ $section->semester?->name ?? __('Active') }}
-                    </span>
+                        <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+                            {{ $section->semester?->localized_name ?? __('Active') }}
+                        </span>
                 </div>
 
                 <!-- Stats -->

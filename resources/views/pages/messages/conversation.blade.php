@@ -487,9 +487,93 @@
             <div class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all dark:bg-neutral-800 sm:my-8 sm:w-full sm:max-w-md sm:align-middle">
                 <div class="bg-white px-4 pt-5 pb-4 dark:bg-neutral-800 sm:p-6 sm:pb-4">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-neutral-100">{{ __('Conversation Settings') }}</h3>
-                    <div class="mt-4 space-y-3">
+                    <div class="mt-4 space-y-4">
                         @if($conversation->is_group)
-                            <p class="text-sm text-gray-600 dark:text-neutral-400">{{ __('Group conversation with') }} {{ $conversation->participants->count() }} {{ __('members') }}</p>
+                            <!-- Group Info -->
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">{{ __('Group Name') }}</label>
+                                    <form action="#" method="POST" class="flex gap-2" onsubmit="updateGroupName(event, {{ $conversation->id }})">
+                                        @csrf
+                                        <input type="text" value="{{ $conversation->title }}" class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100" id="groupNameInput">
+                                        <button type="submit" class="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
+                                            {{ __('Update') }}
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <p class="text-sm text-gray-600 dark:text-neutral-400">{{ __('Group conversation with') }} {{ $conversation->participants->count() }} {{ __('members') }}</p>
+
+                                <!-- Members List -->
+                                <div>
+                                    <h4 class="text-sm font-medium text-gray-900 dark:text-neutral-100 mb-2">{{ __('Members') }}</h4>
+                                    <div class="max-h-32 overflow-y-auto space-y-1">
+                                        @foreach($conversation->participants as $participant)
+                                            <div class="flex items-center justify-between py-1">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs">
+                                                        {{ strtoupper(substr($participant->name, 0, 1)) }}
+                                                    </div>
+                                                    <span class="text-sm text-gray-900 dark:text-neutral-100">{{ $participant->name }}</span>
+                                                    @if($participant->pivot->is_admin)
+                                                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded dark:bg-blue-900 dark:text-blue-200">{{ __('Admin') }}</span>
+                                                    @endif
+                                                </div>
+                                                @php
+                                                    $isAdmin = $conversation->participants()->where('users.id', auth()->id())->where('conversation_participants.is_admin', true)->exists();
+                                                @endphp
+                                                @if($isAdmin && $participant->id !== auth()->id())
+                                                    <form action="#" method="POST" class="inline" onsubmit="removeMember(event, {{ $conversation->id }}, {{ $participant->id }})">
+                                                        @csrf
+                                                        <button type="submit" class="text-red-600 hover:text-red-800 text-xs" onclick="return confirm('{{ __('Remove') }} {{ $participant->name }} {{ __('from the group?') }}')">
+                                                            {{ __('Remove') }}
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                @php
+                                    $isAdmin = $conversation->participants()->where('users.id', auth()->id())->where('conversation_participants.is_admin', true)->exists();
+                                @endphp
+                                @if($isAdmin)
+                                    <!-- Add Member -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">{{ __('Add Member') }}</label>
+                                        <form action="#" method="POST" class="flex gap-2" onsubmit="addMember(event, {{ $conversation->id }})">
+                                            @csrf
+                                            <select class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100" id="addMemberSelect" required>
+                                                <option value="">{{ __('Select user to add') }}</option>
+                                                @php
+                                                    $existingUserIds = $conversation->participants->pluck('id')->toArray();
+                                                    $availableUsers = \App\Models\User::whereNotIn('id', $existingUserIds)->get();
+                                                @endphp
+                                                @foreach($availableUsers as $user)
+                                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <button type="submit" class="px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition">
+                                                {{ __('Add') }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="border-t border-gray-200 dark:border-neutral-600 pt-3 space-y-3">
+                                <!-- Leave Group -->
+                                <form action="#" method="POST" onsubmit="leaveGroup(event, {{ $conversation->id }})">
+                                    @csrf
+                                    <button type="submit" class="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300" onclick="return confirm('{{ __('Are you sure you want to leave this group?') }}')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        {{ __('Leave Group') }}
+                                    </button>
+                                </form>
+                            </div>
                         @else
                             <p class="text-sm text-gray-600 dark:text-neutral-400">{{ __('Direct conversation') }}</p>
                         @endif
@@ -579,22 +663,122 @@
         function forwardMessage(targetConversationId) {
             if (!forwardMessageId) return;
 
-            fetch(`{{ route('messages.send', ':conversationId') }}`.replace(':conversationId', targetConversationId), {
+            fetch(`/messages/${forwardMessageId}/forward`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                 },
-                body: new URLSearchParams({
-                    content: `Forwarded message: ${document.querySelector(`[data-forward="${forwardMessageId}"]`).closest('.flex').querySelector('p.whitespace-pre-wrap').textContent.trim()}`,
+                body: JSON.stringify({
+                    conversation_id: targetConversationId,
                 })
             })
-            .then(response => {
-                if (response.ok) {
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
                     alert('Message forwarded successfully');
                 } else {
-                    alert('Failed to forward message');
+                    alert(data.error || 'Failed to forward message');
                 }
+            })
+            .catch(error => console.error('Forward error:', error));
+        }
+
+        // Group management functions
+        function updateGroupName(event, conversationId) {
+            event.preventDefault();
+            const nameInput = document.getElementById('groupNameInput');
+            const newName = nameInput.value.trim();
+
+            if (!newName) {
+                alert('{{ __("Group name cannot be empty") }}');
+                return;
+            }
+
+            fetch(`/messages/conversation/${conversationId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: JSON.stringify({ title: newName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.error || 'Failed to update group name');
+                }
+            })
+            .catch(error => console.error('Update group name error:', error));
+        }
+
+        function addMember(event, conversationId) {
+            event.preventDefault();
+            const select = document.getElementById('addMemberSelect');
+            const userId = select.value;
+
+            if (!userId) return;
+
+            fetch(`/messages/conversation/${conversationId}/participants`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: JSON.stringify({ user_id: userId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.error || 'Failed to add member');
+                }
+            })
+            .catch(error => console.error('Add member error:', error));
+        }
+
+        function removeMember(event, conversationId, userId) {
+            event.preventDefault();
+
+            fetch(`/messages/conversation/${conversationId}/participants/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.error || 'Failed to remove member');
+                }
+            })
+            .catch(error => console.error('Remove member error:', error));
+        }
+
+        function leaveGroup(event, conversationId) {
+            event.preventDefault();
+
+            fetch(`/messages/conversation/${conversationId}/leave`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '{{ route("messages.index") }}';
+                } else {
+                    alert(data.error || 'Failed to leave group');
+                }
+            })
+            .catch(error => console.error('Leave group error:', error));
+        }
             })
             .catch(error => console.error('Forward error:', error));
 
@@ -864,11 +1048,11 @@
             }).catch(error => console.error('Typing stop error:', error));
         }
 
-        function updateTypingIndicators() {
+        function updateTypingIndicators(typingUsers) {
             const indicator = document.getElementById('typing-indicators');
             const text = document.getElementById('typing-text');
 
-            if (typingUsers.length > 0) {
+            if (typingUsers && typingUsers.length > 0) {
                 const names = typingUsers.map(u => u.name).join(', ');
                 text.textContent = names + (typingUsers.length === 1 ? ' is typing...' : ' are typing...');
                 indicator.classList.remove('hidden');
@@ -877,10 +1061,9 @@
             }
         }
 
-        // Listen for typing events (if using WebSockets)
-        // For now, we'll poll for typing status
+        // Poll for typing users
         setInterval(() => {
-            fetch(`{{ route('messages.conversation.search', $conversation->id) }}?query=typing`, {
+            fetch(`{{ route('messages.conversation.typing', $conversation->id) }}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -888,8 +1071,9 @@
             })
             .then(response => response.json())
             .then(data => {
-                // This is a placeholder - we'd need a proper API endpoint for getting typing users
-                // For now, typing indicators are shown when users actually type
+                if (data.success) {
+                    updateTypingIndicators(data.typing_users);
+                }
             })
             .catch(error => console.error('Typing poll error:', error));
         }, 2000);

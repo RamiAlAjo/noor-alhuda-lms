@@ -23,7 +23,7 @@ class SearchController extends Controller
         if (strlen($query) < 2) {
             return response()->json([
                 'results' => [],
-                'total' => 0
+                'total' => 0,
             ]);
         }
 
@@ -31,19 +31,20 @@ class SearchController extends Controller
 
         // Search users (students, teachers, admins)
         $users = User::where(function ($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('email', 'like', "%{$query}%")
-                  ->orWhere('user_id', 'like', "%{$query}%")
-                  ->orWhereHas('profile', function ($pq) use ($query) {
-                      $pq->where('first_name', 'like', "%{$query}%")
-                         ->orWhere('last_name', 'like', "%{$query}%");
-                  });
-            })
+            $q->where('name', 'like', "%{$query}%")
+                ->orWhere('email', 'like', "%{$query}%")
+                ->orWhere('user_id', 'like', "%{$query}%")
+                ->orWhereHas('profile', function ($pq) use ($query) {
+                    $pq->where('first_name', 'like', "%{$query}%")
+                        ->orWhere('last_name', 'like', "%{$query}%");
+                });
+        })
             ->with(['roles', 'profile'])
             ->limit($limit)
             ->get()
             ->map(function ($user) {
                 $role = $user->roles->first()?->name ?? 'user';
+
                 return [
                     'id' => $user->id,
                     'type' => 'user',
@@ -58,10 +59,10 @@ class SearchController extends Controller
 
         // Search courses
         $courses = Course::where(function ($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('code', 'like', "%{$query}%")
-                  ->orWhere('description', 'like', "%{$query}%");
-            })
+            $q->where('name', 'like', "%{$query}%")
+                ->orWhere('code', 'like', "%{$query}%")
+                ->orWhere('description', 'like', "%{$query}%");
+        })
             ->with(['department', 'major'])
             ->limit($limit)
             ->get()
@@ -69,7 +70,7 @@ class SearchController extends Controller
                 return [
                     'id' => $course->id,
                     'type' => 'course',
-                    'title' => $course->code . ' - ' . $course->name,
+                    'title' => $course->code.' - '.$course->name,
                     'subtitle' => $course->department->name ?? '',
                     'url' => $this->getCourseUrl($course),
                     'icon' => 'book-open',
@@ -84,11 +85,11 @@ class SearchController extends Controller
 
             if ($user->hasRole('student')) {
                 $offerings = CourseOffering::whereHas('enrollments', function ($q) use ($user) {
-                        $q->where('student_id', $user->id)->where('status', 'approved');
-                    })
+                    $q->where('student_id', $user->id)->where('status', 'approved');
+                })
                     ->whereHas('course', function ($q) use ($query) {
                         $q->where('name', 'like', "%{$query}%")
-                          ->orWhere('code', 'like', "%{$query}%");
+                            ->orWhere('code', 'like', "%{$query}%");
                     })
                     ->with(['course', 'teacher'])
                     ->limit($limit)
@@ -97,8 +98,8 @@ class SearchController extends Controller
                         return [
                             'id' => $offering->id,
                             'type' => 'offering',
-                            'title' => $offering->course->code . ' - ' . $offering->course->name,
-                            'subtitle' => 'Section ' . $offering->section_name . ' | ' . ($offering->teacher->name ?? 'No teacher'),
+                            'title' => $offering->course->code.' - '.$offering->course->name,
+                            'subtitle' => 'Section '.$offering->section_name.' | '.($offering->teacher->name ?? 'No teacher'),
                             'url' => route('student.courses.show', $offering),
                             'icon' => 'academic-cap',
                         ];
@@ -109,7 +110,7 @@ class SearchController extends Controller
                 $offerings = CourseOffering::where('teacher_id', $user->id)
                     ->whereHas('course', function ($q) use ($query) {
                         $q->where('name', 'like', "%{$query}%")
-                          ->orWhere('code', 'like', "%{$query}%");
+                            ->orWhere('code', 'like', "%{$query}%");
                     })
                     ->with(['course'])
                     ->limit($limit)
@@ -118,8 +119,8 @@ class SearchController extends Controller
                         return [
                             'id' => $offering->id,
                             'type' => 'offering',
-                            'title' => $offering->course->code . ' - ' . $offering->course->name,
-                            'subtitle' => 'Section ' . $offering->section_name,
+                            'title' => $offering->course->code.' - '.$offering->course->name,
+                            'subtitle' => 'Section '.$offering->section_name,
                             'url' => route('teacher.courses.show', $offering),
                             'icon' => 'academic-cap',
                         ];
@@ -133,7 +134,7 @@ class SearchController extends Controller
         $announcements = Announcement::where('is_published', true)
             ->where(function ($q) use ($query) {
                 $q->where('title', 'like', "%{$query}%")
-                  ->orWhere('content', 'like', "%{$query}%");
+                    ->orWhere('content', 'like', "%{$query}%");
             })
             ->with('author')
             ->limit($limit)
@@ -143,7 +144,7 @@ class SearchController extends Controller
                     'id' => $announcement->id,
                     'type' => 'announcement',
                     'title' => $announcement->title,
-                    'subtitle' => 'By ' . ($announcement->author->name ?? 'System') . ' • ' . $announcement->created_at->diffForHumans(),
+                    'subtitle' => 'By '.($announcement->author->name ?? 'System').' • '.$announcement->created_at->diffForHumans(),
                     'url' => '#', // Announcements might not have direct links
                     'icon' => 'megaphone',
                 ];
@@ -157,7 +158,7 @@ class SearchController extends Controller
         return response()->json([
             'results' => $results,
             'total' => count($results),
-            'query' => $query
+            'query' => $query,
         ]);
     }
 
@@ -166,7 +167,7 @@ class SearchController extends Controller
      */
     private function getUserUrl(User $user): string
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return '#';
         }
 
@@ -187,7 +188,7 @@ class SearchController extends Controller
      */
     private function getUserIcon(string $role): string
     {
-        return match($role) {
+        return match ($role) {
             'admin' => 'shield-check',
             'teacher' => 'academic-cap',
             'student' => 'user',
@@ -200,7 +201,7 @@ class SearchController extends Controller
      */
     private function getCourseUrl(Course $course): string
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return '#';
         }
 

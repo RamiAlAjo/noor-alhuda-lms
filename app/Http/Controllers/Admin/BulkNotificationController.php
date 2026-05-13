@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\CourseOffering;
 use App\Models\NotificationTemplate;
 use App\Models\Semester;
 use App\Models\User;
 use App\Services\NotificationService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class BulkNotificationController extends Controller
@@ -75,7 +74,7 @@ class BulkNotificationController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send bulk notifications: ' . $e->getMessage(),
+                'message' => 'Failed to send bulk notifications: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -110,7 +109,7 @@ class BulkNotificationController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to get recipient preview: ' . $e->getMessage(),
+                'message' => 'Failed to get recipient preview: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -150,7 +149,7 @@ class BulkNotificationController extends Controller
     {
         return User::whereHas('enrollments', function ($query) use ($semesterId) {
             $query->where('semester_id', $semesterId)
-                  ->where('status', 'approved');
+                ->where('status', 'approved');
         })->get();
     }
 
@@ -170,8 +169,8 @@ class BulkNotificationController extends Controller
     public function getTemplates(): JsonResponse
     {
         $templates = NotificationTemplate::where('is_active', true)
-                                       ->select('id', 'name', 'type', 'category', 'subject', 'content')
-                                       ->get();
+            ->select('id', 'name', 'type', 'category', 'subject', 'content')
+            ->get();
 
         return response()->json([
             'success' => true,

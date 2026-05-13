@@ -13,6 +13,7 @@ class Semester extends Model
     protected $fillable = [
         'academic_year_id',
         'name',
+        'name_ar',
         'start_date',
         'end_date',
         'enrollment_start_date',
@@ -128,5 +129,15 @@ class Semester extends Model
     public static function getCurrent(): ?self
     {
         return static::where('is_active', true)->first();
+    }
+
+    /**
+     * Get the localized name of the semester.
+     */
+    public function getLocalizedNameAttribute(): string
+    {
+        $locale = app()->getLocale();
+
+        return $locale === 'ar' && $this->name_ar ? $this->name_ar : $this->name;
     }
 }

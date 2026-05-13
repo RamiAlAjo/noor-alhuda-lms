@@ -202,11 +202,13 @@ class CapacityDataCollector
 
         $underUtilized = $offerings->filter(function ($o) {
             $rate = $o->max_students > 0 ? ($o->enrolled_count / $o->max_students) * 100 : 0;
+
             return $rate < 30;
         })->count();
 
         $optimal = $offerings->filter(function ($o) {
             $rate = $o->max_students > 0 ? ($o->enrolled_count / $o->max_students) * 100 : 0;
+
             return $rate >= 50 && $rate <= 85;
         })->count();
 

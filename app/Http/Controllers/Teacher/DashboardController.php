@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Teacher;
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use App\Models\Assessment;
+use App\Models\Conversation;
 use App\Models\CourseOffering;
+use App\Models\Message;
 use App\Models\StudentGrade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
@@ -79,5 +81,125 @@ class DashboardController extends Controller
             'pendingGradesCount',
             'recentAnnouncements'
         ));
+    }
+
+    /**
+     * Display the teacher calendar.
+     */
+    public function calendar(): View
+    {
+        $teacher = auth()->user();
+
+        // Get courses with their assessments and schedules
+        $courses = CourseOffering::where('teacher_id', $teacher->id)
+            ->with([
+                'course',
+                'semester',
+                'semester.academicYear',
+                'assessments' => function ($query) {
+                    $query->where('is_published', true)
+                        ->whereNotNull('due_date')
+                        ->orderBy('due_date');
+                },
+            ])
+            ->get();
+
+        // Get all assessment deadlines
+        $assessmentEvents = [];
+        foreach ($courses as $course) {
+            foreach ($course->assessments as $assessment) {
+                $assessmentEvents[] = [
+                    'id' => 'assessment_'.$assessment->id,
+                    'title' => $assessment->title,
+                    'description' => $assessment->description,
+                    'start' => $assessment->due_date,
+                    'end' => $assessment->due_date,
+                    'type' => 'assessment',
+                    'course' => $course->course->name,
+                    'section' => $course->section_name,
+                    'url' => route('teacher.courses.assessments.grade', [
+                        'section' => $course->id,
+                        'assessment' => $assessment->id,
+                    ]),
+                ];
+            }
+        }
+
+        // Get course start/end dates as events
+        $courseEvents = [];
+        foreach ($courses as $course) {
+            if ($course->semester) {
+                $courseEvents[] = [
+                    'id' => 'course_start_'.$course->id,
+                    'title' => 'Course Start: '.$course->course->name,
+                    'description' => 'Start of '.$course->section_name,
+                    'start' => $course->semester->start_date,
+                    'end' => $course->semester->start_date,
+                    'type' => 'course',
+                    'course' => $course->course->name,
+                    'section' => $course->section_name,
+                ];
+
+                $courseEvents[] = [
+                    'id' => 'course_end_'.$course->id,
+                    'title' => 'Course End: '.$course->course->name,
+                    'description' => 'End of '.$course->section_name,
+                    'start' => $course->semester->end_date,
+                    'end' => $course->semester->end_date,
+                    'type' => 'course',
+                    'course' => $course->course->name,
+                    'section' => $course->section_name,
+                ];
+            }
+        }
+
+        // Combine all events
+        $allEvents = array_merge($assessmentEvents, $courseEvents);
+
+        return view('pages.teacher.calendar', compact('courses', 'allEvents'));
+    }
+
+    /**
+     * Display teacher messaging interface.
+     */
+    public function messages(): View
+    {
+        $teacher = auth()->user();
+
+        // Get conversations involving the teacher and students from their courses
+        $conversations = Conversation::whereHas('participants', function ($query) use ($teacher) {
+            $query->where('user_id', $teacher->id);
+        })
+            ->whereHas('participants', function ($query) {
+                $query->whereHas('roles', function ($q) {
+                    $q->where('name', 'student');
+                });
+            })
+            ->with([
+                'participants' => function ($query) use ($teacher) {
+                    $query->where('user_id', '!=', $teacher->id);
+                },
+                'lastMessage',
+                'unreadMessages' => function ($query) use ($teacher) {
+                    $query->where('sender_id', '!=', $teacher->id)
+                        ->whereDoesntHave('readBy', function ($q) use ($teacher) {
+                            $q->where('user_id', $teacher->id);
+                        });
+                },
+            ])
+            ->orderByDesc(
+                Message::select('created_at')
+                    ->whereColumn('conversation_id', 'conversations.id')
+                    ->latest()
+                    ->limit(1)
+            )
+            ->paginate(20);
+
+        // Get courses for filtering conversations by course
+        $courses = CourseOffering::where('teacher_id', $teacher->id)
+            ->with('course')
+            ->get();
+
+        return view('pages.teacher.messages', compact('conversations', 'courses'));
     }
 }

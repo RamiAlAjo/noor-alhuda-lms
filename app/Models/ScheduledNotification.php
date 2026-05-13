@@ -41,7 +41,7 @@ class ScheduledNotification extends Model
     public function scopePending($query)
     {
         return $query->where('is_sent', false)
-                    ->where('scheduled_at', '<=', now());
+            ->where('scheduled_at', '<=', now());
     }
 
     /**
@@ -82,6 +82,7 @@ class ScheduledNotification extends Model
             return true;
         } catch (\Exception $e) {
             \Log::error("Failed to send scheduled notification {$this->id}: {$e->getMessage()}");
+
             return false;
         }
     }
@@ -114,7 +115,7 @@ class ScheduledNotification extends Model
                 case 'semester':
                     return User::whereHas('enrollments', function ($query) use ($recipients) {
                         $query->where('semester_id', $recipients['semester_id'])
-                              ->where('status', 'approved');
+                            ->where('status', 'approved');
                     })->get();
             }
         }

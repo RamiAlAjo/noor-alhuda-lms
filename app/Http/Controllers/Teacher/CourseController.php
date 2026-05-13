@@ -70,6 +70,98 @@ class CourseController extends Controller
     }
 
     /**
+     * Show bulk attendance form for multiple dates.
+     */
+    public function bulkAttendance(CourseSection $section): View
+    {
+        $this->authorize('view', $section);
+
+        $section->load(['course', 'enrollments.student']);
+
+        // Get last 10 attendance dates for this section
+        $recentDates = \App\Models\Attendance::where('course_offering_id', $section->id)
+            ->distinct('date')
+            ->orderBy('date', 'desc')
+            ->limit(10)
+            ->pluck('date')
+            ->map(function ($date) {
+                return $date->format('Y-m-d');
+            });
+
+        return view('pages.teacher.courses.attendance.bulk', compact('section', 'recentDates'));
+    }
+
+    /**
+     * Store bulk attendance for multiple dates.
+     */
+    public function storeBulkAttendance(Request $request, CourseSection $section)
+    {
+        $this->authorize('view', $section);
+
+        $request->validate([
+            'dates' => 'required|array|min:1',
+            'dates.*' => 'required|date',
+            'attendance' => 'required|array',
+            'attendance.*' => 'required|array',
+            'attendance.*.*' => 'required|in:present,absent,excused,late',
+        ]);
+
+        $dates = $request->dates;
+        $attendanceData = $request->attendance;
+
+        foreach ($dates as $date) {
+            if (isset($attendanceData[$date])) {
+                foreach ($attendanceData[$date] as $studentId => $status) {
+                    // Check if student is enrolled
+                    $enrollment = $section->enrollments()
+                        ->where('student_id', $studentId)
+                        ->where('status', 'approved')
+                        ->first();
+
+                    if ($enrollment) {
+                        \App\Models\Attendance::updateOrCreate(
+                            [
+                                'course_offering_id' => $section->id,
+                                'student_id' => $studentId,
+                                'date' => $date,
+                            ],
+                            [
+                                'status' => $status,
+                                'marked_by' => auth()->id(),
+                            ]
+                        );
+                    }
+                }
+            }
+        }
+
+        return redirect()->route('teacher.courses.attendance', $section)
+            ->with('success', __('Bulk attendance saved successfully'));
+    }
+
+    /**
+     * Show attendance calendar view.
+     */
+    public function attendanceCalendar(CourseSection $section): View
+    {
+        $this->authorize('view', $section);
+
+        $section->load(['course', 'enrollments.student']);
+
+        // Get attendance data for the current month
+        $currentMonth = now()->startOfMonth();
+        $endOfMonth = now()->endOfMonth();
+
+        $attendanceRecords = \App\Models\Attendance::where('course_offering_id', $section->id)
+            ->whereBetween('date', [$currentMonth, $endOfMonth])
+            ->with('student')
+            ->get()
+            ->groupBy(['date', 'student_id']);
+
+        return view('pages.teacher.courses.attendance.calendar', compact('section', 'attendanceRecords', 'currentMonth', 'endOfMonth'));
+    }
+
+    /**
      * Store attendance.
      */
     public function storeAttendance(Request $request, CourseSection $section)
@@ -116,20 +208,47 @@ class CourseController extends Controller
         $section->load(['course', 'enrollments.student']);
 
         $search = request('search');
-        $enrollments = $section->enrollments()->where('status', 'approved');
+        $status = request('status');
+        $sortBy = request('sort', 'name');
 
+        $enrollments = $section->enrollments();
+
+        // Apply status filter
+        if ($status) {
+            $enrollments = $enrollments->where('status', $status);
+        } else {
+            // Default to approved only
+            $enrollments = $enrollments->where('status', 'approved');
+        }
+
+        // Apply search filter
         if ($search) {
             $enrollments = $enrollments->whereHas('student', function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('user_id', 'like', "%{$search}%")
-                    ->orWhereHas('profile', function ($q) use ($search) {
-                        $q->where('first_name', 'like', "%{$search}%")
-                            ->orWhere('last_name', 'like', "%{$search}%");
-                    });
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('user_id', 'like', "%{$search}%");
             });
         }
 
-        $enrollments = $enrollments->get();
+        // Apply sorting
+        switch ($sortBy) {
+            case 'email':
+                $enrollments = $enrollments->join('users', 'enrollments.student_id', '=', 'users.id')
+                    ->orderBy('users.email')
+                    ->select('enrollments.*');
+                break;
+            case 'enrolled_at':
+                $enrollments = $enrollments->orderBy('enrollments.created_at', 'desc');
+                break;
+            case 'name':
+            default:
+                $enrollments = $enrollments->join('users', 'enrollments.student_id', '=', 'users.id')
+                    ->orderBy('users.name')
+                    ->select('enrollments.*');
+                break;
+        }
+
+        $enrollments = $enrollments->with('student')->get();
 
         return view('pages.teacher.courses.students', compact('section', 'enrollments'));
     }
@@ -293,7 +412,76 @@ class CourseController extends Controller
         $section->load(['course', 'enrollments.student']);
         $assessment->load(['questions.options', 'studentGrades.student']);
 
-        return view('pages.teacher.courses.grades.view', compact('section', 'assessment'));
+        // Get ungraded enrollments count
+        $gradedStudentIds = $assessment->studentGrades->pluck('student_id')->toArray();
+        $ungradedEnrollments = $section->enrollments->where('status', 'approved')
+            ->whereNotIn('student_id', $gradedStudentIds);
+
+        return view('pages.teacher.courses.grades.view', compact('section', 'assessment', 'ungradedEnrollments'));
+    }
+
+    /**
+     * Show bulk grading form for an assessment.
+     */
+    public function bulkGrade(CourseSection $section, Assessment $assessment): View
+    {
+        $this->authorize('view', $section);
+
+        $section->load(['course', 'enrollments.student']);
+        $assessment->load(['studentGrades.student']);
+
+        // Get students who haven't been graded yet
+        $gradedStudentIds = $assessment->studentGrades->pluck('student_id')->toArray();
+        $ungradedEnrollments = $section->enrollments->where('status', 'approved')
+            ->whereNotIn('student_id', $gradedStudentIds);
+
+        return view('pages.teacher.courses.grades.bulk-grade', compact('section', 'assessment', 'ungradedEnrollments'));
+    }
+
+    /**
+     * Store bulk grades for an assessment.
+     */
+    public function storeBulkGrade(Request $request, CourseSection $section, Assessment $assessment)
+    {
+        $this->authorize('view', $section);
+
+        $request->validate([
+            'grades' => 'required|array',
+            'grades.*.student_id' => 'required|exists:users,id',
+            'grades.*.grade' => 'required|numeric|min:0|max:100',
+            'grades.*.feedback' => 'nullable|string|max:1000',
+        ]);
+
+        $gradesData = $request->grades;
+
+        foreach ($gradesData as $gradeData) {
+            $enrollment = $section->enrollments()
+                ->where('student_id', $gradeData['student_id'])
+                ->where('status', 'approved')
+                ->first();
+
+            if ($enrollment) {
+                StudentGrade::updateOrCreate(
+                    [
+                        'student_id' => $gradeData['student_id'],
+                        'assessment_id' => $assessment->id,
+                    ],
+                    [
+                        'grade' => $gradeData['grade'],
+                        'percentage' => $gradeData['grade'],
+                        'max_grade' => $assessment->max_score ?? 100,
+                        'feedback' => $gradeData['feedback'] ?? null,
+                        'passed' => $gradeData['grade'] >= ($assessment->passing_score ?? 60),
+                        'submitted_at' => now(),
+                        'graded_at' => now(),
+                        'graded_by' => auth()->id(),
+                    ]
+                );
+            }
+        }
+
+        return redirect()->route('teacher.courses.grades.view', [$section, $assessment])
+            ->with('success', __('Bulk grades saved successfully'));
     }
 
     /**

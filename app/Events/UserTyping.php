@@ -14,7 +14,9 @@ class UserTyping implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public int $conversationId;
+
     public User $user;
+
     public bool $isTyping;
 
     /**
@@ -65,19 +67,6 @@ class UserTyping implements ShouldBroadcast
             'user_id' => $this->user->id,
             'user_name' => $this->user->name,
             'is_typing' => $this->isTyping,
-        ];
-    }
-}
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
         ];
     }
 }

@@ -166,22 +166,175 @@ class GradeAppealController extends Controller
     /**
      * Verify the teacher has access to the appeal.
      */
+    /**
+     * Bulk approve grade appeals.
+     */
+    public function bulkApprove(Request $request)
+    {
+        $request->validate([
+            'appeal_ids' => 'required|array',
+            'appeal_ids.*' => 'exists:grade_appeals,id',
+        ]);
+
+        $appeals = GradeAppeal::whereIn('id', $request->appeal_ids)->get();
+        $approved = 0;
+
+        foreach ($appeals as $appeal) {
+            try {
+                $this->authorizeTeacher($appeal);
+
+                if (! in_array($appeal->status, [GradeAppeal::STATUS_PENDING, GradeAppeal::STATUS_UNDER_REVIEW])) {
+                    continue;
+                }
+
+                $this->approveAppeal($appeal, $request);
+                $approved++;
+            } catch (\Exception $e) {
+                // Continue with other appeals
+            }
+        }
+
+        return redirect()->back()->with('success', "Successfully approved {$approved} appeal(s).");
+    }
+
+    /**
+     * Bulk reject grade appeals.
+     */
+    public function bulkReject(Request $request)
+    {
+        $request->validate([
+            'appeal_ids' => 'required|array',
+            'appeal_ids.*' => 'exists:grade_appeals,id',
+            'rejection_reason' => 'required|string|max:1000',
+        ]);
+
+        $appeals = GradeAppeal::whereIn('id', $request->appeal_ids)->get();
+        $rejected = 0;
+
+        foreach ($appeals as $appeal) {
+            try {
+                $this->authorizeTeacher($appeal);
+
+                if (! in_array($appeal->status, [GradeAppeal::STATUS_PENDING, GradeAppeal::STATUS_UNDER_REVIEW])) {
+                    continue;
+                }
+
+                $this->rejectAppeal($appeal, $request);
+                $rejected++;
+            } catch (\Exception $e) {
+                // Continue with other appeals
+            }
+        }
+
+        return redirect()->back()->with('success', "Successfully rejected {$rejected} appeal(s).");
+    }
+
+    /**
+     * Bulk escalate grade appeals.
+     */
+    public function bulkEscalate(Request $request)
+    {
+        $request->validate([
+            'appeal_ids' => 'required|array',
+            'appeal_ids.*' => 'exists:grade_appeals,id',
+            'escalation_reason' => 'required|string|max:1000',
+        ]);
+
+        $appeals = GradeAppeal::whereIn('id', $request->appeal_ids)->get();
+        $escalated = 0;
+
+        foreach ($appeals as $appeal) {
+            try {
+                $this->authorizeTeacher($appeal);
+
+                if (! in_array($appeal->status, [GradeAppeal::STATUS_PENDING, GradeAppeal::STATUS_UNDER_REVIEW])) {
+                    continue;
+                }
+
+                $this->escalateAppeal($appeal, $request);
+                $escalated++;
+            } catch (\Exception $e) {
+                // Continue with other appeals
+            }
+        }
+
+        return redirect()->back()->with('success', "Successfully escalated {$escalated} appeal(s).");
+    }
+
     private function authorizeTeacher(GradeAppeal $appeal): void
     {
-        $teacherId = Auth::id();
-        $hasAccess = false;
+        $teacher = auth()->user();
 
-        if ($appeal->enrollment && $appeal->enrollment->offering) {
-            $hasAccess = $appeal->enrollment->offering->teacher_id == $teacherId;
+        if (! $appeal->enrollment || $appeal->enrollment->offering->teacher_id !== $teacher->id) {
+            if (! $appeal->assessment || $appeal->assessment->courseOffering->teacher_id !== $teacher->id) {
+                abort(403, 'You are not authorized to manage this appeal.');
+            }
+        }
+    }
+
+    private function approveAppeal(GradeAppeal $appeal, Request $request)
+    {
+        $validated = $request->validate([
+            'new_grade' => 'nullable|numeric|min:0|max:100',
+            'approval_reason' => 'nullable|string|max:1000',
+        ]);
+
+        $appeal->update([
+            'status' => GradeAppeal::STATUS_APPROVED,
+            'reviewer_id' => auth()->id(),
+            'reviewed_at' => now(),
+            'reviewer_notes' => $validated['approval_reason'] ?? null,
+        ]);
+
+        // Update grade if new grade is provided
+        if (! empty($validated['new_grade']) && $appeal->grade) {
+            $grade = $appeal->grade;
+            $grade->update([
+                'grade' => $validated['new_grade'],
+                'percentage' => $validated['new_grade'],
+                'feedback' => ($grade->feedback ? $grade->feedback."\n\n" : '')."Grade updated due to appeal approval: {$validated['approval_reason']}",
+                'graded_at' => now(),
+                'graded_by' => auth()->id(),
+            ]);
         }
 
-        if (! $hasAccess && $appeal->assessment && $appeal->assessment->offering) {
-            $hasAccess = $appeal->assessment->offering->teacher_id == $teacherId;
-        }
+        // Log the action
+        \App\Services\AuditLogService::logGradeAppeal($appeal, 'approved');
+    }
 
-        if (! $hasAccess) {
-            abort(403, __('lms.unauthorized_access'));
-        }
+    private function rejectAppeal(GradeAppeal $appeal, Request $request)
+    {
+        $validated = $request->validate([
+            'rejection_reason' => 'required|string|max:1000',
+        ]);
+
+        $appeal->update([
+            'status' => GradeAppeal::STATUS_REJECTED,
+            'reviewer_id' => auth()->id(),
+            'reviewed_at' => now(),
+            'reviewer_notes' => $validated['rejection_reason'],
+        ]);
+
+        // Log the action
+        \App\Services\AuditLogService::logGradeAppeal($appeal, 'rejected');
+    }
+
+    private function escalateAppeal(GradeAppeal $appeal, Request $request)
+    {
+        $validated = $request->validate([
+            'escalation_reason' => 'required|string|max:1000',
+        ]);
+
+        $appeal->update([
+            'status' => GradeAppeal::STATUS_ESCALATED,
+            'reviewer_id' => auth()->id(),
+            'reviewed_at' => now(),
+            'reviewer_notes' => $validated['escalation_reason'],
+            'escalated_to' => 1, // Assuming admin ID is 1, you might want to make this configurable
+        ]);
+
+        // Log the action
+        \App\Services\AuditLogService::logGradeAppeal($appeal, 'escalated');
     }
 
     /**

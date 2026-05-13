@@ -60,8 +60,8 @@ class NotificationDropdown extends Component
 
         if ($this->searchTerm) {
             $query->where(function ($q) {
-                $q->where('title', 'like', '%' . $this->searchTerm . '%')
-                  ->orWhere('content', 'like', '%' . $this->searchTerm . '%');
+                $q->where('title', 'like', '%'.$this->searchTerm.'%')
+                    ->orWhere('content', 'like', '%'.$this->searchTerm.'%');
             });
         }
 
@@ -114,7 +114,7 @@ class NotificationDropdown extends Component
             ->get();
 
         if ($newNotifications->isNotEmpty()) {
-            \Log::info('Found ' . $newNotifications->count() . ' new notifications for user ' . $user->id);
+            \Log::info('Found '.$newNotifications->count().' new notifications for user '.$user->id);
 
             foreach ($newNotifications as $notification) {
                 // Add to the beginning of the list
@@ -132,12 +132,12 @@ class NotificationDropdown extends Component
                 ]);
 
                 // Increment unread count if not read
-                if (!$notification->is_read) {
+                if (! $notification->is_read) {
                     $this->unreadCount++;
                 }
 
                 // Play sound for new notifications
-                if ($this->soundEnabled && !$notification->is_read) {
+                if ($this->soundEnabled && ! $notification->is_read) {
                     $this->dispatch('notification-received', [
                         'soundEnabled' => $this->soundEnabled,
                         'pushEnabled' => $this->pushEnabled,
@@ -279,8 +279,6 @@ class NotificationDropdown extends Component
                 ->count() / 30, 1),
         ];
     }
-
-
 
     public function render()
     {

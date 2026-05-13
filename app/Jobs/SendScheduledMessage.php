@@ -32,7 +32,7 @@ class SendScheduledMessage implements ShouldQueue
     {
         try {
             // Check if message is still scheduled and not sent
-            if (!$this->message->scheduled_at ||
+            if (! $this->message->scheduled_at ||
                 $this->message->sent_at ||
                 now()->isBefore($this->message->scheduled_at)) {
                 return;
@@ -63,14 +63,5 @@ class SendScheduledMessage implements ShouldQueue
     public function failed(\Throwable $exception): void
     {
         Log::error("Scheduled message job failed for message {$this->message->id}: {$exception->getMessage()}");
-    }
-}
-
-    /**
-     * Execute the job.
-     */
-    public function handle(): void
-    {
-        //
     }
 }

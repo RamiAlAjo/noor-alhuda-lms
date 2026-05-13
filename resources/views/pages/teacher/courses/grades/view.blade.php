@@ -22,10 +22,17 @@
                         </h1>
                     </div>
                 </div>
-                <flux:button :href="route('teacher.courses.grades', $section)" variant="ghost" class="!text-white hover:!bg-white/20">
-                    {{ __('Back to Grades') }}
-                    <flux:icon.arrow-left class="w-4 h-4 ml-2" />
-                </flux:button>
+                <div class="flex items-center gap-3">
+                    @if($ungradedEnrollments->count() > 0)
+                    <flux:button :href="route('teacher.courses.assessments.bulk-grade', [$section, $assessment])" variant="primary" class="!bg-green-600 hover:!bg-green-700">
+                        {{ __('Bulk Grade') }} ({{ $ungradedEnrollments->count() }})
+                    </flux:button>
+                    @endif
+                    <flux:button :href="route('teacher.courses.grades', $section)" variant="ghost" class="!text-white hover:!bg-white/20">
+                        {{ __('Back to Grades') }}
+                        <flux:icon.arrow-left class="w-4 h-4 ml-2" />
+                    </flux:button>
+                </div>
             </div>
         </div>
 

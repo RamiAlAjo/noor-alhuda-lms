@@ -32,9 +32,13 @@ class MessageTemplate extends Model
      * Template categories
      */
     const CATEGORY_GENERAL = 'general';
+
     const CATEGORY_ACADEMIC = 'academic';
+
     const CATEGORY_ADMINISTRATIVE = 'administrative';
+
     const CATEGORY_SYSTEM = 'system';
+
     const CATEGORY_WELCOME = 'welcome';
 
     /**
@@ -78,7 +82,8 @@ class MessageTemplate extends Model
      */
     public function extractVariables(): array
     {
-        preg_match_all('/\{\{(\w+)\}\}/', $this->content . ' ' . $this->subject, $matches);
+        preg_match_all('/\{\{(\w+)\}\}/', $this->content.' '.$this->subject, $matches);
+
         return array_unique($matches[1] ?? []);
     }
 
@@ -187,9 +192,9 @@ class MessageTemplate extends Model
     public static function getMostUsed(int $limit = 10): \Illuminate\Database\Eloquent\Collection
     {
         return static::active()
-                    ->orderBy('usage_count', 'desc')
-                    ->limit($limit)
-                    ->get();
+            ->orderBy('usage_count', 'desc')
+            ->limit($limit)
+            ->get();
     }
 
     /**
@@ -198,11 +203,11 @@ class MessageTemplate extends Model
     public static function getAvailableForUser(int $userId): \Illuminate\Database\Eloquent\Collection
     {
         return static::active()
-                    ->where(function ($query) use ($userId) {
-                        $query->where('is_public', true)
-                              ->orWhere('created_by', $userId);
-                    })
-                    ->orderBy('usage_count', 'desc')
-                    ->get();
+            ->where(function ($query) use ($userId) {
+                $query->where('is_public', true)
+                    ->orWhere('created_by', $userId);
+            })
+            ->orderBy('usage_count', 'desc')
+            ->get();
     }
 }

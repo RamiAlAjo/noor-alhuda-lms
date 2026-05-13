@@ -46,7 +46,7 @@
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-bold text-neutral-900 dark:text-white">{{ __('Quizzes') }}</h1>
-            <p class="text-neutral-600 dark:text-neutral-400">{{ $offering->course?->name ?? __('Course') }} - {{ $offering->semester?->name ?? '' }}</p>
+            <p class="text-neutral-600 dark:text-neutral-400">{{ $offering->course?->name ?? __('Course') }} - {{ $offering->semester?->localized_name ?? '' }}</p>
         </div>
         <flux:button href="{{ route('teacher.quizzes.create', $offering) }}" variant="primary">
             <flux:icon name="plus" class="mr-2" />

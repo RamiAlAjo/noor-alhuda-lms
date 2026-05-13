@@ -65,24 +65,63 @@
                             rows="2"
                         />
 
-                        <!-- File Upload -->
-                        <div class="rounded-lg border border-dashed border-neutral-300 p-4 dark:border-neutral-600">
-                            <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                                {{ __('Upload File') }}
-                            </label>
-                            <input
-                                type="file"
-                                name="file"
-                                class="block w-full text-sm text-neutral-500
-                                    file:mr-4 file:py-2 file:px-4
-                                    file:rounded-full file:border-0
-                                    file:text-sm file:font-semibold
-                                    file:bg-blue-50 file:text-blue-700
-                                    hover:file:bg-blue-100
-                                    dark:file:bg-blue-900 dark:file:text-blue-300
-                                "
-                            />
-                            <p class="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{{ __('Max size: 10MB') }}</p>
+                        <!-- Enhanced File Upload -->
+                        <div class="space-y-3">
+                            <!-- Drag & Drop Area -->
+                            <div id="fileDropZone" class="relative rounded-lg border-2 border-dashed border-neutral-300 p-6 text-center transition-colors hover:border-blue-400 dark:border-neutral-600 dark:hover:border-blue-500">
+                                <input
+                                    type="file"
+                                    name="file"
+                                    id="fileInput"
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip,.rar,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv"
+                                />
+                                <div class="space-y-2">
+                                    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                            {{ __('Drop files here or click to browse') }}
+                                        </p>
+                                        <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                                            {{ __('Supported formats: PDF, DOC, PPT, XLS, TXT, ZIP, Images, Videos') }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div id="filePreview" class="mt-4 hidden">
+                                    <div class="flex items-center gap-2 p-2 bg-neutral-50 dark:bg-neutral-800 rounded-md">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                                        </svg>
+                                        <span id="fileName" class="text-sm text-neutral-700 dark:text-neutral-300"></span>
+                                        <span id="fileSize" class="text-xs text-neutral-500 dark:text-neutral-400"></span>
+                                        <button type="button" id="removeFile" class="text-red-500 hover:text-red-700">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
+                                    {{ __('Maximum file size: 50MB') }}
+                                </p>
+                            </div>
+
+                            <!-- Upload Progress (Hidden by default) -->
+                            <div id="uploadProgress" class="hidden">
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-neutral-700 dark:text-neutral-300">{{ __('Uploading...') }}</span>
+                                        <span id="progressPercent" class="text-neutral-500">0%</span>
+                                    </div>
+                                    <div class="w-full bg-neutral-200 rounded-full h-2 dark:bg-neutral-700">
+                                        <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- YouTube URL -->

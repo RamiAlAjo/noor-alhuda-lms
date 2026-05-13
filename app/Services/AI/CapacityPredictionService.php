@@ -213,7 +213,7 @@ class CapacityPredictionService
                 $fillRates[] = ($enrollment / $maxCapacities[$i]) * 100;
             }
         }
-        $fillRateAvg = !empty($fillRates) ? array_sum($fillRates) / count($fillRates) : 0;
+        $fillRateAvg = ! empty($fillRates) ? array_sum($fillRates) / count($fillRates) : 0;
 
         return [
             'average' => $average,
@@ -233,7 +233,7 @@ class CapacityPredictionService
     private function calculateTemporalAdjustment(int $semesterId, int $courseId): float
     {
         $semester = Semester::find($semesterId);
-        if (!$semester) {
+        if (! $semester) {
             return 1.0;
         }
 
@@ -282,7 +282,7 @@ class CapacityPredictionService
      */
     private function getDepartmentAdjustment(?int $departmentId): float
     {
-        if (!$departmentId) {
+        if (! $departmentId) {
             return 1.0;
         }
 
@@ -293,6 +293,7 @@ class CapacityPredictionService
             // Adjust based on whether this department typically has higher/lower enrollment
             $globalAvg = 25; // Assume global average
             $adjustment = $deptStats['avg_enrollment'] / $globalAvg;
+
             return min(1.3, max(0.8, $adjustment));
         }
 
@@ -352,7 +353,7 @@ class CapacityPredictionService
         }
 
         // Feature completeness
-        $featureCount = count(array_filter($features, fn($v) => $v !== null && $v !== 0));
+        $featureCount = count(array_filter($features, fn ($v) => $v !== null && $v !== 0));
         $featureCompleteness = $featureCount / count($features);
         $confidence += $featureCompleteness * 0.1;
 
@@ -411,7 +412,8 @@ class CapacityPredictionService
             return 0;
         }
 
-        $variance = array_sum(array_map(fn($v) => pow($v - $mean, 2), $values)) / (count($values) - 1);
+        $variance = array_sum(array_map(fn ($v) => pow($v - $mean, 2), $values)) / (count($values) - 1);
+
         return sqrt($variance);
     }
 
@@ -469,7 +471,7 @@ class CapacityPredictionService
      */
     private function getDepartmentCapacityMultiplier(?int $departmentId): float
     {
-        if (!$departmentId) {
+        if (! $departmentId) {
             return 1.0;
         }
 
@@ -894,7 +896,7 @@ class CapacityPredictionService
     private function generateSeasonalRecommendations(int $semesterId): array
     {
         $semester = Semester::find($semesterId);
-        if (!$semester) {
+        if (! $semester) {
             return [];
         }
 

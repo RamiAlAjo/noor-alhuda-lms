@@ -13,7 +13,38 @@
         </flux:button>
     </div>
 
-    <!-- Stats & Search -->
+    <!-- Search & Filters -->
+    <div class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div class="flex flex-col lg:flex-row gap-4">
+            <!-- Search -->
+            <div class="flex-1">
+                <flux:input
+                    type="text"
+                    id="studentSearch"
+                    placeholder="{{ __('Search students by name or email...') }}"
+                    class="w-full"
+                />
+            </div>
+
+            <!-- Filters -->
+            <div class="flex gap-2">
+                <select id="statusFilter" class="rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2">
+                    <option value="">{{ __('All Status') }}</option>
+                    <option value="approved">{{ __('Approved') }}</option>
+                    <option value="pending">{{ __('Pending') }}</option>
+                    <option value="rejected">{{ __('Rejected') }}</option>
+                </select>
+
+                <select id="sortBy" class="rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2">
+                    <option value="name">{{ __('Sort by Name') }}</option>
+                    <option value="email">{{ __('Sort by Email') }}</option>
+                    <option value="enrolled_at">{{ __('Sort by Enrollment Date') }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
     <div class="mb-6 grid gap-4 md:grid-cols-4">
         <div class="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800">
             <div class="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-50 opacity-0 transition-opacity group-hover:opacity-100 dark:from-emerald-900/20 dark:to-teal-900/20"></div>
@@ -25,7 +56,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Total Enrolled') }}</p>
-                    <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">{{ $enrollments->count() }}</p>
+                    <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100" id="totalCount">{{ $enrollments->count() }}</p>
                 </div>
             </div>
         </div>
@@ -39,7 +70,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Active') }}</p>
-                    <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">{{ $enrollments->count() }}</p>
+                    <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100" id="activeCount">{{ $enrollments->where('status', 'approved')->count() }}</p>
                 </div>
             </div>
         </div>
@@ -57,21 +88,35 @@
                 </div>
             </div>
         </div>
-        <div class="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
-            <form method="GET" action="{{ route('teacher.courses.students', $section) }}" class="flex items-center gap-2">
-                <flux:input
-                    type="search"
-                    name="search"
-                    placeholder="{{ __('Search students...') }}"
-                    :value="request('search')"
-                    class="w-full"
-                />
-                <flux:button type="submit" variant="primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </flux:button>
-            </form>
+        <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+            <div class="flex flex-col lg:flex-row gap-4">
+                <!-- Search -->
+                <div class="flex-1">
+                    <flux:input
+                        type="text"
+                        id="studentSearch"
+                        placeholder="{{ __('Search students by name or email...') }}"
+                        :value="request('search')"
+                        class="w-full"
+                    />
+                </div>
+
+                <!-- Filters -->
+                <div class="flex gap-2">
+                    <select id="statusFilter" class="rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2">
+                        <option value="">{{ __('All Status') }}</option>
+                        <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>{{ __('Approved') }}</option>
+                        <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>{{ __('Pending') }}</option>
+                        <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>{{ __('Rejected') }}</option>
+                    </select>
+
+                    <select id="sortBy" class="rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2">
+                        <option value="name" {{ request('sort', 'name') === 'name' ? 'selected' : '' }}>{{ __('Sort by Name') }}</option>
+                        <option value="email" {{ request('sort') === 'email' ? 'selected' : '' }}>{{ __('Sort by Email') }}</option>
+                        <option value="enrolled_at" {{ request('sort') === 'enrolled_at' ? 'selected' : '' }}>{{ __('Sort by Enrollment Date') }}</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 

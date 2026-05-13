@@ -107,7 +107,15 @@
             <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg">
                 <p class="text-sm text-orange-600 dark:text-orange-400">{{ __('Class Percentile') }}</p>
                 <p class="text-2xl font-bold text-orange-900 dark:text-orange-100">{{ $report['percentile'] }}%</p>
-                <p class="text-xs text-orange-600 dark:text-orange-400">{{ $report['percentile'] >= 75 ? 'Above Average' : ($report['percentile'] >= 50 ? 'Average' : 'Below Average') }}</p>
+                <p class="text-xs text-orange-600 dark:text-orange-400">
+                    @if($report['percentile'] >= 75)
+                        {{ __('Above Average') }}
+                    @elseif($report['percentile'] >= 50)
+                        {{ __('Average') }}
+                    @else
+                        {{ __('Below Average') }}
+                    @endif
+                </p>
             </div>
         </div>
 

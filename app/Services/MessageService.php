@@ -2,9 +2,7 @@
 
 namespace App\Services;
 
-use App\Events\MessageSent;
 use App\Jobs\SendScheduledMessage;
-use App\Mail\MessageNotification;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\MessageAttachment;
@@ -12,8 +10,6 @@ use App\Models\MessageReaction;
 use App\Models\MessageTemplate;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
 
 class MessageService
@@ -54,7 +50,7 @@ class MessageService
         $sender = auth()->user();
 
         // Check if user is participant
-        if (!$conversation->hasParticipant($sender->id)) {
+        if (! $conversation->hasParticipant($sender->id)) {
             throw new \Exception('You are not a participant in this conversation.');
         }
 
@@ -76,7 +72,7 @@ class MessageService
         ]);
 
         // Handle attachments
-        if (!empty($options['attachments'])) {
+        if (! empty($options['attachments'])) {
             $this->attachFiles($message, $options['attachments']);
         }
 
@@ -84,7 +80,7 @@ class MessageService
         $conversation->updateLastMessageAt();
 
         // Send mention notifications
-        if (!empty($mentions)) {
+        if (! empty($mentions)) {
             $this->sendMentionNotifications($message, $mentions);
         }
 
@@ -113,7 +109,7 @@ class MessageService
             })
             ->first();
 
-        if (!$conversation) {
+        if (! $conversation) {
             $conversation = $this->createConversation([$sender->id, $receiverId]);
         }
 
@@ -183,7 +179,7 @@ class MessageService
 
                 MessageAttachment::create([
                     'message_id' => $message->id,
-                    'filename' => uniqid() . '_' . $file->getClientOriginalName(),
+                    'filename' => uniqid().'_'.$file->getClientOriginalName(),
                     'original_filename' => $file->getClientOriginalName(),
                     'mime_type' => $file->getMimeType(),
                     'file_size' => $file->getSize(),
@@ -230,7 +226,7 @@ class MessageService
         $conversation = Conversation::findOrFail($conversationId);
 
         // Check if user is participant
-        if (!auth()->check() || !$conversation->hasParticipant(auth()->id())) {
+        if (! auth()->check() || ! $conversation->hasParticipant(auth()->id())) {
             throw new \Exception('You do not have permission to view this conversation.');
         }
 
@@ -248,11 +244,11 @@ class MessageService
         return Conversation::whereHas('participants', function ($query) use ($userId) {
             $query->where('conversation_participants.user_id', $userId);
         })
-        ->with(['latestMessage.sender', 'participants' => function ($query) use ($userId) {
-            $query->where('conversation_participants.user_id', '!=', $userId);
-        }])
-        ->orderBy('last_message_at', 'desc')
-        ->paginate($perPage);
+            ->with(['latestMessage.sender', 'participants' => function ($query) use ($userId) {
+                $query->where('conversation_participants.user_id', '!=', $userId);
+            }])
+            ->orderBy('last_message_at', 'desc')
+            ->paginate($perPage);
     }
 
     /**
@@ -276,7 +272,7 @@ class MessageService
         $message = Message::findOrFail($messageId);
 
         // Check if user can react to this message (must be in the same conversation)
-        if (!$message->conversation || !$message->conversation->hasParticipant($userId)) {
+        if (! $message->conversation || ! $message->conversation->hasParticipant($userId)) {
             throw new \Exception('You cannot react to this message.');
         }
 
@@ -353,37 +349,37 @@ class MessageService
     {
         $messages = Message::where(function ($q) use ($userId) {
             $q->where('sender_id', $userId)
-              ->orWhere('receiver_id', $userId)
-              ->orWhereHas('conversation.participants', function ($p) use ($userId) {
-                  $p->where('user_id', $userId);
-              });
+                ->orWhere('receiver_id', $userId)
+                ->orWhereHas('conversation.participants', function ($p) use ($userId) {
+                    $p->where('user_id', $userId);
+                });
         })
-        ->where(function ($q) use ($query) {
-            $q->where('subject', 'like', "%{$query}%")
-              ->orWhere('content', 'like', "%{$query}%");
-        });
+            ->where(function ($q) use ($query) {
+                $q->where('subject', 'like', "%{$query}%")
+                    ->orWhere('content', 'like', "%{$query}%");
+            });
 
         // Apply filters
-        if (!empty($filters['type'])) {
+        if (! empty($filters['type'])) {
             $messages->where('message_type', $filters['type']);
         }
 
-        if (!empty($filters['priority'])) {
+        if (! empty($filters['priority'])) {
             $messages->where('priority', $filters['priority']);
         }
 
-        if (!empty($filters['date_from'])) {
+        if (! empty($filters['date_from'])) {
             $messages->where('created_at', '>=', $filters['date_from']);
         }
 
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $messages->where('created_at', '<=', $filters['date_to']);
         }
 
         return $messages->with(['sender', 'receiver', 'conversation'])
-                       ->orderBy('created_at', 'desc')
-                       ->limit(100)
-                       ->get();
+            ->orderBy('created_at', 'desc')
+            ->limit(100)
+            ->get();
     }
 
     /**
@@ -394,7 +390,7 @@ class MessageService
         return Message::where('conversation_id', $conversationId)
             ->where(function ($q) use ($query) {
                 $q->where('content', 'like', "%{$query}%")
-                  ->orWhere('subject', 'like', "%{$query}%");
+                    ->orWhere('subject', 'like', "%{$query}%");
             })
             ->with(['sender', 'messageAttachments'])
             ->orderBy('created_at', 'desc')
@@ -416,7 +412,7 @@ class MessageService
         $usernames = array_unique($matches[1]);
         $conversation = Conversation::find($conversationId);
 
-        if (!$conversation) {
+        if (! $conversation) {
             return [];
         }
 
@@ -467,12 +463,10 @@ class MessageService
                 broadcast(new \App\Events\NotificationSent($notification));
             } catch (\Exception $e) {
                 // Log error but don't fail the message sending
-                \Log::error('Failed to send mention notification: ' . $e->getMessage());
+                \Log::error('Failed to send mention notification: '.$e->getMessage());
             }
         }
     }
-
-
 
     /**
      * Pin a message in conversation.
@@ -483,14 +477,14 @@ class MessageService
         $message = Message::findOrFail($messageId);
 
         // Check if user can pin (must be conversation participant or admin)
-        if (!$message->conversation || !$message->conversation->hasParticipant($userId)) {
+        if (! $message->conversation || ! $message->conversation->hasParticipant($userId)) {
             throw new \Exception('You cannot pin messages in this conversation.');
         }
 
         // Check if user is admin for group conversations
         if ($message->conversation->is_group) {
             $participant = $message->conversation->participants()->where('users.id', $userId)->first();
-            if (!$participant || !$participant->pivot->is_admin) {
+            if (! $participant || ! $participant->pivot->is_admin) {
                 throw new \Exception('Only admins can pin messages in group conversations.');
             }
         }
@@ -507,14 +501,14 @@ class MessageService
         $message = Message::findOrFail($messageId);
 
         // Check if user can unpin (must be conversation participant or admin)
-        if (!$message->conversation || !$message->conversation->hasParticipant($userId)) {
+        if (! $message->conversation || ! $message->conversation->hasParticipant($userId)) {
             throw new \Exception('You cannot unpin messages in this conversation.');
         }
 
         // Check if user is admin for group conversations
         if ($message->conversation->is_group) {
             $participant = $message->conversation->participants()->where('users.id', $userId)->first();
-            if (!$participant || !$participant->pivot->is_admin) {
+            if (! $participant || ! $participant->pivot->is_admin) {
                 throw new \Exception('Only admins can unpin messages in group conversations.');
             }
         }
@@ -554,7 +548,7 @@ class MessageService
     public function getTypingUsers(int $conversationId): Collection
     {
         $conversation = Conversation::find($conversationId);
-        if (!$conversation) {
+        if (! $conversation) {
             return collect();
         }
 
@@ -573,7 +567,7 @@ class MessageService
     /**
      * Get message analytics.
      */
-    public function getAnalytics(\DateTime $startDate = null, \DateTime $endDate = null): array
+    public function getAnalytics(?\DateTime $startDate = null, ?\DateTime $endDate = null): array
     {
         $startDate = $startDate ?? now()->subDays(30);
         $endDate = $endDate ?? now();
@@ -583,13 +577,13 @@ class MessageService
         return [
             'total_messages' => $messages->count(),
             'messages_by_type' => $messages->selectRaw('message_type, COUNT(*) as count')
-                                         ->groupBy('message_type')
-                                         ->pluck('count', 'message_type')
-                                         ->toArray(),
+                ->groupBy('message_type')
+                ->pluck('count', 'message_type')
+                ->toArray(),
             'messages_by_priority' => $messages->selectRaw('priority, COUNT(*) as count')
-                                             ->groupBy('priority')
-                                             ->pluck('count', 'priority')
-                                             ->toArray(),
+                ->groupBy('priority')
+                ->pluck('count', 'priority')
+                ->toArray(),
             'read_rate' => $messages->count() > 0
                          ? ($messages->where('is_read', true)->count() / $messages->count()) * 100
                          : 0,
@@ -606,8 +600,8 @@ class MessageService
     {
         // This is a simplified calculation - in reality, you'd need to track conversation threads
         $messages = Message::whereBetween('created_at', [$startDate, $endDate])
-                          ->whereNotNull('read_at')
-                          ->get();
+            ->whereNotNull('read_at')
+            ->get();
 
         if ($messages->isEmpty()) {
             return null;
@@ -627,19 +621,19 @@ class MessageService
     private function getMostActiveUsers(\DateTime $startDate, \DateTime $endDate, int $limit = 10): array
     {
         return Message::whereBetween('created_at', [$startDate, $endDate])
-                     ->selectRaw('sender_id, COUNT(*) as message_count')
-                     ->groupBy('sender_id')
-                     ->with('sender:id,name,email')
-                     ->orderBy('message_count', 'desc')
-                     ->limit($limit)
-                     ->get()
-                     ->map(function ($item) {
-                         return [
-                             'user' => $item->sender,
-                             'message_count' => $item->message_count,
-                         ];
-                     })
-                     ->toArray();
+            ->selectRaw('sender_id, COUNT(*) as message_count')
+            ->groupBy('sender_id')
+            ->with('sender:id,name,email')
+            ->orderBy('message_count', 'desc')
+            ->limit($limit)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'user' => $item->sender,
+                    'message_count' => $item->message_count,
+                ];
+            })
+            ->toArray();
     }
 
     /**
@@ -655,16 +649,16 @@ class MessageService
             'total_attachments' => $attachments->count(),
             'total_size' => $attachments->sum('file_size'),
             'by_type' => $attachments->selectRaw('file_type, COUNT(*) as count, SUM(file_size) as size')
-                                   ->groupBy('file_type')
-                                   ->get()
-                                   ->map(function ($item) {
-                                       return [
-                                           'type' => $item->file_type,
-                                           'count' => $item->count,
-                                           'size' => $item->size,
-                                       ];
-                                   })
-                                   ->toArray(),
+                ->groupBy('file_type')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'type' => $item->file_type,
+                        'count' => $item->count,
+                        'size' => $item->size,
+                    ];
+                })
+                ->toArray(),
         ];
     }
 

@@ -60,8 +60,6 @@ class CourseTest extends TestCase
         $this->assertTrue($course->prerequisites->contains('prerequisite_course_id', $prerequisite->id));
     }
 
-
-
     /** @test */
     public function it_can_check_if_course_is_active()
     {

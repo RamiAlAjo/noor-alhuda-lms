@@ -32,7 +32,22 @@ class QuizController extends Controller
             });
         })->where(function ($q) {
             $q->where('quiz_type', '!=', 'none')->orWhereNotNull('time_limit_minutes');
-        })->with(['section.course'])->orderBy('created_at', 'desc')->paginate(20);
+        })->with(['section.course', 'studentGrades' => function ($q) {
+            $q->selectRaw('assessment_id, COUNT(*) as attempts_count, AVG(percentage) as avg_score, MAX(percentage) as max_score, MIN(percentage) as min_score')
+                ->groupBy('assessment_id');
+        }])->orderBy('created_at', 'desc')->paginate(20);
+
+        // Calculate analytics for each quiz
+        foreach ($quizzes as $quiz) {
+            $studentGrades = $quiz->studentGrades ?? collect();
+            $quiz->analytics = [
+                'total_attempts' => $studentGrades->sum('attempts_count'),
+                'avg_score' => $studentGrades->avg('avg_score'),
+                'highest_score' => $studentGrades->max('max_score'),
+                'lowest_score' => $studentGrades->min('min_score'),
+                'completion_rate' => $quiz->section ? ($studentGrades->count() / $quiz->section->enrollments->where('status', 'approved')->count()) * 100 : 0,
+            ];
+        }
 
         return view('pages.teacher.quizzes.all', compact('quizzes', 'offerings'));
     }

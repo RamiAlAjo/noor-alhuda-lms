@@ -39,6 +39,7 @@ class ProcessScheduledNotifications extends Command
 
         if ($pendingNotifications->isEmpty()) {
             $this->info('No scheduled notifications to process.');
+
             return Command::SUCCESS;
         }
 
@@ -52,7 +53,7 @@ class ProcessScheduledNotifications extends Command
 
         foreach ($pendingNotifications as $scheduled) {
             try {
-                if (!$dryRun) {
+                if (! $dryRun) {
                     $success = $scheduled->send();
                     if ($success) {
                         $sent++;
@@ -76,7 +77,7 @@ class ProcessScheduledNotifications extends Command
         $bar->finish();
         $this->newLine(2);
 
-        $this->info("Processing complete:");
+        $this->info('Processing complete:');
         $this->line("  Sent: {$sent}");
         $this->line("  Failed: {$failed}");
 

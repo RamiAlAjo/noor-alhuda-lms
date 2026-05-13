@@ -5,12 +5,26 @@
             <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100">{{ __('Attendance') }}</h1>
             <p class="mt-1 text-neutral-500 dark:text-neutral-400">{{ $section->course?->name ?? __('Course') }} - {{ __('Section') }} {{ $section->sectionNumber }}</p>
         </div>
-        <flux:button :href="route('teacher.courses.show', $section)" variant="ghost">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
-            </svg>
-            {{ __('Back to Course') }}
-        </flux:button>
+        <div class="flex items-center gap-3">
+            <flux:button :href="route('teacher.courses.attendance.bulk', $section)" variant="primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                {{ __('Bulk Attendance') }}
+            </flux:button>
+            <flux:button :href="route('teacher.courses.attendance.calendar', $section)" variant="outline">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {{ __('Calendar View') }}
+            </flux:button>
+            <flux:button :href="route('teacher.courses.show', $section)" variant="ghost">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                </svg>
+                {{ __('Back to Course') }}
+            </flux:button>
+        </div>
     </div>
 
     <!-- Stats -->

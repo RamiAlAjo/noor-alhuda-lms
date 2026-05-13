@@ -50,7 +50,7 @@ class UserTest extends TestCase
             'email' => 'test@example.com',
         ]);
 
-        $this->assertEquals($user->profile->first_name . ' ' . $user->profile->last_name, $user->full_name);
+        $this->assertEquals($user->profile->first_name.' '.$user->profile->last_name, $user->full_name);
     }
 
     /** @test */

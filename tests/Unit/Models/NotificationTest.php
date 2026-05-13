@@ -168,7 +168,7 @@ class NotificationTest extends TestCase
 
         $notificationWithCustomIcon = Notification::factory()->create([
             'type' => 'grade',
-            'data' => ['icon' => 'custom-icon']
+            'data' => ['icon' => 'custom-icon'],
         ]);
         $this->assertEquals('custom-icon', $notificationWithCustomIcon->icon);
     }
@@ -181,7 +181,7 @@ class NotificationTest extends TestCase
 
         $notificationWithCustomColor = Notification::factory()->create([
             'type' => 'enrollment',
-            'data' => ['color' => 'custom-color']
+            'data' => ['color' => 'custom-color'],
         ]);
         $this->assertEquals('custom-color', $notificationWithCustomColor->color);
     }

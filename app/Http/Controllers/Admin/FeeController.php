@@ -180,7 +180,7 @@ class FeeController extends Controller
         ]);
 
         $payment->update($request->only([
-            'amount', 'payment_method', 'transaction_id', 'status', 'notes'
+            'amount', 'payment_method', 'transaction_id', 'status', 'notes',
         ]));
 
         return redirect()->route('admin.payments.index')->with('success', 'Payment updated successfully.');

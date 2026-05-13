@@ -192,8 +192,8 @@ class User extends Authenticatable
     public function conversations(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(\App\Models\Conversation::class, 'conversation_participants')
-                    ->withPivot('joined_at', 'last_read_at', 'is_admin', 'is_muted')
-                    ->withTimestamps();
+            ->withPivot('joined_at', 'last_read_at', 'is_admin', 'is_muted')
+            ->withTimestamps();
     }
 
     /**
@@ -419,7 +419,7 @@ class User extends Authenticatable
         // Check if user has been active in the last 5 minutes
         $lastActivity = \Cache::get("user:{$this->id}:last_activity");
 
-        if (!$lastActivity) {
+        if (! $lastActivity) {
             return false;
         }
 

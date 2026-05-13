@@ -43,7 +43,7 @@
             <p class="mt-1 text-neutral-500 dark:text-neutral-400">
                 {{ __('Section') }} {{ $section->sectionNumber }}
                 @if($section->semester)
-                    - {{ $section->semester->name }}
+                    - {{ $section->semester->localized_name }}
                     @if($section->semester->academicYear)
                         {{ $section->semester->academicYear->name }}
                     @endif

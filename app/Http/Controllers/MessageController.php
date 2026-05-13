@@ -28,11 +28,13 @@ class MessageController extends Controller
 
         if ($tab === 'conversations') {
             $conversations = $this->messageService->getUserConversations($user->id);
+
             return view('pages.messages.index', compact('conversations', 'tab'));
         } else {
             // Legacy inbox view
             $messages = Message::inbox($user->id)->paginate(20);
             $sentMessages = Message::sent($user->id)->paginate(20);
+
             return view('pages.messages.index', compact('messages', 'sentMessages', 'tab'));
         }
     }
@@ -47,7 +49,7 @@ class MessageController extends Controller
 
         // Check if user has access to this conversation
         $conversation = Conversation::findOrFail($conversationId);
-        if (!$conversation->hasParticipant($user->id)) {
+        if (! $conversation->hasParticipant($user->id)) {
             abort(403);
         }
 
@@ -71,7 +73,7 @@ class MessageController extends Controller
         }
 
         // Mark as read if receiver
-        if ($message->receiver_id === Auth::id() && !$message->is_read) {
+        if ($message->receiver_id === Auth::id() && ! $message->is_read) {
             $message->markAsRead();
         }
 
@@ -97,7 +99,7 @@ class MessageController extends Controller
         if ($conversationId) {
             $conversation = Conversation::findOrFail($conversationId);
             // Check if user is participant
-            if (!$conversation->hasParticipant(Auth::id())) {
+            if (! $conversation->hasParticipant(Auth::id())) {
                 abort(403);
             }
         }
@@ -111,7 +113,8 @@ class MessageController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'content' => 'required|string',
+            'content' => 'nullable|string',
+            'message' => 'nullable|string',
             'subject' => 'nullable|string|max:255',
             'receiver_id' => 'nullable|exists:users,id',
             'conversation_id' => 'nullable|exists:conversations,id',
@@ -124,13 +127,16 @@ class MessageController extends Controller
             'tags.*' => 'string|max:50',
         ]);
 
+        // Handle both 'content' and 'message' fields for backward compatibility
+        $messageContent = $request->content ?: $request->message;
+
         try {
             $user = Auth::user();
 
             // Handle template-based messages
             if ($request->template_id) {
                 $template = MessageTemplate::findOrFail($request->template_id);
-                if (!$template->is_public && $template->created_by !== $user->id) {
+                if (! $template->is_public && $template->created_by !== $user->id) {
                     abort(403);
                 }
 
@@ -158,14 +164,14 @@ class MessageController extends Controller
                     // Reply in existing conversation
                     $message = $this->messageService->sendMessage(
                         $request->conversation_id,
-                        $request->content,
+                        $messageContent,
                         $options
                     );
                 } else {
                     // Create new direct message
                     $message = $this->messageService->sendDirectMessage(
                         $request->receiver_id,
-                        $request->content,
+                        $messageContent,
                         $options
                     );
                 }
@@ -173,14 +179,14 @@ class MessageController extends Controller
 
             $message = __('Message sent successfully!');
             if ($message->scheduled_at) {
-                $message .= ' ' . __('It will be sent at') . ' ' . $message->scheduled_at->format('M j, Y \a\t g:i A');
+                $message .= ' '.__('It will be sent at').' '.$message->scheduled_at->format('M j, Y \a\t g:i A');
             }
 
             return redirect()->route('messages.conversation', $message->conversation_id ?? $message->id)
-                           ->with('success', $message);
+                ->with('success', $message);
 
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Failed to send message: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Failed to send message: '.$e->getMessage());
         }
     }
 
@@ -189,17 +195,23 @@ class MessageController extends Controller
      */
     public function createConversation(Request $request)
     {
+
         $request->validate([
-            'participant_ids' => 'required|array|min:1',
+            'participant_ids' => 'required|array|min:2',
             'participant_ids.*' => 'exists:users,id',
             'title' => 'nullable|string|max:255',
             'message' => 'required|string',
         ]);
 
         try {
-            // Add current user to participants
-            $participantIds = array_merge($request->participant_ids, [Auth::id()]);
+            $participantIds = $request->participant_ids;
             $participantIds = array_unique($participantIds);
+
+            // Current user should already be included in the form
+            // But ensure they're there just in case
+            if (! in_array(Auth::id(), $participantIds)) {
+                $participantIds[] = Auth::id();
+            }
 
             $conversation = $this->messageService->createConversation($participantIds, [
                 'title' => $request->title,
@@ -209,10 +221,10 @@ class MessageController extends Controller
             $message = $this->messageService->sendMessage($conversation->id, $request->message);
 
             return redirect()->route('messages.conversation', $conversation->id)
-                           ->with('success', __('Conversation created successfully!'));
+                ->with('success', __('Conversation created successfully!'));
 
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'Failed to create conversation: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Failed to create conversation: '.$e->getMessage());
         }
     }
 
@@ -301,6 +313,7 @@ class MessageController extends Controller
             $message->conversation?->hasParticipant(Auth::id())) {
 
             $this->messageService->deleteMessage($message->id, Auth::id());
+
             return back()->with('success', __('Message deleted'));
         }
 
@@ -318,6 +331,7 @@ class MessageController extends Controller
 
         try {
             $this->messageService->addReaction($message->id, $request->reaction_type);
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 400);
@@ -335,6 +349,7 @@ class MessageController extends Controller
 
         try {
             $this->messageService->removeReaction($message->id, $request->reaction_type);
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 400);
@@ -348,6 +363,7 @@ class MessageController extends Controller
     {
         try {
             $this->messageService->pinMessage($message->id);
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 400);
@@ -361,6 +377,7 @@ class MessageController extends Controller
     {
         try {
             $this->messageService->unpinMessage($message->id);
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 400);
@@ -373,7 +390,7 @@ class MessageController extends Controller
     public function startTyping(Request $request, Conversation $conversation)
     {
         // Check if user has access to this conversation
-        if (!$conversation->hasParticipant(auth()->id())) {
+        if (! $conversation->hasParticipant(auth()->id())) {
             return response()->json(['success' => false, 'error' => 'Access denied'], 403);
         }
 
@@ -391,7 +408,7 @@ class MessageController extends Controller
     public function stopTyping(Request $request, Conversation $conversation)
     {
         // Check if user has access to this conversation
-        if (!$conversation->hasParticipant(auth()->id())) {
+        if (! $conversation->hasParticipant(auth()->id())) {
             return response()->json(['success' => false, 'error' => 'Access denied'], 403);
         }
 
@@ -401,6 +418,199 @@ class MessageController extends Controller
         broadcast(new \App\Events\UserTyping($conversation->id, auth()->user(), false));
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Get typing users for a conversation.
+     */
+    public function getTypingUsers(Request $request, Conversation $conversation)
+    {
+        // Check if user has access to this conversation
+        if (! $conversation->hasParticipant(auth()->id())) {
+            return response()->json(['success' => false, 'error' => 'Access denied'], 403);
+        }
+
+        $typingUsers = $this->messageService->getTypingUsers($conversation->id);
+
+        return response()->json([
+            'success' => true,
+            'typing_users' => $typingUsers->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                ];
+            }),
+        ]);
+    }
+
+    /**
+     * Update conversation details.
+     */
+    public function updateConversation(Request $request, Conversation $conversation)
+    {
+        $request->validate([
+            'title' => 'nullable|string|max:255',
+        ]);
+
+        // Check if user has access to this conversation
+        if (! $conversation->hasParticipant(auth()->id())) {
+            return response()->json(['success' => false, 'error' => 'Access denied'], 403);
+        }
+
+        // Only allow updates for group conversations
+        if (! $conversation->is_group) {
+            return response()->json(['success' => false, 'error' => 'Cannot update direct conversations'], 400);
+        }
+
+        $conversation->update($request->only(['title']));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Conversation updated successfully',
+        ]);
+    }
+
+    /**
+     * Add a participant to a group conversation.
+     */
+    public function addParticipant(Request $request, Conversation $conversation)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        // Check if user has access to this conversation
+        if (! $conversation->hasParticipant(auth()->id())) {
+            return response()->json(['success' => false, 'error' => 'Access denied'], 403);
+        }
+
+        // Only allow for group conversations
+        if (! $conversation->is_group) {
+            return response()->json(['success' => false, 'error' => 'Cannot add participants to direct conversations'], 400);
+        }
+
+        // Check if user is admin (for now, allow any participant to add members)
+        $user = \App\Models\User::find($request->user_id);
+
+        if ($conversation->hasParticipant($request->user_id)) {
+            return response()->json(['success' => false, 'error' => 'User is already a participant'], 400);
+        }
+
+        $conversation->addParticipant($user);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Participant added successfully',
+        ]);
+    }
+
+    /**
+     * Remove a participant from a group conversation.
+     */
+    public function removeParticipant(Request $request, Conversation $conversation, \App\Models\User $user)
+    {
+        // Check if user has access to this conversation
+        if (! $conversation->hasParticipant(auth()->id())) {
+            return response()->json(['success' => false, 'error' => 'Access denied'], 403);
+        }
+
+        // Only allow for group conversations
+        if (! $conversation->is_group) {
+            return response()->json(['success' => false, 'error' => 'Cannot remove participants from direct conversations'], 400);
+        }
+
+        // Check if user is admin or removing themselves
+        $isAdmin = $conversation->participants()
+            ->where('users.id', auth()->id())
+            ->where('conversation_participants.is_admin', true)
+            ->exists();
+
+        if (! $isAdmin && $user->id !== auth()->id()) {
+            return response()->json(['success' => false, 'error' => 'Only admins can remove other participants'], 403);
+        }
+
+        if (! $conversation->hasParticipant($user->id)) {
+            return response()->json(['success' => false, 'error' => 'User is not a participant'], 400);
+        }
+
+        $conversation->removeParticipant($user);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Participant removed successfully',
+        ]);
+    }
+
+    /**
+     * Leave a conversation.
+     */
+    public function leaveConversation(Request $request, Conversation $conversation)
+    {
+        // Check if user has access to this conversation
+        if (! $conversation->hasParticipant(auth()->id())) {
+            return response()->json(['success' => false, 'error' => 'Access denied'], 403);
+        }
+
+        // Only allow for group conversations
+        if (! $conversation->is_group) {
+            return response()->json(['success' => false, 'error' => 'Cannot leave direct conversations'], 400);
+        }
+
+        $conversation->removeParticipant(auth()->user());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Successfully left the conversation',
+        ]);
+    }
+
+    /**
+     * Forward a message to another conversation.
+     */
+    public function forwardMessage(Request $request, Message $message)
+    {
+        $request->validate([
+            'conversation_id' => 'required|exists:conversations,id',
+            'additional_message' => 'nullable|string|max:1000',
+        ]);
+
+        // Check if user has access to the original message
+        if ($message->sender_id !== auth()->id() && ! $message->conversation->hasParticipant(auth()->id())) {
+            abort(403, 'You do not have access to this message.');
+        }
+
+        // Check if user has access to the target conversation
+        $targetConversation = Conversation::findOrFail($request->conversation_id);
+        if (! $targetConversation->hasParticipant(auth()->id())) {
+            abort(403, 'You do not have access to the target conversation.');
+        }
+
+        // Create the forwarded message content
+        $forwardedContent = "Forwarded message:\n\"{$message->content}\"";
+        if ($request->additional_message) {
+            $forwardedContent .= "\n\n{$request->additional_message}";
+        }
+
+        // Send the forwarded message
+        $forwardedMessage = $this->messageService->sendMessage(
+            $targetConversation->id,
+            $forwardedContent,
+            [
+                'message_type' => Message::TYPE_FORWARD,
+                'metadata' => [
+                    'original_message_id' => $message->id,
+                    'original_conversation_id' => $message->conversation_id,
+                    'original_sender_id' => $message->sender_id,
+                    'forwarded_by' => auth()->id(),
+                    'forwarded_at' => now(),
+                ],
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Message forwarded successfully',
+        ]);
     }
 
     /**
@@ -436,7 +646,7 @@ class MessageController extends Controller
         ]);
 
         // Check if user has access to this conversation
-        if (!$conversation->hasParticipant(auth()->id())) {
+        if (! $conversation->hasParticipant(auth()->id())) {
             abort(403);
         }
 
@@ -524,7 +734,7 @@ class MessageController extends Controller
         ]);
 
         // Check if user has access to this conversation
-        if (!$conversation->hasParticipant(auth()->id())) {
+        if (! $conversation->hasParticipant(auth()->id())) {
             abort(403);
         }
 
@@ -543,7 +753,7 @@ class MessageController extends Controller
 
             return redirect()->back()->with('success', __('Message sent successfully'));
         } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => __('Failed to send message: ') . $e->getMessage()]);
+            return redirect()->back()->withErrors(['error' => __('Failed to send message: ').$e->getMessage()]);
         }
     }
 }

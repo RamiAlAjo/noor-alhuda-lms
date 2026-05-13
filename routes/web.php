@@ -292,7 +292,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 $user->settings->update($request->only([
                     'notification_email', 'notification_push', 'notification_grades',
                     'notification_enrollment', 'notification_payments', 'notification_announcements',
-                    'notification_reminders'
+                    'notification_reminders',
                 ]));
             }
 
@@ -322,7 +322,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                     break;
             }
 
-            return back()->with('success', ucfirst($type) . ' test completed.');
+            return back()->with('success', ucfirst($type).' test completed.');
         })->name('settings.notifications.test');
 
         // User Notifications Page
@@ -398,6 +398,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Teacher routes
     Route::middleware(['role:teacher'])->prefix('teacher')->group(function () {
         Route::get('/dashboard', [TeacherDashboardController::class, 'index'])->name('teacher.dashboard');
+        Route::get('/calendar', [TeacherDashboardController::class, 'calendar'])->name('teacher.calendar');
+        Route::get('/messages', [TeacherDashboardController::class, 'messages'])->name('teacher.messages');
 
         // Teacher Courses
         Route::get('/courses', [TeacherCourseController::class, 'index'])->name('teacher.courses.index');
@@ -405,6 +407,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/courses/{section}/students', [TeacherCourseController::class, 'students'])->name('teacher.courses.students');
         Route::get('/courses/{section}/attendance', [TeacherCourseController::class, 'attendance'])->name('teacher.courses.attendance');
         Route::post('/courses/{section}/attendance', [TeacherCourseController::class, 'storeAttendance'])->name('teacher.courses.attendance.store');
+        Route::get('/courses/{section}/attendance/bulk', [TeacherCourseController::class, 'bulkAttendance'])->name('teacher.courses.attendance.bulk');
+        Route::post('/courses/{section}/attendance/bulk', [TeacherCourseController::class, 'storeBulkAttendance'])->name('teacher.courses.attendance.bulk.store');
+        Route::get('/courses/{section}/attendance/calendar', [TeacherCourseController::class, 'attendanceCalendar'])->name('teacher.courses.attendance.calendar');
         Route::get('/courses/{section}/materials', [TeacherCourseController::class, 'materials'])->name('teacher.courses.materials');
         Route::post('/courses/{section}/materials', [TeacherCourseController::class, 'storeMaterial'])->name('teacher.courses.materials.store');
         Route::delete('/materials/{material}', [TeacherCourseController::class, 'destroyMaterial'])->name('teacher.materials.destroy');
@@ -415,6 +420,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/questions/{question}', [TeacherCourseController::class, 'destroyQuestion'])->name('teacher.questions.destroy');
         Route::get('/courses/{section}/assessments/{assessment}/grade/{studentGrade}', [TeacherCourseController::class, 'gradeStudent'])->name('teacher.courses.assessments.grade');
         Route::post('/courses/{section}/assessments/{assessment}/grade/{studentGrade}', [TeacherCourseController::class, 'storeGrade'])->name('teacher.courses.assessments.grade.store');
+        Route::get('/courses/{section}/assessments/{assessment}/bulk-grade', [TeacherCourseController::class, 'bulkGrade'])->name('teacher.courses.assessments.bulk-grade');
+        Route::post('/courses/{section}/assessments/{assessment}/bulk-grade', [TeacherCourseController::class, 'storeBulkGrade'])->name('teacher.courses.assessments.bulk-grade.store');
         Route::get('/courses/{section}/assessments/{assessment}/preview', [TeacherCourseController::class, 'previewAssessment'])->name('teacher.courses.assessments.preview');
         Route::get('/courses/{section}/grades', [TeacherCourseController::class, 'grades'])->name('teacher.courses.grades');
         Route::get('/courses/{section}/grades/{assessment}', [TeacherCourseController::class, 'viewGrades'])->name('teacher.courses.grades.view');
@@ -448,6 +455,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/appeals/{appeal}/approve', [TeacherGradeAppealController::class, 'approve'])->name('teacher.appeals.approve');
         Route::post('/appeals/{appeal}/reject', [TeacherGradeAppealController::class, 'reject'])->name('teacher.appeals.reject');
         Route::post('/appeals/{appeal}/escalate', [TeacherGradeAppealController::class, 'escalate'])->name('teacher.appeals.escalate');
+        Route::post('/appeals/bulk-approve', [TeacherGradeAppealController::class, 'bulkApprove'])->name('teacher.appeals.bulk-approve');
+        Route::post('/appeals/bulk-reject', [TeacherGradeAppealController::class, 'bulkReject'])->name('teacher.appeals.bulk-reject');
+        Route::post('/appeals/bulk-escalate', [TeacherGradeAppealController::class, 'bulkEscalate'])->name('teacher.appeals.bulk-escalate');
 
         // Teacher Discussions
         Route::get('/discussions', [TeacherDiscussionController::class, 'index'])->name('teacher.discussions.index');
@@ -655,12 +665,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Conversations
         Route::get('/messages/conversation/{conversation}', [MessageController::class, 'showConversation'])->name('messages.conversation');
+        Route::get('/messages/conversation', function () {
+            return redirect()->route('messages.index');
+        });
         Route::post('/messages/conversation', [MessageController::class, 'createConversation'])->name('messages.conversation.create');
+        Route::patch('/messages/conversation/{conversation}', [MessageController::class, 'updateConversation'])->name('messages.conversation.update');
+        Route::post('/messages/conversation/{conversation}/participants', [MessageController::class, 'addParticipant'])->name('messages.conversation.add-participant');
+        Route::delete('/messages/conversation/{conversation}/participants/{user}', [MessageController::class, 'removeParticipant'])->name('messages.conversation.remove-participant');
+        Route::post('/messages/conversation/{conversation}/leave', [MessageController::class, 'leaveConversation'])->name('messages.conversation.leave');
         Route::patch('/messages/conversation/{conversation}/read', [MessageController::class, 'markConversationAsRead'])->name('messages.conversation.read');
         Route::patch('/messages/conversation/{conversation}/archive', [MessageController::class, 'archiveConversation'])->name('messages.conversation.archive');
         Route::patch('/messages/conversation/{conversation}/unarchive', [MessageController::class, 'unarchiveConversation'])->name('messages.conversation.unarchive');
         Route::post('/messages/conversation/{conversation}/send', [MessageController::class, 'sendMessage'])->name('messages.send');
         Route::get('/messages/conversation/{conversation}/search', [MessageController::class, 'searchConversation'])->name('messages.conversation.search');
+        Route::get('/messages/conversation/{conversation}/typing', [MessageController::class, 'getTypingUsers'])->name('messages.conversation.typing');
+        Route::post('/messages/{message}/forward', [MessageController::class, 'forwardMessage'])->name('messages.forward');
 
         // Messages
         Route::get('/messages/create', [MessageController::class, 'create'])->name('messages.create');

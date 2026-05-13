@@ -38,7 +38,7 @@ class NotificationService
         int $maxRetries = 3
     ): Notification {
         // Check user preferences
-        if (!Notification::userWantsNotification($user->id, $type)) {
+        if (! Notification::userWantsNotification($user->id, $type)) {
             // Create notification but don't send it
             return Notification::create([
                 'user_id' => $user->id,
@@ -75,7 +75,7 @@ class NotificationService
                 $broadcastSuccess = true;
                 break;
             } catch (\Exception $e) {
-                \Log::warning("Notification broadcasting failed (attempt {$attempt}/{$maxRetries}): " . $e->getMessage());
+                \Log::warning("Notification broadcasting failed (attempt {$attempt}/{$maxRetries}): ".$e->getMessage());
 
                 if ($attempt < $maxRetries) {
                     sleep(1); // Wait 1 second before retry
@@ -84,12 +84,12 @@ class NotificationService
         }
 
         // Update retry count in notification data
-        if (!$broadcastSuccess) {
+        if (! $broadcastSuccess) {
             $notification->update([
                 'data' => array_merge($notification->data ?? [], [
                     'broadcast_failed' => true,
                     'retry_count' => $maxRetries,
-                ])
+                ]),
             ]);
         }
 
@@ -316,6 +316,7 @@ class NotificationService
     private function shouldSendEmail(string $type): bool
     {
         $importantTypes = ['grade', 'payment', 'system', 'warning'];
+
         return in_array($type, $importantTypes);
     }
 
@@ -327,19 +328,19 @@ class NotificationService
         try {
             // Check if user wants email notifications
             $preferences = Notification::getUserPreferences($user->id);
-            if (!$preferences['email_notifications']) {
+            if (! $preferences['email_notifications']) {
                 return;
             }
 
             \Mail::send([], [], function ($message) use ($user, $notification) {
                 $message->to($user->email)
-                        ->subject('Noor LMS: ' . $notification->title)
-                        ->html(
-                            view('emails.notification', [
-                                'user' => $user,
-                                'notification' => $notification,
-                            ])->render()
-                        );
+                    ->subject('Noor LMS: '.$notification->title)
+                    ->html(
+                        view('emails.notification', [
+                            'user' => $user,
+                            'notification' => $notification,
+                        ])->render()
+                    );
             });
 
             \Log::info("Email notification sent to {$user->email} for notification {$notification->id}");
@@ -351,7 +352,7 @@ class NotificationService
     /**
      * Get notification analytics.
      */
-    public function getAnalytics(\DateTime $startDate = null, \DateTime $endDate = null): array
+    public function getAnalytics(?\DateTime $startDate = null, ?\DateTime $endDate = null): array
     {
         $startDate = $startDate ?? now()->subDays(30);
         $endDate = $endDate ?? now();
@@ -361,9 +362,9 @@ class NotificationService
         return [
             'total_sent' => $query->count(),
             'by_type' => $query->selectRaw('type, COUNT(*) as count')
-                              ->groupBy('type')
-                              ->pluck('count', 'type')
-                              ->toArray(),
+                ->groupBy('type')
+                ->pluck('count', 'type')
+                ->toArray(),
             'read_rate' => $query->count() > 0
                          ? ($query->where('is_read', true)->count() / $query->count()) * 100
                          : 0,
@@ -378,8 +379,8 @@ class NotificationService
     private function calculateAverageTimeToRead(\DateTime $startDate, \DateTime $endDate): ?float
     {
         $notifications = Notification::whereBetween('created_at', [$startDate, $endDate])
-                                   ->whereNotNull('read_at')
-                                   ->get();
+            ->whereNotNull('read_at')
+            ->get();
 
         if ($notifications->isEmpty()) {
             return null;
@@ -401,12 +402,12 @@ class NotificationService
         // This would require tracking who sent notifications
         // For now, return types as proxy
         return Notification::whereBetween('created_at', [$startDate, $endDate])
-                          ->selectRaw('type, COUNT(*) as count')
-                          ->groupBy('type')
-                          ->orderBy('count', 'desc')
-                          ->limit(5)
-                          ->pluck('count', 'type')
-                          ->toArray();
+            ->selectRaw('type, COUNT(*) as count')
+            ->groupBy('type')
+            ->orderBy('count', 'desc')
+            ->limit(5)
+            ->pluck('count', 'type')
+            ->toArray();
     }
 
     /**

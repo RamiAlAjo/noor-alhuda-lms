@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Conversation extends Model
 {
@@ -31,7 +31,9 @@ class Conversation extends Model
      * Conversation types
      */
     const TYPE_DIRECT = 'direct';
+
     const TYPE_GROUP = 'group';
+
     const TYPE_SYSTEM = 'system';
 
     /**
@@ -56,8 +58,8 @@ class Conversation extends Model
     public function participants(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'conversation_participants')
-                    ->withPivot('joined_at', 'last_read_at', 'is_admin', 'is_muted')
-                    ->withTimestamps();
+            ->withPivot('joined_at', 'last_read_at', 'is_admin', 'is_muted')
+            ->withTimestamps();
     }
 
     /**
@@ -74,17 +76,17 @@ class Conversation extends Model
     public function getUnreadCountForUser(int $userId): int
     {
         $lastReadAt = $this->participants()
-                          ->where('user_id', $userId)
-                          ->value('last_read_at');
+            ->where('user_id', $userId)
+            ->value('last_read_at');
 
-        if (!$lastReadAt) {
+        if (! $lastReadAt) {
             return $this->messages()->count();
         }
 
         return $this->messages()
-                   ->where('sender_id', '!=', $userId)
-                   ->where('created_at', '>', $lastReadAt)
-                   ->count();
+            ->where('sender_id', '!=', $userId)
+            ->where('created_at', '>', $lastReadAt)
+            ->count();
     }
 
     /**
@@ -93,8 +95,8 @@ class Conversation extends Model
     public function markAsReadForUser(int $userId): void
     {
         $this->participants()
-             ->where('user_id', $userId)
-             ->update(['last_read_at' => now()]);
+            ->where('user_id', $userId)
+            ->update(['last_read_at' => now()]);
     }
 
     /**
@@ -134,11 +136,11 @@ class Conversation extends Model
             return $this->title;
         }
 
-        if (!$this->is_group) {
+        if (! $this->is_group) {
             // For direct messages, show the other participant's name
             $otherParticipant = $this->participants()
-                                   ->where('user_id', '!=', auth()->id())
-                                   ->first();
+                ->where('user_id', '!=', auth()->id())
+                ->first();
 
             return $otherParticipant ? $otherParticipant->name : 'Unknown User';
         }
@@ -151,10 +153,10 @@ class Conversation extends Model
      */
     public function getAvatarUrlAttribute(): string
     {
-        if (!$this->is_group && $this->participants()->count() === 2) {
+        if (! $this->is_group && $this->participants()->count() === 2) {
             $otherParticipant = $this->participants()
-                                   ->where('user_id', '!=', auth()->id())
-                                   ->first();
+                ->where('user_id', '!=', auth()->id())
+                ->first();
 
             return $otherParticipant ? $otherParticipant->getAvatarUrl() : '/default-avatar.png';
         }
