@@ -71,12 +71,27 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
+        \Illuminate\Support\Facades\Log::info('Course creation attempt', [
+            'input' => $request->all(),
+            'user_id' => auth()->id(),
+        ]);
+
+        // Clean empty strings for numeric/optional fields from form selects
+        $request->merge([
+            'year_level' => $request->year_level ?: null,
+            'theory_hours' => $request->theory_hours ?: null,
+            'lab_hours' => $request->lab_hours ?: null,
+        ]);
+
         $request->validate([
-            'code' => 'required|string|max:10|unique:courses',
+            'code' => 'required|string|max:20|unique:courses',
             'name' => 'required|string|max:255',
             'name_ar' => 'nullable|string|max:255',
             'department_id' => 'required|exists:departments,id',
             'credits' => 'required|integer|min:1|max:10',
+            'theory_hours' => 'nullable|integer|min:0|max:20',
+            'lab_hours' => 'nullable|integer|min:0|max:20',
+            'year_level' => 'nullable|integer|between:1,5',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
             'major_ids' => 'array',
@@ -85,19 +100,56 @@ class CourseController extends Controller
 
         // Laravel's boolean validation automatically converts 'on' to true
         // and null (when checkbox unchecked) to false
-        $courseData = $request->except('major_ids');
+        $courseData = $request->except(['major_ids', '_token']);
 
-        $course = Course::create($courseData);
+        // Handle checkbox
+        $courseData['is_active'] = $request->boolean('is_active');
 
-        if ($request->has('major_ids')) {
-            $course->majors()->attach($request->major_ids);
+        // Map legacy form fields if needed (defensive)
+        if (isset($courseData['hours'])) {
+            $courseData['theory_hours'] = $courseData['hours'];
+            unset($courseData['hours']);
+        }
+        if (isset($courseData['level'])) {
+            $courseData['year_level'] = $courseData['level'];
+            unset($courseData['level']);
         }
 
-        // Clear course listings cache
-        Cache::forget('admin_course_offerings');
+        // Only keep fields that are actually fillable in the model (prevents mass assignment issues)
+        $fillable = (new \App\Models\Course)->getFillable();
+        $courseData = array_intersect_key($courseData, array_flip($fillable));
 
-        return redirect()->route('admin.courses.index')
-            ->with('success', __('lms::messages.course_created'));
+        // Set sensible defaults for missing optional fields
+        $courseData['semester_available'] = $courseData['semester_available'] ?? 'both';
+        $courseData['theory_hours'] = $courseData['theory_hours'] ?? 3;
+        $courseData['lab_hours'] = $courseData['lab_hours'] ?? 0;
+        $courseData['year_level'] = $courseData['year_level'] ?? 1;
+        $courseData['is_active'] = $courseData['is_active'] ?? true;
+
+        try {
+            $course = Course::create($courseData);
+
+            if ($request->filled('major_ids')) {
+                $course->majors()->sync($request->major_ids);
+            }
+
+            Cache::forget('admin_course_offerings');
+
+            \Illuminate\Support\Facades\Log::info('Course created successfully', ['course_id' => $course->id, 'code' => $course->code]);
+
+            return redirect()->route('admin.courses.index')
+                ->with('success', __('Course created successfully.'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Course creation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'input' => $request->all(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Failed to create course: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -149,33 +201,86 @@ class CourseController extends Controller
      */
     public function update(Request $request, Course $course)
     {
+        \Illuminate\Support\Facades\Log::info('Course update attempt', [
+            'course_id' => $course->id,
+            'input' => $request->all(),
+            'user_id' => auth()->id(),
+        ]);
+
+        // Clean empty strings for numeric/optional fields
+        $request->merge([
+            'year_level' => $request->year_level ?: null,
+            'theory_hours' => $request->theory_hours ?: null,
+            'lab_hours' => $request->lab_hours ?: null,
+        ]);
+
         $request->validate([
-            'code' => 'required|string|max:10|unique:courses,code,'.$course->id,
+            'code' => 'required|string|max:20|unique:courses,code,'.$course->id,
             'name' => 'required|string|max:255',
             'name_ar' => 'nullable|string|max:255',
             'department_id' => 'required|exists:departments,id',
             'credits' => 'required|integer|min:1|max:10',
+            'theory_hours' => 'nullable|integer|min:0|max:20',
+            'lab_hours' => 'nullable|integer|min:0|max:20',
+            'year_level' => 'nullable|integer|between:1,5',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
             'major_ids' => 'array',
             'major_ids.*' => 'exists:majors,id',
         ]);
 
-        // Laravel's boolean validation automatically converts 'on' to true
-        // and null (when checkbox unchecked) to false
-        $course->update($request->except('major_ids'));
+        $courseData = $request->except(['major_ids', '_token', '_method']);
 
-        if ($request->has('major_ids')) {
-            $course->majors()->sync($request->major_ids);
-        } else {
-            $course->majors()->detach();
+        // Handle checkbox reliably
+        $courseData['is_active'] = $request->boolean('is_active');
+
+        // Map legacy fields
+        if (isset($courseData['hours'])) {
+            $courseData['theory_hours'] = $courseData['hours'];
+            unset($courseData['hours']);
+        }
+        if (isset($courseData['level'])) {
+            $courseData['year_level'] = $courseData['level'];
+            unset($courseData['level']);
         }
 
-        // Clear course listings cache
-        Cache::forget('admin_course_offerings');
+        // Only keep fillable fields
+        $fillable = (new \App\Models\Course)->getFillable();
+        $courseData = array_intersect_key($courseData, array_flip($fillable));
 
-        return redirect()->route('admin.courses.index')
-            ->with('success', __('lms::messages.course_updated'));
+        // Set defaults
+        $courseData['semester_available'] = $courseData['semester_available'] ?? $course->semester_available ?? 'both';
+        $courseData['theory_hours'] = $courseData['theory_hours'] ?? $course->theory_hours ?? 3;
+        $courseData['lab_hours'] = $courseData['lab_hours'] ?? $course->lab_hours ?? 0;
+        $courseData['year_level'] = $courseData['year_level'] ?? $course->year_level ?? 1;
+        $courseData['is_active'] = $courseData['is_active'] ?? $course->is_active ?? true;
+
+        try {
+            $course->update($courseData);
+
+            if ($request->has('major_ids')) {
+                $course->majors()->sync($request->major_ids);
+            } else {
+                $course->majors()->detach();
+            }
+
+            Cache::forget('admin_course_offerings');
+
+            \Illuminate\Support\Facades\Log::info('Course updated successfully', ['course_id' => $course->id]);
+
+            return redirect()->route('admin.courses.index')
+                ->with('success', __('Course updated successfully.'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Course update failed', [
+                'course_id' => $course->id,
+                'error' => $e->getMessage(),
+                'input' => $request->all(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Failed to update course: ' . $e->getMessage());
+        }
     }
 
     /**

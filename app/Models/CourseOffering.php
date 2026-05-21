@@ -92,7 +92,7 @@ class CourseOffering extends Model
     /**
      * Get pre-quizzes for this offering.
      */
-    public function preQuizzes(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    public function preQuizzes()
     {
         return $this->assessments()->where('quiz_type', 'pre_quiz');
     }
@@ -100,7 +100,7 @@ class CourseOffering extends Model
     /**
      * Get post-quizzes for this offering.
      */
-    public function postQuizzes(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    public function postQuizzes()
     {
         return $this->assessments()->where('quiz_type', 'post_quiz');
     }
@@ -108,7 +108,7 @@ class CourseOffering extends Model
     /**
      * Get regular quizzes for this offering.
      */
-    public function quizzes(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    public function quizzes()
     {
         return $this->assessments()->where('quiz_type', 'quiz');
     }

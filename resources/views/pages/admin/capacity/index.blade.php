@@ -33,14 +33,17 @@
             <p class="mt-2 text-gray-600 dark:text-gray-400">{{ __('Optimize course capacities with AI-powered predictions') }}</p>
         </div>
         <div class="flex space-x-3">
-            <button type="button" onclick="runBatchPrediction()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button id="batch-btn" type="button" onclick="runBatchPrediction()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-60">
+                <svg id="batch-icon" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                 </svg>
-                {{ __('Run Batch Prediction') }}
+                <span id="batch-text">{{ __('Run Batch Prediction') }}</span>
             </button>
         </div>
     </div>
+
+    <!-- Batch Prediction Status Message -->
+    <div id="batch-status" class="hidden mb-6 rounded-xl border p-4 text-sm transition-all"></div>
 
     <!-- Semester Selector -->
     <div class="mb-6">
@@ -277,6 +280,7 @@
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                     <tr>
+                        <th class="px-3 py-3 w-12 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">#</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Course') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Teacher') }}</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ __('Enrolled') }}</th>
@@ -287,9 +291,12 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                    @foreach($offerings as $offering)
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                            <td class="px-6 py-4 whitespace-nowrap">
+                     @foreach($offerings as $offering)
+                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                             <td class="px-3 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-500 dark:text-gray-400">
+                                 {{ $loop->iteration }}
+                             </td>
+                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div>
                                         <div class="text-sm font-medium text-gray-900 dark:text-white">
@@ -454,25 +461,107 @@
         }
 
         function runBatchPrediction() {
+            const btn = document.getElementById('batch-btn');
+            const btnText = document.getElementById('batch-text');
+            const btnIcon = document.getElementById('batch-icon');
+            const status = document.getElementById('batch-status');
+            const semesterId = {{ $semesterId ?? 'null' }};
+
+            if (!semesterId) {
+                showBatchStatus('error', 'No semester selected for batch prediction.');
+                return;
+            }
+
+            // Set loading state
+            btn.disabled = true;
+            btnText.textContent = '{{ __("Running Batch Prediction...") }}';
+            btnIcon.innerHTML = `
+                <svg class="w-4 h-4 mr-2 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+            `;
+
+            status.className = 'mb-6 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-200';
+            status.innerHTML = `
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-3 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    <span>{{ __("Running AI batch predictions for all courses in this semester. This may take a moment...") }}</span>
+                </div>
+            `;
+            status.classList.remove('hidden');
+
             fetch(`{{ url('/admin/capacity/batch') }}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
+                },
+                body: JSON.stringify({ semester_id: semesterId })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    location.reload();
+                    status.className = 'mb-6 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-200';
+                    status.innerHTML = `
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span><strong>{{ __("Success!") }}</strong> ${data.processed || 0} {{ __("predictions generated and saved.") }} {{ __("Reloading page...") }}</span>
+                        </div>
+                    `;
+                    
+                    // Reload after short delay so user can read the message
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1200);
                 } else {
-                    alert('Batch prediction failed: ' + data.message);
+                    showBatchStatus('error', data.message || '{{ __("Batch prediction failed for an unknown reason.") }}');
+                    resetBatchButton();
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while running batch prediction');
+                showBatchStatus('error', '{{ __("An unexpected error occurred while running batch prediction. Please check the browser console or try again.") }}');
+                resetBatchButton();
             });
+        }
+
+        function showBatchStatus(type, message) {
+            const status = document.getElementById('batch-status');
+            const classes = {
+                'success': 'border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-200',
+                'error': 'border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-200',
+                'info': 'border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-200'
+            };
+
+            status.className = `mb-6 rounded-xl border p-4 text-sm ${classes[type] || classes['error']}`;
+            status.innerHTML = `
+                <div class="flex items-start">
+                    <div class="flex-1">${message}</div>
+                    <button onclick="document.getElementById('batch-status').classList.add('hidden')" class="ml-4 text-current opacity-60 hover:opacity-100">×</button>
+                </div>
+            `;
+            status.classList.remove('hidden');
+        }
+
+        function resetBatchButton() {
+            const btn = document.getElementById('batch-btn');
+            const btnText = document.getElementById('batch-text');
+            const btnIcon = document.getElementById('batch-icon');
+
+            btn.disabled = false;
+            btnText.textContent = '{{ __("Run Batch Prediction") }}';
+            btnIcon.innerHTML = `
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+            `;
         }
 
         function showRecommendations(offeringId, recommendations) {

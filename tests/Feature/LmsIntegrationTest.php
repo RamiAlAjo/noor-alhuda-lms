@@ -8,6 +8,7 @@ use App\Models\CourseOffering;
 use App\Models\Enrollment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class LmsIntegrationTest extends TestCase
@@ -446,8 +447,9 @@ class LmsIntegrationTest extends TestCase
 
         try {
             Enrollment::create([
-                'user_id' => $newStudent->id,
+                'student_id' => $newStudent->id,
                 'course_offering_id' => $advancedOffering->id,
+                'semester_id' => $advancedOffering->semester_id,
                 'status' => 'approved',
             ]);
             $this->fail('Expected exception not thrown');

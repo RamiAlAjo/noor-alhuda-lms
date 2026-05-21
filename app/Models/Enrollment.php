@@ -274,4 +274,23 @@ class Enrollment extends Model
         // Assuming A, B, C are passing grades
         return in_array($this->final_grade, ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-']);
     }
+
+    /**
+     * Boot the model and add prerequisite validation on creation for approved enrollments.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (self $enrollment) {
+            if ($enrollment->status === 'approved' && $enrollment->course_offering_id) {
+                $offering = CourseOffering::find($enrollment->course_offering_id);
+                if ($offering && $offering->course) {
+                    if (! $offering->course->hasCompletedPrerequisites($enrollment->student_id)) {
+                        throw new \Exception('Prerequisite not met');
+                    }
+                }
+            }
+        });
+    }
 }

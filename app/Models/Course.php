@@ -97,31 +97,37 @@ class Course extends Model
         $prerequisiteCourseIds = $this->prerequisites()
             ->where('is_active', true)
             ->where('type', 'required')
-            ->pluck('prerequisite_course_id');
+            ->pluck('prerequisite_course_id')
+            ->unique()
+            ->toArray();
 
-        // If no required prerequisites, student can enroll
-        if ($prerequisiteCourseIds->isEmpty()) {
+        if (empty($prerequisiteCourseIds)) {
             return true;
         }
 
-        // Get all offering IDs for the prerequisite courses
-        $passedOfferingIds = CourseOffering::whereIn('course_id', $prerequisiteCourseIds)
-            ->pluck('id');
+        // For each prerequisite course, check if the student has at least one passing grade
+        // in any of its offerings.
+        foreach ($prerequisiteCourseIds as $prereqCourseId) {
+            $prereqOfferings = CourseOffering::where('course_id', $prereqCourseId)->pluck('id');
 
-        // If no offerings exist for prerequisites, return false (cannot verify)
-        if ($passedOfferingIds->isEmpty()) {
-            return false;
+            if ($prereqOfferings->isEmpty()) {
+                // No offerings for this prereq yet — cannot verify, treat as not met
+                return false;
+            }
+
+            $hasPassedThisPrereq = StudentGrade::where('student_id', $studentId)
+                ->whereHas('assessment', function ($q) use ($prereqOfferings) {
+                    $q->whereIn('course_offering_id', $prereqOfferings);
+                })
+                ->where('passed', true)
+                ->exists();
+
+            if (! $hasPassedThisPrereq) {
+                return false; // Missing at least one required prereq
+            }
         }
 
-        // Get assessments from prerequisite offerings and check if student passed
-        $passedAssessments = StudentGrade::where('student_id', $studentId)
-            ->whereHas('assessment', function ($q) use ($passedOfferingIds) {
-                $q->whereIn('course_offering_id', $passedOfferingIds);
-            })
-            ->where('passed', true)
-            ->exists();
-
-        return $passedAssessments;
+        return true;
     }
 
     /**

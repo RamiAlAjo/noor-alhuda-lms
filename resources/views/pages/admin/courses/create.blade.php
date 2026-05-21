@@ -49,6 +49,29 @@
     <form method="POST" action="{{ route('admin.courses.store') }}">
         @csrf
 
+        @if (session('success'))
+            <div class="mb-6 rounded-xl border border-green-200 bg-green-50 p-4 text-green-700 dark:border-green-800 dark:bg-green-900/20 dark:text-green-300">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300">
+                <div class="font-semibold">{{ __('Please fix the following errors:') }}</div>
+                <ul class="mt-2 list-disc pl-5 text-sm">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="grid gap-6 lg:grid-cols-3">
             <!-- Main Form -->
             <div class="lg:col-span-2">
@@ -69,19 +92,29 @@
 
                         <flux:input name="name" :label="__('Course Name')" placeholder="e.g., Introduction to Computer Science" required />
 
-                        <flux:textarea name="description" :label="__('Description')" placeholder="{{ __('Course description') }}" rows="4" />
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{{ __('Description') }}</label>
+                            <textarea name="description"
+                                      class="block w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500"
+                                      rows="4"
+                                      placeholder="{{ __('Course description') }}">{{ old('description') }}</textarea>
+                        </div>
 
                         <div class="grid gap-4 md:grid-cols-3">
                             <flux:input name="credits" type="number" :label="__('Credits')" placeholder="3" required />
-                            <flux:input name="hours" type="number" :label="__('Weekly Hours')" placeholder="4" />
-                            <flux:select name="level" :label="__('Level')">
-                                <flux:select.option value="beginner">{{ __('Beginner') }}</flux:select.option>
-                                <flux:select.option value="intermediate">{{ __('Intermediate') }}</flux:select.option>
-                                <flux:select.option value="advanced">{{ __('Advanced') }}</flux:select.option>
+                            <flux:input name="theory_hours" type="number" :label="__('Theory Hours')" placeholder="3" />
+                            <flux:input name="lab_hours" type="number" :label="__('Lab Hours')" placeholder="0" />
+                            <flux:select name="year_level" :label="__('Year Level')">
+                                <flux:select.option value="">{{ __('Select Level') }}</flux:select.option>
+                                <flux:select.option value="1">{{ __('Year 1') }}</flux:select.option>
+                                <flux:select.option value="2">{{ __('Year 2') }}</flux:select.option>
+                                <flux:select.option value="3">{{ __('Year 3') }}</flux:select.option>
+                                <flux:select.option value="4">{{ __('Year 4') }}</flux:select.option>
                             </flux:select>
                         </div>
 
-                        <flux:checkbox name="is_active" :label="__('Active')" checked />
+                        <input type="hidden" name="is_active" value="0">
+                        <flux:checkbox name="is_active" :label="__('Active')" value="1" checked />
                     </div>
                 </div>
             </div>

@@ -207,6 +207,7 @@ class StudentPerformancePredictionEngine implements PredictionInterface
     {
         try {
             $response = Http::timeout(5)
+                ->connectTimeout(2)
                 ->withHeaders(['Authorization' => "Bearer {$this->mlApiKey}"])
                 ->get("{$this->mlServiceUrl}/health");
 
@@ -406,6 +407,7 @@ class StudentPerformancePredictionEngine implements PredictionInterface
 
         try {
             $response = Http::timeout(5)
+                ->connectTimeout(2)
                 ->withHeaders(['Authorization' => "Bearer {$this->mlApiKey}"])
                 ->get("{$this->mlServiceUrl}/health");
 
@@ -465,7 +467,11 @@ class StudentPerformancePredictionEngine implements PredictionInterface
 
         for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
             try {
-                $response = Http::timeout(config('services.ml_api.timeout', 30))
+                $timeout = (int) config('services.ml_api.timeout', 10);
+                $connectTimeout = min(2, max(1, (int) ($timeout / 4)));
+
+                $response = Http::timeout($timeout)
+                    ->connectTimeout($connectTimeout)
                     ->withHeaders([
                         'Authorization' => "Bearer {$this->mlApiKey}",
                         'Content-Type' => 'application/json',

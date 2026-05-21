@@ -248,12 +248,19 @@ class CapacityManagementController extends Controller
      */
     public function batchPredict(Request $request): array
     {
-        $request->validate([
-            'semester_id' => 'required|exists:semesters,id',
-        ]);
+        $semesterId = $request->get('semester_id',
+            Semester::where('is_active', true)->first()?->id ?? Semester::first()?->id
+        );
+
+        if (! $semesterId) {
+            return [
+                'success' => false,
+                'message' => 'No active semester found for batch prediction.',
+            ];
+        }
 
         try {
-            $results = $this->predictionService->batchPredict($request->semester_id);
+            $results = $this->predictionService->batchPredict($semesterId);
 
             return [
                 'success' => true,

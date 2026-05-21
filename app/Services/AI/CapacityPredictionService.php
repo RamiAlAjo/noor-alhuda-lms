@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\CourseOffering;
 use App\Models\Semester;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -39,23 +40,29 @@ class CapacityPredictionService
 
         $features = $this->featureEngine->generateFeatures($courseId, $semesterId);
 
-        // Try ML prediction first, fallback to enhanced rule-based prediction
-        try {
-            $prediction = $this->callMLService('/predict/capacity', $features);
+        $result = null;
 
-            $result = [
-                'predicted_students' => (int) $prediction['predicted_enrollment'],
-                'recommended_capacity' => $this->calculateRecommendedCapacity($prediction),
-                'minimum_viable' => (int) ($prediction['minimum_students'] ?? 10),
-                'maximum_optimal' => (int) ($prediction['maximum_students'] ?? 50),
-                'confidence_level' => (float) ($prediction['confidence'] ?? 0.75),
-                'method' => 'ml_prediction',
-                'feature_importance' => $prediction['feature_importance'] ?? null,
-            ];
-        } catch (\Exception $e) {
-            Log::warning('ML prediction failed, using enhanced rule-based: '.$e->getMessage());
+        // Only attempt ML if service is believed to be available (cached check prevents repeated slow failures)
+        if ($this->isMLLikelyAvailable()) {
+            try {
+                $prediction = $this->callMLService('/predict/capacity', $features);
 
-            // Enhanced fallback to rule-based prediction with better algorithms
+                $result = [
+                    'predicted_students' => (int) $prediction['predicted_enrollment'],
+                    'recommended_capacity' => $this->calculateRecommendedCapacity($prediction),
+                    'minimum_viable' => (int) ($prediction['minimum_students'] ?? 10),
+                    'maximum_optimal' => (int) ($prediction['maximum_students'] ?? 50),
+                    'confidence_level' => (float) ($prediction['confidence'] ?? 0.75),
+                    'method' => 'ml_prediction',
+                    'feature_importance' => $prediction['feature_importance'] ?? null,
+                ];
+            } catch (\Exception $e) {
+                Log::warning('ML prediction failed, using enhanced rule-based: '.$e->getMessage());
+            }
+        }
+
+        // Fall back to enhanced rule-based if ML was not used or failed
+        if ($result === null) {
             $result = $this->enhancedRuleBasedPrediction($courseId, $semesterId, $features);
         }
 
@@ -70,7 +77,11 @@ class CapacityPredictionService
      */
     private function callMLService(string $endpoint, array $features): array
     {
-        $response = Http::timeout(config('services.ml_api.timeout', 2))
+        $timeout = (int) config('services.ml_api.timeout', 5);
+        $connectTimeout = min(2, max(1, (int) ($timeout / 3)));
+
+        $response = Http::timeout($timeout)
+            ->connectTimeout($connectTimeout)
             ->withHeaders([
                 'Authorization' => 'Bearer '.$this->mlApiKey,
                 'Content-Type' => 'application/json',
@@ -548,8 +559,16 @@ class CapacityPredictionService
                 'prediction' => $prediction,
             ];
 
-            // Save prediction to database
-            $this->savePrediction($offering->course_id, $semesterId, $prediction);
+            // Save prediction to database (non-fatal — table may not exist yet or have issues)
+            try {
+                $this->savePrediction($offering->course_id, $semesterId, $prediction);
+            } catch (\Throwable $e) {
+                Log::warning('Failed to persist capacity prediction', [
+                    'course_id' => $offering->course_id,
+                    'semester_id' => $semesterId,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         return $results;
@@ -560,7 +579,8 @@ class CapacityPredictionService
      */
     private function savePrediction(int $courseId, int $semesterId, array $prediction): void
     {
-        \Illuminate\Support\Facades\DB::table('capacity_predictions')->updateOrInsert(
+        try {
+            DB::table('capacity_predictions')->updateOrInsert(
             [
                 'course_id' => $courseId,
                 'semester_id' => $semesterId,
@@ -577,6 +597,10 @@ class CapacityPredictionService
                 'updated_at' => now(),
             ]
         );
+        } catch (\Throwable $e) {
+            Log::warning('savePrediction failed: ' . $e->getMessage());
+            // Silently ignore if table missing or other DB issues
+        }
     }
 
     /**
@@ -584,7 +608,7 @@ class CapacityPredictionService
      */
     public function getPredictionHistory(int $courseId, int $limit = 12): array
     {
-        return \Illuminate\Support\Facades\DB::table('capacity_predictions')
+        return DB::table('capacity_predictions')
             ->where('course_id', $courseId)
             ->orderBy('created_at', 'desc')
             ->limit($limit)
@@ -597,7 +621,7 @@ class CapacityPredictionService
      */
     public function getPredictionAccuracy(int $semesterId): array
     {
-        $predictions = \Illuminate\Support\Facades\DB::table('capacity_predictions')
+        $predictions = DB::table('capacity_predictions')
             ->where('semester_id', $semesterId)
             ->get();
 
@@ -667,6 +691,7 @@ class CapacityPredictionService
     {
         try {
             $response = Http::timeout(5)
+                ->connectTimeout(2)
                 ->withHeaders([
                     'Authorization' => 'Bearer '.$this->mlApiKey,
                 ])
@@ -676,6 +701,25 @@ class CapacityPredictionService
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Cached check to avoid hammering a down ML service on every prediction.
+     * Caches the availability result for 30 seconds so a single slow health check
+     * protects the rest of the page (or subsequent requests).
+     */
+    private function isMLLikelyAvailable(): bool
+    {
+        // If no URL configured, don't even try
+        if (empty($this->mlServiceUrl)) {
+            return false;
+        }
+
+        $cacheKey = 'ml_service_availability_flag';
+
+        return Cache::remember($cacheKey, 30, function () {
+            return $this->isMLServiceAvailable();
+        });
     }
 
     /**
