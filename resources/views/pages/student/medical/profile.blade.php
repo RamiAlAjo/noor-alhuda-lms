@@ -84,7 +84,7 @@
             <!-- Current Medications -->
             <div class="mt-4">
                 <flux:textarea
-                    name="current_medications"
+                    name="medications"
                     :label="__('Current Medications')"
                     placeholder="{{ __('List any medications you are currently taking') }}"
                     rows="3"
@@ -93,9 +93,9 @@
 
             <!-- Submit -->
             <div class="mt-6 flex justify-end">
-                <flux:button type="submit" variant="primary">
-                    {{ __('Save Changes') }}
-                </flux:button>
+                <x-button.submit loading-text="Saving...">
+                    Save Changes
+                </x-button.submit>
             </div>
         </form>
     </div>

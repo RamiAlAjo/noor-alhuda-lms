@@ -220,7 +220,17 @@ new class extends Component {
             'dark_gradient' => $this->dark_gradient,
         ]);
 
-        $this->dispatch('appearance-updated');
+        $this->dispatch('appearance-updated', [
+            'high_contrast' => $this->high_contrast,
+            'large_text' => $this->large_text,
+            'dyslexia_font' => $this->dyslexia_font,
+            'reduced_motion' => $this->reduced_motion,
+            'grayscale' => $this->grayscale,
+            'strong_focus_outline' => $this->strong_focus_outline,
+            'line_spacing' => $this->line_spacing,
+            'font_face' => $this->font_face,
+            'font_size' => $this->font_size,
+        ]);
     }
 }; ?>
 
@@ -375,17 +385,17 @@ new class extends Component {
                 <flux:heading level="3" size="sm">{{ __('Accessibility') }}</flux:heading>
 
                 <div class="space-y-3">
-                    <flux:switch wire:model="high_contrast" :label="__('High Contrast Mode')" description="{{ __('Increase contrast for better visibility') }}" />
+                    <flux:switch wire:model="high_contrast" wire:change="saveAppearance" :label="__('High Contrast Mode')" description="{{ __('Increase contrast for better visibility') }}" />
 
-                    <flux:switch wire:model="large_text" :label="__('Large Text')" description="{{ __('Increase default text size') }}" />
+                    <flux:switch wire:model="large_text" wire:change="saveAppearance" :label="__('Large Text')" description="{{ __('Increase default text size') }}" />
 
-                    <flux:switch wire:model="dyslexia_font" :label="__('Dyslexia-Friendly Font')" description="{{ __('Use OpenDyslexic font for easier reading') }}" />
+                    <flux:switch wire:model="dyslexia_font" wire:change="saveAppearance" :label="__('Dyslexia-Friendly Font')" description="{{ __('Use OpenDyslexic font for easier reading') }}" />
 
-                    <flux:switch wire:model="reduced_motion" :label="__('Reduced Motion')" description="{{ __('Minimize animations and transitions') }}" />
+                    <flux:switch wire:model="reduced_motion" wire:change="saveAppearance" :label="__('Reduced Motion')" description="{{ __('Minimize animations and transitions') }}" />
 
-                    <flux:switch wire:model="grayscale" :label="__('Grayscale Mode')" description="{{ __('Remove colors for simpler visual experience') }}" />
+                    <flux:switch wire:model="grayscale" wire:change="saveAppearance" :label="__('Grayscale Mode')" description="{{ __('Remove colors for simpler visual experience') }}" />
 
-                    <flux:switch wire:model="strong_focus_outline" :label="__('Strong Focus Outline')" description="{{ __('Enhanced focus indicators for keyboard navigation') }}" />
+                    <flux:switch wire:model="strong_focus_outline" wire:change="saveAppearance" :label="__('Strong Focus Outline')" description="{{ __('Enhanced focus indicators for keyboard navigation') }}" />
                 </div>
             </div>
 
@@ -393,14 +403,14 @@ new class extends Component {
             <div class="space-y-4">
                 <flux:heading level="3" size="sm">{{ __('Font Settings') }}</flux:heading>
 
-                <flux:select wire:model="font_face" :label="__('Font Family')" class="w-full">
+                <flux:select wire:model="font_face" wire:change="saveAppearance" :label="__('Font Family')" class="w-full">
                     <flux:select.option value="sans-serif">{{ __('Sans Serif (Default)') }}</flux:select.option>
                     <flux:select.option value="serif">{{ __('Serif') }}</flux:select.option>
                     <flux:select.option value="monospace">{{ __('Monospace') }}</flux:select.option>
                     <flux:select.option value="dyslexic">{{ __('Dyslexic (OpenDyslexic)') }}</flux:select.option>
                 </flux:select>
 
-                <flux:select wire:model="font_size" :label="__('Font Size')" class="w-full">
+                <flux:select wire:model="font_size" wire:change="saveAppearance" :label="__('Font Size')" class="w-full">
                     <flux:select.option value="12">{{ __('Small (12px)') }}</flux:select.option>
                     <flux:select.option value="14">{{ __('Medium (14px)') }}</flux:select.option>
                     <flux:select.option value="16">{{ __('Normal (16px)') }}</flux:select.option>
@@ -409,7 +419,7 @@ new class extends Component {
                     <flux:select.option value="24">{{ __('Huge (24px)') }}</flux:select.option>
                 </flux:select>
 
-                <flux:select wire:model="line_spacing" :label="__('Line Spacing')" class="w-full">
+                <flux:select wire:model="line_spacing" wire:change="saveAppearance" :label="__('Line Spacing')" class="w-full">
                     <flux:select.option value="1.2">{{ __('Compact (1.2)') }}</flux:select.option>
                     <flux:select.option value="1.5">{{ __('Normal (1.5)') }}</flux:select.option>
                     <flux:select.option value="1.8">{{ __('Relaxed (1.8)') }}</flux:select.option>

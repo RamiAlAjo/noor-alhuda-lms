@@ -86,11 +86,11 @@
             <!-- Current Medications -->
             <div class="mt-4">
                 <flux:textarea
-                    name="current_medications"
+                    name="medications"
                     :label="__('Current Medications')"
                     placeholder="{{ __('List any medications you are currently taking') }}"
                     rows="3"
-                >{{ old('current_medications', $user->medicalRecord?->current_medications) }}</flux:textarea>
+                >{{ old('medications', $user->medicalRecord?->medications) }}</flux:textarea>
             </div>
 
             <!-- Submit -->
@@ -98,9 +98,9 @@
                 <a href="{{ route('student.medical.profile') }}" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition">
                     {{ __('Cancel') }}
                 </a>
-                <flux:button type="submit" variant="primary">
-                    {{ __('Save Changes') }}
-                </flux:button>
+                <x-button.submit loading-text="Saving...">
+                    Save Changes
+                </x-button.submit>
             </div>
         </form>
     </div>

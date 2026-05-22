@@ -14,13 +14,12 @@ class MedicalRecord extends Model
         'blood_type',
         'allergies',
         'medical_conditions',
-        'medications',
+        'current_medications',   // real column in DB
         'emergency_contact_name',
         'emergency_contact_phone',
         'emergency_contact_relation',
-        'doctor_name',
-        'doctor_phone',
         'notes',
+        // doctor_name and doctor_phone exist in the form but not yet in the table
     ];
 
     public function student()

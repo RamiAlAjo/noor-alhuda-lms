@@ -54,11 +54,11 @@ class MedicalController extends Controller
             abort(404);
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'blood_type' => 'nullable|string|max:5',
             'allergies' => 'nullable|string',
             'medical_conditions' => 'nullable|string',
-            'medications' => 'nullable|string',
+            'current_medications' => 'nullable|string',
             'emergency_contact_name' => 'nullable|string|max:255',
             'emergency_contact_phone' => 'nullable|string|max:20',
             'emergency_contact_relation' => 'nullable|string|max:100',
@@ -67,9 +67,22 @@ class MedicalController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        // Only save columns that actually exist in the database right now
+        $data = [
+            'blood_type'                 => $request->blood_type,
+            'allergies'                  => $request->allergies,
+            'medical_conditions'         => $request->medical_conditions,
+            'current_medications'        => $request->current_medications,
+            'emergency_contact_name'     => $request->emergency_contact_name,
+            'emergency_contact_phone'    => $request->emergency_contact_phone,
+            'emergency_contact_relation' => $request->emergency_contact_relation,
+            'notes'                      => $request->notes,
+            // doctor_name and doctor_phone exist in the form but the columns are not in the DB yet
+        ];
+
         MedicalRecord::updateOrCreate(
             ['student_id' => $student->id],
-            $request->all()
+            $data
         );
 
         return back()->with('success', __('lms::messages.medical_record_updated'));

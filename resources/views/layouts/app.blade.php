@@ -85,6 +85,112 @@
         })();
         </script>
 
+        <!-- Global Accessibility Live Update Handler -->
+        <script>
+            // Listen for accessibility changes from the settings page (or any Livewire component)
+            // This makes changes take effect instantly across the current page without reload
+            document.addEventListener('livewire:init', () => {
+                Livewire.on('appearance-updated', (payload) => {
+                    if (!payload || typeof payload !== 'object') return;
+
+                    const html = document.documentElement;
+
+                    // Map of setting => how to apply it
+                    const settingsToApply = {
+                        'high_contrast': (val) => {
+                            localStorage.setItem('accessibility_high_contrast', val ? 'true' : 'false');
+                            if (val) {
+                                html.setAttribute('data-high-contrast-mode', 'true');
+                                html.classList.add('high-contrast');
+                            } else {
+                                html.removeAttribute('data-high-contrast-mode');
+                                html.classList.remove('high-contrast');
+                            }
+                        },
+                        'large_text': (val) => {
+                            localStorage.setItem('accessibility_large_text', val ? 'true' : 'false');
+                            if (val) {
+                                html.setAttribute('data-large-text-mode', 'true');
+                                html.classList.add('large-text');
+                            } else {
+                                html.removeAttribute('data-large-text-mode');
+                                html.classList.remove('large-text');
+                            }
+                        },
+                        'dyslexia_font': (val) => {
+                            localStorage.setItem('accessibility_dyslexia_font', val ? 'true' : 'false');
+                            if (val) {
+                                html.setAttribute('data-dyslexia-font-mode', 'true');
+                                html.classList.add('dyslexia-font');
+                            } else {
+                                html.removeAttribute('data-dyslexia-font-mode');
+                                html.classList.remove('dyslexia-font');
+                            }
+                        },
+                        'reduced_motion': (val) => {
+                            localStorage.setItem('accessibility_reduced_motion', val ? 'true' : 'false');
+                            if (val) {
+                                html.setAttribute('data-reduced-motion-mode', 'true');
+                                html.classList.add('reduced-motion');
+                            } else {
+                                html.removeAttribute('data-reduced-motion-mode');
+                                html.classList.remove('reduced-motion');
+                            }
+                        },
+                        'grayscale': (val) => {
+                            localStorage.setItem('accessibility_grayscale', val ? 'true' : 'false');
+                            if (val) {
+                                html.setAttribute('data-grayscale-mode', 'true');
+                                html.classList.add('grayscale');
+                            } else {
+                                html.removeAttribute('data-grayscale-mode');
+                                html.classList.remove('grayscale');
+                            }
+                        },
+                        'strong_focus_outline': (val) => {
+                            localStorage.setItem('accessibility_focus_outline', val ? 'true' : 'false');
+                            if (val) {
+                                html.setAttribute('data-focus-outline-mode', 'true');
+                            } else {
+                                html.removeAttribute('data-focus-outline-mode');
+                            }
+                        },
+                        'line_spacing': (val) => {
+                            localStorage.setItem('accessibility_line_spacing', val);
+                            // The CSS uses data-line-spacing-mode for the boolean "increased" state
+                            // For numeric, we can set a custom property or attribute
+                            html.style.setProperty('--user-line-spacing', val);
+                            if (parseFloat(val) > 1.5) {
+                                html.setAttribute('data-line-spacing-mode', 'true');
+                            } else {
+                                html.removeAttribute('data-line-spacing-mode');
+                            }
+                        },
+                        'font_size': (val) => {
+                            localStorage.setItem('accessibility_font_size', val);
+                            // Map numeric to the data-font-size values used in CSS
+                            let sizeKey = 'medium';
+                            const num = parseInt(val);
+                            if (num <= 14) sizeKey = 'small';
+                            else if (num >= 18 && num < 20) sizeKey = 'large';
+                            else if (num >= 20) sizeKey = 'xlarge';
+                            html.setAttribute('data-font-size', sizeKey);
+                        }
+                    };
+
+                    // Apply each setting that was sent in the payload
+                    Object.keys(settingsToApply).forEach(key => {
+                        if (key in payload) {
+                            settingsToApply[key](payload[key]);
+                        }
+                    });
+
+                    // Optional: flash a small toast or just let the styles apply
+                    console.log('Accessibility settings applied live from settings page');
+                });
+            });
+        </script>
+
         <!-- Theme and accessibility styles are now loaded from external CSS files -->
     </head>
     <body class="min-h-screen bg-zinc-50 dark:bg-zinc-950">

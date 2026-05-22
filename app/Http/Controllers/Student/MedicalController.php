@@ -53,7 +53,7 @@ class MedicalController extends Controller
             'blood_type' => 'nullable|string|max:5',
             'allergies' => 'nullable|string|max:1000',
             'chronic_conditions' => 'nullable|string|max:1000',
-            'current_medications' => 'nullable|string|max:1000',
+            'medications' => 'nullable|string|max:1000',
             'emergency_contact_name' => 'nullable|string|max:255',
             'emergency_contact_phone' => 'nullable|string|max:20',
             'emergency_contact_relationship' => 'nullable|string|max:50',

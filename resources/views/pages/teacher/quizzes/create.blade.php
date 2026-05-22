@@ -181,7 +181,9 @@
                 <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
                     <div class="flex flex-col gap-3">
                         <flux:button type="submit" variant="primary" class="w-full">
-                            {{ __('Create Quiz') }}
+                            <x-button.submit loading-text="Creating..." variant="primary">
+                                Create Quiz
+                            </x-button.submit>
                         </flux:button>
                         <flux:button href="{{ route('teacher.quizzes.index', $offering) }}" variant="ghost" class="w-full">
                             {{ __('Cancel') }}

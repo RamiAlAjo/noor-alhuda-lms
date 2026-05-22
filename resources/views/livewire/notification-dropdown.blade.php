@@ -38,26 +38,26 @@
     </flux:tooltip>
 
     <!-- Dropdown Panel -->
-        <div
-            x-show="isOpen"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 scale-95"
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-75"
-            x-transition:leave-start="opacity-100 scale-100"
-            x-transition:leave-end="opacity-0 scale-95"
-            x-cloak
-            x-trap.noscroll="isOpen"
-            class="w-96 max-w-sm"
+    <div
+        x-show="isOpen"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-75"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        x-cloak
+        x-trap.noscroll="isOpen"
         class="absolute end-0 mt-2 w-80 sm:w-96 rounded-xl shadow-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 z-50 overflow-hidden"
         role="menu"
         aria-orientation="vertical"
         aria-labelledby="notifications-menu"
     >
         <!-- Header -->
-        <div class="px-4 py-3 border-b border-zinc-200 dark:border-zinc-700 bg-gradient-to-r from-[var(--color-accent)]/5 to-transparent">
-            <div class="flex items-center justify-between">
-                <div>
+        <div class="px-4 py-3 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/60">
+            <div class="flex items-center justify-between gap-3">
+                <!-- Title -->
+                <div class="min-w-0">
                     <h2 class="font-semibold text-sm text-zinc-900 dark:text-zinc-100" id="notifications-menu">
                         {{ __('Notifications') }}
                     </h2>
@@ -69,50 +69,25 @@
                         @endif
                     </p>
                 </div>
-                <!-- Search and Filters -->
-                <div class="mb-4 space-y-3">
-                    <!-- Search -->
-                    <div class="relative">
-                        <flux:input
-                            wire:model.live.debounce.300ms="searchTerm"
-                            placeholder="{{ __('Search notifications...') }}"
-                            class="w-full pl-9 pr-4 py-2 text-sm border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                        <flux:icon name="magnifying-glass" class="absolute left-3 top-2.5 size-4 text-zinc-400" />
-                    </div>
 
-                    <!-- Filters -->
-                    <div class="flex items-center gap-2">
-                        <select
-                            wire:model.live="filterType"
-                            class="flex-1 text-sm border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 px-3 py-1 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                <!-- Quick Actions -->
+                <div class="flex items-center gap-1.5">
+                    <!-- Mark all as read -->
+                    @if($unreadCount > 0)
+                        <button
+                            type="button"
+                            wire:click="markAllAsRead"
+                            class="px-2.5 py-1 text-xs font-medium rounded-lg bg-[var(--color-accent)]/10 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/15 transition-colors focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
                         >
-                            <option value="all">{{ __('All Types') }}</option>
-                            <option value="grade">{{ __('Grades') }}</option>
-                            <option value="enrollment">{{ __('Enrollment') }}</option>
-                            <option value="payment">{{ __('Payments') }}</option>
-                            <option value="announcement">{{ __('Announcements') }}</option>
-                            <option value="reminder">{{ __('Reminders') }}</option>
-                            <option value="system">{{ __('System') }}</option>
-                        </select>
+                            {{ __('Mark all read') }}
+                        </button>
+                    @endif
 
-                        <label class="flex items-center gap-1 text-sm">
-                            <input
-                                type="checkbox"
-                                wire:model.live="showUnreadOnly"
-                                class="rounded border-zinc-300 dark:border-zinc-600 text-blue-600 focus:ring-blue-500"
-                            />
-                            {{ __('Unread') }}
-                        </label>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-2">
                     <!-- Sound Toggle -->
                     <button
                         type="button"
                         x-on:click="$wire.toggleSound()"
-                        class="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                        class="p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
                         x-bind:title="soundEnabled ? '{{ __('Disable sound') }}' : '{{ __('Enable sound') }}'"
                         x-bind:aria-label="soundEnabled ? '{{ __('Disable notification sound') }}' : '{{ __('Enable notification sound') }}'"
                         x-bind:aria-pressed="soundEnabled"
@@ -121,12 +96,12 @@
                         <flux:icon name="speaker-x-mark" class="size-4 text-zinc-500" x-show="!soundEnabled" aria-hidden="true" />
                     </button>
 
-                    <!-- Push Notification Toggle -->
+                    <!-- Push Toggle -->
                     <button
                         type="button"
                         x-on:click="$wire.togglePush()"
-                        class="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-                        x-bind:title="pushEnabled ? '{{ __('Disable push notifications') }}' : '{{ __('Enable push notifications') }}'"
+                        class="p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
+                        x-bind:title="pushEnabled ? '{{ __('Disable push') }}' : '{{ __('Enable push') }}'"
                         x-bind:aria-label="pushEnabled ? '{{ __('Disable push notifications') }}' : '{{ __('Enable push notifications') }}'"
                         x-bind:aria-pressed="pushEnabled"
                     >
@@ -137,8 +112,46 @@
             </div>
         </div>
 
+        <!-- Filters Row -->
+        <div class="px-4 py-3 border-b border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 space-y-3">
+            <!-- Search -->
+            <div class="relative">
+                <flux:input
+                    wire:model.live.debounce.300ms="searchTerm"
+                    placeholder="{{ __('Search notifications...') }}"
+                    class="w-full pl-9 text-sm"
+                />
+                <flux:icon name="magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
+            </div>
+
+            <!-- Filters -->
+            <div class="flex items-center gap-2">
+                <select
+                    wire:model.live="filterType"
+                    class="flex-1 text-sm border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 px-3 py-1.5 focus:ring-2 focus:ring-[var(--color-accent)]"
+                >
+                    <option value="all">{{ __('All Types') }}</option>
+                    <option value="grade">{{ __('Grades') }}</option>
+                    <option value="enrollment">{{ __('Enrollment') }}</option>
+                    <option value="payment">{{ __('Payments') }}</option>
+                    <option value="announcement">{{ __('Announcements') }}</option>
+                    <option value="reminder">{{ __('Reminders') }}</option>
+                    <option value="system">{{ __('System') }}</option>
+                </select>
+
+                <label class="flex items-center gap-1.5 text-sm whitespace-nowrap px-2 py-1 rounded-lg border border-zinc-300 dark:border-zinc-600 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        wire:model.live="showUnreadOnly"
+                        class="rounded border-zinc-300 dark:border-zinc-600 text-[var(--color-accent)] focus:ring-[var(--color-accent)]"
+                    />
+                    <span class="text-xs">{{ __('Unread only') }}</span>
+                </label>
+            </div>
+        </div>
+
         <!-- Notifications List -->
-        <div class="max-h-96 overflow-y-auto" role="list" aria-label="{{ __('Notifications list') }}">
+        <div class="max-h-[340px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-600" role="list" aria-label="{{ __('Notifications list') }}">
             @forelse($notifications as $notification)
                 <div
                     class="group relative px-4 py-3 border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors {{ !$notification['is_read'] ? 'bg-blue-50/50 dark:bg-blue-900/10' : '' }}"
@@ -214,7 +227,7 @@
         @if(count($notifications) > 0)
             <div class="px-4 py-3 border-t border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50">
                 <a
-                    href="{{ route('admin.announcements.index') }}"
+                    href="{{ route('notifications.index') }}"
                     class="flex items-center justify-center gap-2 text-sm text-[var(--color-accent)] hover:underline font-medium focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] rounded"
                 >
                     {{ __('View all notifications') }}

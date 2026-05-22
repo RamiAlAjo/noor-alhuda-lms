@@ -127,9 +127,9 @@
                 <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
                     <h3 class="mb-4 font-semibold text-neutral-900 dark:text-neutral-100">{{ __('Actions') }}</h3>
                     <div class="space-y-3">
-                        <flux:button type="submit" variant="primary" class="w-full justify-center">
-                            {{ __('Update Course') }}
-                        </flux:button>
+                        <x-button.submit loading-text="Updating..." variant="primary" class="w-full justify-center">
+                            Update Course
+                        </x-button.submit>
                         <flux:button :href="route('admin.courses.index')" variant="ghost" class="w-full justify-center">
                             {{ __('Cancel') }}
                         </flux:button>

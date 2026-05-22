@@ -86,7 +86,7 @@
 
             <div>
                 <label class="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">{{ __('Current Medications') }}</label>
-                <textarea name="medications" rows="3" class="w-full rounded-xl border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white">{{ old('medications', $student->medicalRecord->medications ?? '') }}</textarea>
+                <textarea name="current_medications" rows="3" class="w-full rounded-xl border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white">{{ old('current_medications', $student->medicalRecord->current_medications ?? '') }}</textarea>
             </div>
 
             <!-- Emergency Contact -->
@@ -130,14 +130,17 @@
             </div>
 
             <!-- Submit -->
-            <div class="flex items-center gap-4 border-t border-neutral-200 pt-4 dark:border-neutral-700">
-                <flux:button type="submit" variant="primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="flex items-center justify-between border-t border-neutral-200 pt-4 dark:border-neutral-700">
+                <flux:button :href="route('admin.medical.index')" variant="ghost">
+                    {{ __('Cancel') }}
+                </flux:button>
+
+                <x-button.submit loading-text="Saving...">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
-                    {{ __('Save Changes') }}
-                </flux:button>
-                <flux:button :href="route('admin.medical.index')" variant="ghost">{{ __('Cancel') }}</flux:button>
+                    Save Changes
+                </x-button.submit>
             </div>
         </form>
     </div>

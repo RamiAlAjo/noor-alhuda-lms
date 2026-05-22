@@ -27,38 +27,44 @@
     =============================================================================
 --}}
 <x-layouts::app :title="__('Enrollment Management')">
-    <!-- Header -->
-    <div class="mb-8 flex items-center justify-between">
-        <div>
-            <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100">{{ __('Enrollment Management') }}</h1>
-            <p class="mt-1 text-neutral-500 dark:text-neutral-400">{{ __('Manage student course enrollments') }}</p>
-        </div>
-        <flux:button :href="route('admin.enrollments.requests')" variant="primary">
+    <x-page-header
+        :title="__('Enrollment Management')"
+        :description="__('Manage student course enrollments')"
+    >
+        <flux:button :href="route('admin.enrollments.requests')" variant="primary" class="shadow-sm">
             {{ __('Pending Requests') }}
             @if(isset($stats['pending']) && $stats['pending'] > 0)
-            <span class="ml-2 rounded-full bg-red-500 px-2 py-0.5 text-xs text-white">{{ $stats['pending'] }}</span>
+                <span class="ml-2 rounded-full bg-red-500 px-2 py-0.5 text-xs text-white">{{ $stats['pending'] }}</span>
             @endif
         </flux:button>
-    </div>
+    </x-page-header>
 
     <!-- Stats Cards -->
-    <div class="mb-6 grid gap-4 md:grid-cols-4">
-        <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
-            <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Total') }}</p>
-            <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">{{ $stats['total'] ?? 0 }}</p>
-        </div>
-        <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
-            <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Approved') }}</p>
-            <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">{{ $stats['approved'] ?? 0 }}</p>
-        </div>
-        <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
-            <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Pending') }}</p>
-            <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">{{ $stats['pending'] ?? 0 }}</p>
-        </div>
-        <div class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
-            <p class="text-sm text-neutral-500 dark:text-neutral-400">{{ __('Rejected') }}</p>
-            <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100">{{ $stats['rejected'] ?? 0 }}</p>
-        </div>
+    <div class="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <x-stat-card
+            icon="users"
+            :label="__('Total')"
+            :value="$stats['total'] ?? 0"
+            color="indigo"
+        />
+        <x-stat-card
+            icon="check-circle"
+            :label="__('Approved')"
+            :value="$stats['approved'] ?? 0"
+            color="green"
+        />
+        <x-stat-card
+            icon="clock"
+            :label="__('Pending')"
+            :value="$stats['pending'] ?? 0"
+            color="amber"
+        />
+        <x-stat-card
+            icon="x-mark"
+            :label="__('Rejected')"
+            :value="$stats['rejected'] ?? 0"
+            color="red"
+        />
     </div>
 
     <!-- Filters -->
