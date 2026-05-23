@@ -429,9 +429,9 @@ new class extends Component {
 
             <!-- Save Button -->
             <div class="flex items-center gap-4 pt-4 border-t border-stone-200 dark:border-stone-700">
-                <flux:button variant="primary" type="submit" class="w-full">
-                    {{ __('Save Appearance') }}
-                </flux:button>
+                <x-button.submit loading-text="Saving Appearance..." variant="primary" class="w-full">
+                    Save Appearance
+                </x-button.submit>
 
                 <x-action-message class="me-3" on="appearance-updated">
                     {{ __('Saved.') }}

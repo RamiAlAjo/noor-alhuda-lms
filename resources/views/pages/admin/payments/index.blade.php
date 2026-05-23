@@ -49,7 +49,7 @@
                     <flux:select.option value="rejected" :selected="request('status') === 'rejected'">{{ __('Rejected') }}</flux:select.option>
                 </flux:select>
             </div>
-            <flux:button type="submit" variant="primary">{{ __('Filter') }}</flux:button>
+            <x-button.submit loading-text="{{ __('Filtering...') }}">{{ __('Filter') }}</x-button.submit>
         </form>
     </div>
 
@@ -100,11 +100,11 @@
                             <div class="flex items-center justify-end gap-2">
                                 <form method="POST" action="{{ route('admin.payments.approve', $payment) }}">
                                     @csrf
-                                    <flux:button type="submit" size="sm" variant="primary">{{ __('Approve') }}</flux:button>
+                                    <x-button.submit size="sm" loading-text="{{ __('Approving...') }}">{{ __('Approve') }}</x-button.submit>
                                 </form>
                                 <form method="POST" action="{{ route('admin.payments.reject', $payment) }}">
                                     @csrf
-                                    <flux:button type="submit" size="sm" variant="danger">{{ __('Reject') }}</flux:button>
+                                    <x-button.submit size="sm" variant="danger" loading-text="{{ __('Rejecting...') }}">{{ __('Reject') }}</x-button.submit>
                                 </form>
                             </div>
                             @endif

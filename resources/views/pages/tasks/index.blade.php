@@ -188,9 +188,9 @@
                 <flux:button type="button" variant="ghost" onclick="document.getElementById('addTaskModal').close()">
                     {{ __('Cancel') }}
                 </flux:button>
-                <flux:button type="submit" variant="primary">
-                    {{ __('Add Task') }}
-                </flux:button>
+                <x-button.submit loading-text="Adding..." variant="primary">
+                    Add Task
+                </x-button.submit>
             </div>
         </form>
     </dialog>
@@ -225,9 +225,9 @@
                 <flux:button type="button" variant="ghost" onclick="document.getElementById('editTaskModal-{{ $task->id }}').close()">
                     {{ __('Cancel') }}
                 </flux:button>
-                <flux:button type="submit" variant="primary">
-                    {{ __('Save Changes') }}
-                </flux:button>
+                <x-button.submit loading-text="Saving..." variant="primary">
+                    Save Changes
+                </x-button.submit>
             </div>
         </form>
     </dialog>

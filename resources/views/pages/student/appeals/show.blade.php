@@ -178,10 +178,10 @@
                         <form action="{{ route('student.appeals.withdraw', $appeal) }}" method="POST" onsubmit="return confirm('{{ __('lms.confirm_withdraw_appeal') }}')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                            <x-button.submit variant="danger" loading-text="{{ __('Withdrawing...') }}" class="w-full inline-flex justify-center items-center">
                                 <flux:icon name="x-mark" class="w-5 h-5 mr-2" />
                                 {{ __('lms.withdraw_appeal') }}
-                            </button>
+                            </x-button.submit>
                         </form>
                     </div>
                 </div>

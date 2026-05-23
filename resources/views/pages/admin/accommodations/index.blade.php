@@ -188,9 +188,9 @@
                             <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('lms.search_students') }}" class="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                         </div>
                         <div class="flex items-end">
-                            <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition">
-                                {{ __('lms.filter') }}
-                            </button>
+                             <x-button.submit loading-text="{{ __('Filtering...') }}">
+                                 {{ __('lms.filter') }}
+                             </x-button.submit>
                         </div>
                     </form>
                 </div>
@@ -354,9 +354,9 @@
                         <button type="button" onclick="closeTypeModal()" class="px-4 py-2 border border-gray-300 dark:border-gray-500 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition">
                             {{ __('lms.cancel') }}
                         </button>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition">
-                            {{ __('lms.save') }}
-                        </button>
+                         <x-button.submit loading-text="{{ __('Saving...') }}">
+                             {{ __('lms.save') }}
+                         </x-button.submit>
                     </div>
                 </form>
             </div>

@@ -90,9 +90,9 @@
             />
 
             <div class="flex items-center justify-end">
-                <flux:button type="submit" variant="primary" class="w-full" data-test="register-user-button">
+                <x-button.submit loading-text="{{ __('Creating...') }}" class="w-full" data-test="register-user-button">
                     {{ __('Create account') }}
-                </flux:button>
+                </x-button.submit>
             </div>
         </form>
 

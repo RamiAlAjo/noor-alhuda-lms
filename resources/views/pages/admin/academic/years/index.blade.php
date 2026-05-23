@@ -62,9 +62,9 @@
                                 <form method="POST" action="{{ route('admin.academic.years.destroy', $year) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <flux:button size="sm" variant="danger" type="submit" onclick="return confirm('{{ __('Are you sure you want to delete this academic year?') }}')">
+                                    <x-button.submit size="sm" variant="danger" loading-text="{{ __('Deleting...') }}" confirm="{{ __('Are you sure you want to delete this academic year?') }}">
                                         {{ __('Delete') }}
-                                    </flux:button>
+                                    </x-button.submit>
                                 </form>
                             </div>
                         </td>
@@ -146,9 +146,7 @@
                 <button type="button" onclick="document.getElementById('create-year-modal').close()" class="flex-1 justify-center rounded-lg px-4 py-2 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800">
                     {{ __('Cancel') }}
                 </button>
-                <button type="submit" class="flex-1 justify-center rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700">
-                    {{ __('Create Year') }}
-                </button>
+                <x-button.submit loading-text="{{ __('Creating...') }}" class="flex-1">{{ __('Create Year') }}</x-button.submit>
             </div>
         </form>
     </dialog>
@@ -212,9 +210,7 @@
                 <button type="button" onclick="document.getElementById('edit-year-{{ $year->id }}').close()" class="flex-1 justify-center rounded-lg px-4 py-2 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800">
                     {{ __('Cancel') }}
                 </button>
-                <button type="submit" class="flex-1 justify-center rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 text-white hover:opacity-90">
-                    {{ __('Update Year') }}
-                </button>
+                <x-button.submit loading-text="{{ __('Updating...') }}" class="flex-1">{{ __('Update Year') }}</x-button.submit>
             </div>
         </form>
     </dialog>
@@ -280,9 +276,9 @@
                         <form method="POST" action="{{ route('admin.academic.semesters.destroy', $semester) }}">
                             @csrf
                             @method('DELETE')
-                            <flux:button size="sm" variant="danger" type="submit" onclick="return confirm('{{ __('Are you sure you want to delete this semester?') }}')">
+                            <x-button.submit size="sm" variant="danger" loading-text="{{ __('Deleting...') }}" confirm="{{ __('Are you sure you want to delete this semester?') }}">
                                 {{ __('Delete') }}
-                            </flux:button>
+                            </x-button.submit>
                         </form>
                     </div>
                 </div>
@@ -370,9 +366,7 @@
                 <button type="button" onclick="document.getElementById('create-semester-{{ $year->id }}').close()" class="flex-1 justify-center rounded-lg px-4 py-2 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800">
                     {{ __('Cancel') }}
                 </button>
-                <button type="submit" class="flex-1 justify-center rounded-lg bg-teal-600 px-4 py-2 text-white hover:bg-teal-700">
-                    {{ __('Add Semester') }}
-                </button>
+                <x-button.submit loading-text="{{ __('Adding...') }}" class="flex-1">{{ __('Add Semester') }}</x-button.submit>
             </div>
         </form>
     </dialog>
@@ -441,9 +435,7 @@
                     <button type="button" onclick="document.getElementById('edit-semester-{{ $semester->id }}').close()" class="flex-1 justify-center rounded-lg px-4 py-2 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800">
                         {{ __('Cancel') }}
                     </button>
-                    <button type="submit" class="flex-1 justify-center rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 text-white hover:opacity-90">
-                        {{ __('Update Semester') }}
-                    </button>
+                    <x-button.submit loading-text="{{ __('Updating...') }}" class="flex-1">{{ __('Update Semester') }}</x-button.submit>
                 </div>
             </form>
         </dialog>

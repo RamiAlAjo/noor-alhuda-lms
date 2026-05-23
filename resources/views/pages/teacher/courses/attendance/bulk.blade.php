@@ -152,9 +152,9 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400">
                             {{ __('Review attendance data before saving') }}
                         </p>
-                        <flux:button type="submit" variant="primary" id="saveAttendanceBtn" disabled>
-                            {{ __('Save Attendance') }}
-                        </flux:button>
+                        <x-button.submit loading-text="Saving..." variant="primary" id="saveAttendanceBtn" disabled>
+                            Save Attendance
+                        </x-button.submit>
                     </div>
                 </div>
             </div>

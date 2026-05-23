@@ -88,9 +88,9 @@
                     placeholder="{{ __('lms.search_topics') }}"
                     class="pl-10 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
             </div>
-            <button type="submit" class="px-6 py-2.5 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 transition duration-200">
+            <x-button.submit loading-text="Searching..." variant="secondary">
                 {{ __('lms.search') }}
-            </button>
+            </x-button.submit>
         </form>
     </div>
 

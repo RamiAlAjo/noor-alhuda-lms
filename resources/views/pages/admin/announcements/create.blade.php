@@ -58,7 +58,7 @@
                 </div>
 
                 <div class="flex gap-2">
-                    <flux:button type="submit" variant="primary">{{ __('Create Announcement') }}</flux:button>
+                    <x-button.submit loading-text="{{ __('Creating...') }}">{{ __('Create Announcement') }}</x-button.submit>
                     <flux:button :href="route('admin.announcements.index')" variant="ghost">{{ __('Cancel') }}</flux:button>
                 </div>
             </form>

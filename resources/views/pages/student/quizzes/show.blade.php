@@ -152,10 +152,10 @@
                 @else
                     <form method="POST" action="{{ route('student.quizzes.start', $assessment) }}" class="flex-1">
                         @csrf
-                        <flux:button type="submit" variant="filled" class="w-full justify-center bg-indigo-600 hover:bg-indigo-700">
+                        <x-button.submit loading-text="{{ __('Starting...') }}" class="w-full justify-center">
                             <flux:icon name="{{ $attemptCount > 0 ? 'arrow-path' : 'play' }}" class="mr-2 h-5 w-5" />
                             {{ $attemptCount > 0 ? __('Start New Attempt') : __('Start Quiz') }}
-                        </flux:button>
+                        </x-button.submit>
                     </form>
                 @endif
                 <flux:button href="{{ route('student.quizzes.index') }}" variant="outline" class="flex-1 justify-center">

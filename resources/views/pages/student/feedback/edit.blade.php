@@ -121,12 +121,12 @@ $ratingCategories = [
                     <flux:button :href="route('student.feedback.index')" variant="secondary">
                         {{ __('Cancel') }}
                     </flux:button>
-                    <flux:button type="submit" name="save_draft" value="1" variant="secondary">
+                    <x-button.submit loading-text="{{ __('Saving Draft...') }}" variant="secondary" name="save_draft" value="1">
                         {{ __('Save as Draft') }}
-                    </flux:button>
-                    <flux:button type="submit" variant="primary">
+                    </x-button.submit>
+                    <x-button.submit loading-text="{{ __('Submitting...') }}" variant="primary">
                         {{ __('Submit Feedback') }}
-                    </flux:button>
+                    </x-button.submit>
                 </div>
             </form>
         </div>

@@ -186,9 +186,9 @@
                 <flux:button type="button" variant="ghost" onclick="document.getElementById('addReminderModal').close()">
                     {{ __('Cancel') }}
                 </flux:button>
-                <flux:button type="submit" variant="primary">
+                <x-button.submit loading-text="{{ __('Saving...') }}">
                     {{ __('Save') }}
-                </flux:button>
+                </x-button.submit>
             </div>
         </form>
     </dialog>

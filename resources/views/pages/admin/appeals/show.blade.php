@@ -115,9 +115,9 @@
                                 </select>
                             </div>
                             <div class="flex items-end">
-                                <button type="submit" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+                                <x-button.submit loading-text="{{ __('Updating...') }}">
                                     {{ __('lms.update_status') }}
-                                </button>
+                                </x-button.submit>
                             </div>
                         </div>
                     </form>
@@ -146,9 +146,9 @@
                                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                         placeholder="{{ __('lms.admin_notes_placeholder') }}">{{ $appeal->admin_notes }}</textarea>
                                 </div>
-                                <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                                <x-button.submit loading-text="{{ __('Approving...') }}" class="w-full">
                                     {{ __('lms.approve_appeal') }}
-                                </button>
+                                </x-button.submit>
                             </div>
                         </form>
                     </div>
@@ -171,9 +171,9 @@
                                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                         placeholder="{{ __('lms.admin_notes_placeholder') }}">{{ $appeal->admin_notes }}</textarea>
                                 </div>
-                                <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                                <x-button.submit variant="danger" loading-text="{{ __('Rejecting...') }}" class="w-full">
                                     {{ __('lms.reject_appeal') }}
-                                </button>
+                                </x-button.submit>
                             </div>
                         </form>
                     </div>

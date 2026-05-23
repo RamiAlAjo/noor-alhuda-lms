@@ -44,20 +44,12 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
-        // Chart data: Enrollment trends (last 6 months)
-        $enrollmentChartData = $this->getEnrollmentChartData();
-
-        // Chart data: Students by department
-        $departmentChartData = $this->getDepartmentChartData();
-
-        // Chart data: Revenue by month
-        $revenueChartData = $this->getRevenueChartData();
-
-        // Chart data: Course enrollment distribution
-        $courseEnrollmentData = $this->getCourseEnrollmentData();
-
-        // Chart data: User roles distribution
-        $userRolesData = $this->getUserRolesData();
+        // Chart data cached for 10 minutes (heavy queries)
+        $enrollmentChartData = Cache::remember('admin_chart_enrollments', now()->addMinutes(10), fn() => $this->getEnrollmentChartData());
+        $departmentChartData = Cache::remember('admin_chart_departments', now()->addMinutes(10), fn() => $this->getDepartmentChartData());
+        $revenueChartData = Cache::remember('admin_chart_revenue', now()->addMinutes(10), fn() => $this->getRevenueChartData());
+        $courseEnrollmentData = Cache::remember('admin_chart_courses', now()->addMinutes(10), fn() => $this->getCourseEnrollmentData());
+        $userRolesData = Cache::remember('admin_chart_roles', now()->addMinutes(10), fn() => $this->getUserRolesData());
 
         return view('pages.admin.dashboard', compact(
             'stats',

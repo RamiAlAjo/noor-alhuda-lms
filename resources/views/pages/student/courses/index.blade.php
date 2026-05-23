@@ -94,9 +94,9 @@
                     <option value="name_desc" {{ request('sort') === 'name_desc' ? 'selected' : '' }}>{{ __('Name Z-A') }}</option>
                 </select>
 
-                <flux:button type="submit" variant="primary">
-                    {{ __('Filter') }}
-                </flux:button>
+                <x-button.submit loading-text="Applying..." variant="primary">
+                    Filter
+                </x-button.submit>
 
                 @if(request()->anyFilled(['search', 'filter', 'sort']))
                 <flux:button :href="route('student.courses.index')" variant="ghost">

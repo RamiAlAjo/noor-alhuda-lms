@@ -135,9 +135,9 @@
                 <a href="{{ route('student.appeals.index') }}" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                     {{ __('lms.cancel') }}
                 </a>
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                <x-button.submit loading-text="Submitting..." variant="primary">
                     {{ __('lms.submit_appeal') }}
-                </button>
+                </x-button.submit>
             </div>
         </form>
     </div>

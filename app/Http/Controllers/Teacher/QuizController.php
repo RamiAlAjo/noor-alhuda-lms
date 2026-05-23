@@ -60,11 +60,13 @@ class QuizController extends Controller
         $offering->load(['course', 'assessments.questions']);
 
         $quizzes = $offering->assessments()
-            ->where('quiz_type', '!=', 'none')
-            ->orWhereNotNull('time_limit_minutes')
+            ->where(function ($query) {
+                $query->where('quiz_type', '!=', 'none')
+                      ->orWhereNotNull('time_limit_minutes');
+            })
             ->withCount('questions')
             ->withCount(['attempts as completed_attempts_count' => function ($q) {
-                $q->completed();
+                $q->whereNotNull('submitted_at');
             }])
             ->orderBy('created_at', 'desc')
             ->get();

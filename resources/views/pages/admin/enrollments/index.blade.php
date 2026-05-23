@@ -78,7 +78,7 @@
                     <flux:select.option value="rejected" :selected="request('status') === 'rejected'">{{ __('Rejected') }}</flux:select.option>
                 </flux:select>
             </div>
-            <flux:button type="submit" variant="primary">{{ __('Filter') }}</flux:button>
+            <x-button.submit loading-text="{{ __('Filtering...') }}">{{ __('Filter') }}</x-button.submit>
         </form>
     </div>
 

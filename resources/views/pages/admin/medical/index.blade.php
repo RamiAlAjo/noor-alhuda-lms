@@ -36,12 +36,9 @@
             <div class="flex-1">
                 <flux:input type="text" name="search" placeholder="{{ __('Search by name or user ID...') }}" :value="request('search')" />
             </div>
-            <flux:button type="submit" variant="primary">
-                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+            <x-button.submit loading-text="{{ __('Searching...') }}">
                 {{ __('Search') }}
-            </flux:button>
+            </x-button.submit>
         </form>
     </div>
 

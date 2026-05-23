@@ -173,10 +173,10 @@
                         </flux:field>
                     </div>
 
-                    <flux:button type="submit" variant="primary" class="w-full">
-                        <flux:icon name="plus" class="mr-2" />
-                        {{ __('Add Question') }}
-                    </flux:button>
+                    <x-button.submit loading-text="Adding..." variant="primary" class="w-full">
+                        <flux:icon name="plus" class="size-5" />
+                        Add Question
+                    </x-button.submit>
                 </form>
             </div>
         </div>

@@ -85,9 +85,9 @@
                     </div>
                 </div>
 
-                <flux:button type="submit" variant="primary">
+                <x-button.submit loading-text="{{ __('Saving...') }}">
                     {{ __('Save Notification Preferences') }}
-                </flux:button>
+                </x-button.submit>
             </form>
         </div>
 
@@ -107,25 +107,25 @@
                 <form method="POST" action="{{ route('settings.notifications.test') }}" class="inline-block w-full">
                     @csrf
                     <input type="hidden" name="type" value="push">
-                    <flux:button type="submit" variant="outline" class="w-full">
+                    <x-button.submit loading-text="{{ __('Sending Test...') }}" variant="secondary" class="w-full">
                         {{ __('Test Push Notification') }}
-                    </flux:button>
+                    </x-button.submit>
                 </form>
 
                 <form method="POST" action="{{ route('settings.notifications.test') }}" class="inline-block w-full">
                     @csrf
                     <input type="hidden" name="type" value="email">
-                    <flux:button type="submit" variant="outline" class="w-full">
+                    <x-button.submit loading-text="{{ __('Sending Test...') }}" variant="secondary" class="w-full">
                         {{ __('Test Email Notification') }}
-                    </flux:button>
+                    </x-button.submit>
                 </form>
 
                 <form method="POST" action="{{ route('settings.notifications.test') }}" class="inline-block w-full">
                     @csrf
                     <input type="hidden" name="type" value="sound">
-                    <flux:button type="submit" variant="outline" class="w-full">
+                    <x-button.submit loading-text="{{ __('Playing...') }}" variant="secondary" class="w-full">
                         {{ __('Test Sound') }}
-                    </flux:button>
+                    </x-button.submit>
                 </form>
             </div>
         </div>

@@ -132,9 +132,9 @@
                 <input type="date" name="date_to" class="w-full rounded-lg border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800">
             </div>
             <div class="flex items-end">
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <x-button.submit loading-text="{{ __('Applying...') }}">
                     {{ __('Apply Filters') }}
-                </button>
+                </x-button.submit>
             </div>
         </form>
     </div>

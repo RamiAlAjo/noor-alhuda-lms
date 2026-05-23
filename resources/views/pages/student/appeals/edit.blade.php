@@ -135,9 +135,9 @@ name('student.appeals.edit');
                     <flux:button :href="route('student.appeals.show', $appeal)" variant="secondary">
                         {{ __('Cancel') }}
                     </flux:button>
-                    <flux:button type="submit" variant="primary">
-                        {{ __('Update Appeal') }}
-                    </flux:button>
+                    <x-button.submit loading-text="Updating..." variant="primary">
+                        Update Appeal
+                    </x-button.submit>
                 </div>
             </form>
         </div>

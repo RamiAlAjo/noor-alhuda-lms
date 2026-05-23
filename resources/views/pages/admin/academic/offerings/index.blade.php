@@ -245,7 +245,7 @@
             </div>
             <div class="mt-6 flex gap-3">
                 <button type="button" onclick="document.getElementById('create-offering-modal').close()" class="flex-1 justify-center px-4 py-2 text-neutral-600 hover:bg-neutral-100 rounded-lg">{{ __('Cancel') }}</button>
-                <button type="submit" class="flex-1 justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">{{ __('Create Offering') }}</button>
+                <x-button.submit loading-text="{{ __('Creating...') }}" class="flex-1">{{ __('Create Offering') }}</x-button.submit>
             </div>
         </form>
     </dialog>
@@ -324,7 +324,7 @@
             </div>
             <div class="mt-6 flex gap-3">
                 <button type="button" onclick="document.getElementById('edit-offering-modal').close()" class="flex-1 justify-center px-4 py-2 text-neutral-600 hover:bg-neutral-100 rounded-lg">{{ __('Cancel') }}</button>
-                <button type="submit" class="flex-1 justify-center px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700">{{ __('Save Changes') }}</button>
+                <x-button.submit loading-text="{{ __('Saving...') }}" class="flex-1">{{ __('Save Changes') }}</x-button.submit>
             </div>
         </form>
     </dialog>

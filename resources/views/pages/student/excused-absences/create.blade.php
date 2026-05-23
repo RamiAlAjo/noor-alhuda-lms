@@ -121,9 +121,9 @@ $reasonTypes = [
                     <flux:button :href="route('student.excused-absences.index')" variant="secondary">
                         {{ __('Cancel') }}
                     </flux:button>
-                    <flux:button type="submit" variant="primary">
-                        {{ __('Submit Request') }}
-                    </flux:button>
+                    <x-button.submit loading-text="Submitting..." variant="primary">
+                        Submit Request
+                    </x-button.submit>
                 </div>
             </form>
         </flux:card>

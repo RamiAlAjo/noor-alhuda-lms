@@ -125,9 +125,9 @@
             </select>
         </div>
         <div class="flex gap-2">
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+            <x-button.submit loading-text="{{ __('Applying...') }}">
                 {{ __('Apply Filters') }}
-            </button>
+            </x-button.submit>
             <a href="{{ route('teacher.appeals.index') }}" class="px-4 py-2 bg-neutral-200 text-neutral-800 rounded-lg hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-600 transition">
                 {{ __('Clear') }}
             </a>

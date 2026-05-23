@@ -192,9 +192,9 @@
                             <flux:button type="button" variant="ghost" onclick="document.getElementById('editNoteModal{{ $note->id }}').close()">
                                 {{ __('Cancel') }}
                             </flux:button>
-                            <flux:button type="submit" variant="primary">
+                            <x-button.submit loading-text="{{ __('Updating...') }}">
                                 {{ __('Update Note') }}
-                            </flux:button>
+                            </x-button.submit>
                         </div>
                     </form>
                 </dialog>
@@ -225,9 +225,9 @@
                 <flux:button type="button" variant="ghost" onclick="document.getElementById('addNoteModal').close()">
                     {{ __('Cancel') }}
                 </flux:button>
-                <flux:button type="submit" variant="primary">
+                <x-button.submit loading-text="{{ __('Adding...') }}">
                     {{ __('Add Note') }}
-                </flux:button>
+                </x-button.submit>
             </div>
         </form>
     </dialog>

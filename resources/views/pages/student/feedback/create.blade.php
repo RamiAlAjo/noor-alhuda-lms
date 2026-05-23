@@ -115,12 +115,12 @@
                     </div>
 
                     <div class="p-6 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 flex justify-between">
-                        <button type="submit" name="save_draft" value="1" class="px-4 py-2 border border-gray-300 dark:border-gray-500 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition">
-                            {{ __('lms.save_draft') }}
-                        </button>
-                        <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition">
-                            {{ __('lms.submit_feedback') }}
-                        </button>
+                         <x-button.submit loading-text="{{ __('Saving Draft...') }}" variant="secondary" name="save_draft" value="1">
+                             {{ __('lms.save_draft') }}
+                         </x-button.submit>
+                    <x-button.submit loading-text="{{ __('Submitting...') }}" variant="primary">
+                        {{ __('lms.submit_feedback') }}
+                    </x-button.submit>
                     </div>
                 </form>
             </div>

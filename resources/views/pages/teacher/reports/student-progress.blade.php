@@ -66,9 +66,9 @@
             </div>
             @endif
 
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <x-button.submit loading-text="{{ __('Loading...') }}">
                 {{ __('lms.view_report') }}
-            </button>
+            </x-button.submit>
         </form>
     </div>
 

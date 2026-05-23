@@ -136,9 +136,9 @@
         </div>
 
         <div class="flex gap-3">
-            <flux:button type="submit" variant="primary">
-                {{ __('Save Grades') }}
-            </flux:button>
+            <x-button.submit loading-text="Saving..." variant="primary">
+                Save Grades
+            </x-button.submit>
             <flux:button href="{{ route('teacher.quizzes.analytics', [$offering, $quiz]) }}" variant="ghost">
                 {{ __('Cancel') }}
             </flux:button>

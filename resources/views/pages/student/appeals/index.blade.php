@@ -71,9 +71,9 @@
                 </select>
             </div>
             <div class="flex items-end">
-                <button type="submit" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+                <x-button.submit loading-text="Filtering..." variant="secondary">
                     {{ __('lms.filter') }}
-                </button>
+                </x-button.submit>
             </div>
         </form>
     </div>

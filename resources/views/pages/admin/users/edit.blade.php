@@ -259,12 +259,12 @@
                         </div>
 
                         <div class="flex justify-end">
-                            <flux:button type="submit" variant="primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <x-button.submit loading-text="Updating User...">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
-                                {{ __('Update User') }}
-                            </flux:button>
+                                Update User
+                            </x-button.submit>
                         </div>
                     </form>
                 </div>

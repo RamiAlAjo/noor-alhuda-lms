@@ -67,9 +67,9 @@
                     class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
             </div>
             <div class="flex items-end space-x-2">
-                <button type="submit" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+                <x-button.submit loading-text="{{ __('Filtering...') }}">
                     {{ __('lms.filter') }}
-                </button>
+                </x-button.submit>
                 <a href="{{ route('admin.appeals.index') }}" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                     {{ __('lms.clear') }}
                 </a>

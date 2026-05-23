@@ -131,9 +131,9 @@
                     <flux:checkbox name="is_pinned" :label="__('Pin this announcement')" />
                     <flux:checkbox name="send_notification" :label="__('Send notification to students')" checked />
                 </div>
-                <flux:button type="submit" variant="primary">
-                    {{ __('Post Announcement') }}
-                </flux:button>
+                <x-button.submit loading-text="Posting..." variant="primary">
+                    Post Announcement
+                </x-button.submit>
             </form>
         </div>
 

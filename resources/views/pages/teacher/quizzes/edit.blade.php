@@ -151,9 +151,9 @@
                 <!-- Actions -->
                 <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
                     <div class="flex flex-col gap-3">
-                        <flux:button type="submit" variant="primary" class="w-full">
-                            {{ __('Save Changes') }}
-                        </flux:button>
+                        <x-button.submit loading-text="Saving..." variant="primary" class="w-full">
+                            Save Changes
+                        </x-button.submit>
                         <flux:button href="{{ route('teacher.quizzes.questions', [$offering, $quiz]) }}" variant="secondary" class="w-full">
                             {{ __('Manage Questions') }}
                         </flux:button>

@@ -165,9 +165,9 @@
                                 <form method="POST" action="{{ route('admin.announcements.destroy', $announcement) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <flux:button size="sm" variant="danger" type="submit" :title="__('Delete')">
-                                        {{ __('Delete') }}
-                                    </flux:button>
+                                     <x-button.submit size="sm" variant="danger" loading-text="{{ __('Deleting...') }}">
+                                         {{ __('Delete') }}
+                                     </x-button.submit>
                                 </form>
                             </div>
                         </div>

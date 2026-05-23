@@ -58,9 +58,9 @@ $reasonTypeLabels = [
                                 <form method="POST" action="{{ route('student.excused-absences.destroy', $excusedAbsence) }}" onsubmit="return confirm('{{ __('Are you sure you want to cancel this request?') }}')">
                                     @csrf
                                     @method('DELETE')
-                                    <flux:button type="submit" variant="danger" size="sm">
-                                        {{ __('Cancel Request') }}
-                                    </flux:button>
+                                     <x-button.submit variant="danger" size="sm" loading-text="{{ __('Cancelling...') }}">
+                                         {{ __('Cancel Request') }}
+                                     </x-button.submit>
                                 </form>
                             </div>
                         @endif

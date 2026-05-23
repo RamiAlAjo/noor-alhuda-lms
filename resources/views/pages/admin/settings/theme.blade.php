@@ -62,9 +62,9 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <flux:button variant="primary" type="submit">
+            <x-button.submit loading-text="{{ __('Saving...') }}">
                 {{ __('Save Settings') }}
-            </flux:button>
+            </x-button.submit>
 
             @if(session('success'))
                 <flux:text class="text-green-600 dark:text-green-400">{{ session('success') }}</flux:text>

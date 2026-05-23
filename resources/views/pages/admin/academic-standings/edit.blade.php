@@ -132,9 +132,9 @@
                         <a href="{{ route('admin.academic-standings.show', $academicStanding) }}" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition">
                             {{ __('lms.cancel') }}
                         </a>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition">
+                        <x-button.submit loading-text="{{ __('Updating...') }}">
                             {{ __('lms.update') }}
-                        </button>
+                        </x-button.submit>
                     </div>
                 </form>
             </div>

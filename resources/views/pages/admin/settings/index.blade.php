@@ -105,9 +105,9 @@
                     @endforeach
                 </div>
 
-                <flux:button type="submit" variant="primary">
-                    {{ __('Save General Settings') }}
-                </flux:button>
+                <x-button.submit loading-text="Saving..." variant="primary">
+                    Save General Settings
+                </x-button.submit>
             </form>
         </div>
         @endif
@@ -147,9 +147,9 @@
                     @endforeach
                 </div>
 
-                <flux:button type="submit" variant="primary">
-                    {{ __('Save Security Settings') }}
-                </flux:button>
+                <x-button.submit loading-text="Saving..." variant="primary">
+                    Save Security Settings
+                </x-button.submit>
             </form>
         </div>
         @endif
@@ -194,16 +194,16 @@
                 </div>
 
                 <div class="flex gap-4">
-                    <flux:button type="submit" variant="primary">
-                        {{ __('Save Email Settings') }}
-                    </flux:button>
+                    <x-button.submit loading-text="Saving..." variant="primary">
+                        Save Email Settings
+                    </x-button.submit>
 
                     <form method="POST" action="{{ route('admin.settings.test-email') }}" class="inline">
                         @csrf
                         <flux:input name="test_email" placeholder="test@example.com" class="mr-2" />
-                        <flux:button type="submit" variant="outline">
-                            {{ __('Test Email') }}
-                        </flux:button>
+                         <x-button.submit loading-text="{{ __('Sending...') }}" variant="secondary">
+                             {{ __('Test Email') }}
+                         </x-button.submit>
                     </form>
                 </div>
             </form>
@@ -251,9 +251,9 @@
                     @endforeach
                 </div>
 
-                <flux:button type="submit" variant="primary">
-                    {{ __('Save System Settings') }}
-                </flux:button>
+                <x-button.submit loading-text="Saving..." variant="primary">
+                    Save System Settings
+                </x-button.submit>
             </form>
 
             <!-- Maintenance Mode -->
@@ -271,9 +271,9 @@
                     <flux:textarea name="maintenance_message" :label="__('Maintenance Message')" rows="2" placeholder="The system is currently under maintenance. Please try again later.">
 {{ \App\Models\SystemSetting::get('maintenance_message', 'The system is currently under maintenance. Please try again later.') }}
                     </flux:textarea>
-                    <flux:button type="submit" variant="outline">
-                        {{ __('Toggle Maintenance Mode') }}
-                    </flux:button>
+                     <x-button.submit loading-text="{{ __('Toggling...') }}" variant="secondary">
+                         {{ __('Toggle Maintenance Mode') }}
+                     </x-button.submit>
                 </form>
             </div>
         </div>
@@ -294,9 +294,10 @@
             <div class="space-y-4">
                 <form method="POST" action="{{ route('admin.settings.backup') }}" class="inline-block">
                     @csrf
-                    <flux:button type="submit" variant="primary" icon="archive-box">
-                        {{ __('Create Database Backup') }}
-                    </flux:button>
+                    <x-button.submit loading-text="Creating Backup..." variant="primary">
+                        <flux:icon name="archive-box" class="size-5" />
+                        Create Database Backup
+                    </x-button.submit>
                 </form>
 
                 <p class="text-sm text-stone-600 dark:text-stone-400">
@@ -312,23 +313,23 @@
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <form method="POST" action="{{ route('admin.settings.clear-cache') }}">
                 @csrf
-                <flux:button type="submit" variant="outline" icon="arrow-path" class="w-full">
+                <x-button.submit loading-text="{{ __('Clearing...') }}" variant="secondary" class="w-full">
                     {{ __('Clear Cache') }}
-                </flux:button>
+                </x-button.submit>
             </form>
 
             <form method="POST" action="{{ route('admin.settings.clear-all-caches') }}">
                 @csrf
-                <flux:button type="submit" variant="outline" icon="bolt" class="w-full">
+                <x-button.submit loading-text="{{ __('Clearing...') }}" variant="secondary" class="w-full">
                     {{ __('Clear All Caches') }}
-                </flux:button>
+                </x-button.submit>
             </form>
 
             <form method="POST" action="{{ route('admin.settings.backup') }}">
                 @csrf
-                <flux:button type="submit" variant="outline" icon="archive-box" class="w-full">
+                <x-button.submit loading-text="{{ __('Creating Backup...') }}" variant="secondary" class="w-full">
                     {{ __('Create Backup') }}
-                </flux:button>
+                </x-button.submit>
             </form>
 
             <flux:button :href="route('admin.settings.logs')" variant="outline" icon="document-text" class="w-full">

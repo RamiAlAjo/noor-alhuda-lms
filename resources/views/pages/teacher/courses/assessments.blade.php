@@ -81,9 +81,9 @@
                 <flux:textarea name="description" :label="__('Description')" placeholder="{{ __('Optional description') }}" rows="3" />
             </div>
             <div class="mt-6">
-                <flux:button type="submit" variant="primary">
-                    {{ __('Create Assessment') }}
-                </flux:button>
+                <x-button.submit loading-text="Creating..." variant="primary">
+                    Create Assessment
+                </x-button.submit>
             </div>
         </form>
     </div>

@@ -428,10 +428,9 @@
                         </div>
                     </div>
                     <div class="bg-neutral-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 dark:bg-neutral-700">
-                        <button type="submit"
-                                class="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm dark:bg-blue-700 dark:hover:bg-blue-800">
-                            {{ __('submit_payment') }}
-                        </button>
+                         <x-button.submit loading-text="{{ __('Submitting...') }}" class="inline-flex w-full justify-center sm:w-auto">
+                             {{ __('submit_payment') }}
+                         </x-button.submit>
                         <button type="button"
                                 onclick="closePaymentModal()"
                                 class="mt-3 inline-flex w-full justify-center rounded-md border border-neutral-300 bg-white px-4 py-2 text-base font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-500">

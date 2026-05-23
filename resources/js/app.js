@@ -377,31 +377,34 @@ function initSidebar() {
 
     if (sidebarOverlay) {
         sidebarOverlay.addEventListener("click", function () {
-            closeSidebar(sidebar, sidebarOverlay);
+            if (sidebar) closeSidebar(sidebar, sidebarOverlay);
         });
     }
 
-    // Restore state
-    if (localStorage.getItem("sidebarCollapsed") === "true") {
-        sidebar.classList.add("collapsed");
-        sidebar.classList.remove("expanded");
-    }
+    if (sidebar) {
+        // Restore state
+        if (localStorage.getItem("sidebarCollapsed") === "true") {
+            sidebar.classList.add("collapsed");
+            sidebar.classList.remove("expanded");
+        }
 
-    // Handle resize
-    window.addEventListener(
-        "resize",
-        debounce(function () {
-            if (window.innerWidth >= 1024) {
-                closeSidebar(sidebar, sidebarOverlay);
-            }
-        }, 250),
-    );
+        // Handle resize
+        window.addEventListener(
+            "resize",
+            debounce(function () {
+                if (window.innerWidth >= 1024) {
+                    closeSidebar(sidebar, sidebarOverlay);
+                }
+            }, 250),
+        );
+    }
 }
 
 /**
  * Toggle sidebar
  */
 function toggleSidebar(sidebar, overlay) {
+    if (!sidebar) return;
     const isOpen = sidebar.classList.contains("open");
 
     if (isOpen) {
@@ -415,6 +418,7 @@ function toggleSidebar(sidebar, overlay) {
  * Open sidebar
  */
 function openSidebar(sidebar, overlay) {
+    if (!sidebar) return;
     sidebar.classList.add("open");
     sidebar.classList.remove("collapsed");
     if (overlay) overlay.classList.add("active");
@@ -430,6 +434,7 @@ function openSidebar(sidebar, overlay) {
  * Close sidebar
  */
 function closeSidebar(sidebar, overlay) {
+    if (!sidebar) return;
     sidebar.classList.remove("open");
     if (overlay) overlay.classList.remove("active");
     document.body.style.overflow = "";

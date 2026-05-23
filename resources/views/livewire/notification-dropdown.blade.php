@@ -2,6 +2,7 @@
     x-data="{
         isOpen: @entangle('isOpen'),
         soundEnabled: @entangle('soundEnabled'),
+        pushEnabled: @entangle('pushEnabled'),
         showToasts: []
     }"
     x-on:notification-received.window="handleNotification($event)"

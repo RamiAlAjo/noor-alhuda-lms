@@ -119,9 +119,9 @@
             </div>
 
             <div class="mt-6">
-                <flux:button type="submit" variant="primary">
-                    {{ __('Add Question') }}
-                </flux:button>
+                <x-button.submit loading-text="Adding..." variant="primary">
+                    Add Question
+                </x-button.submit>
             </div>
         </form>
     </div>

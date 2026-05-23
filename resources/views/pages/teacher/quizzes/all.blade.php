@@ -3,57 +3,137 @@
 ?>
 
 <x-layouts::app :title="__('All Quizzes')">
-    <!-- Header -->
-    <div class="mb-8">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100">{{ __('All Quizzes') }}</h1>
-                <p class="mt-1 text-neutral-500 dark:text-neutral-400">{{ __('View and manage quizzes from all your course offerings.') }}</p>
-            </div>
-            <div class="flex gap-3">
-                <flux:button variant="primary" x-data="{ open: false }" @click="open = true">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    {{ __('Create Quiz') }}
-                </flux:button>
+    <div x-data="{ createQuizModalOpen: false }">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100">{{ __('All Quizzes') }}</h1>
+                    <p class="mt-1 text-neutral-500 dark:text-neutral-400">{{ __('View and manage quizzes from all your course offerings.') }}</p>
+                </div>
+                <div class="flex gap-3">
+                    <flux:button variant="primary" @click="createQuizModalOpen = true">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        {{ __('Create Quiz') }}
+                    </flux:button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Create Quiz Modal -->
-    <div x-show="open" class="fixed inset-0 z-50 overflow-y-auto" x-data="{ open: false }">
-        <div class="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="open = false"></div>
-            <div class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all dark:bg-neutral-800 sm:my-8 sm:w-full sm:max-w-md sm:align-middle">
-                <div class="bg-white px-4 pt-5 pb-4 dark:bg-neutral-800 sm:p-6 sm:pb-4">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-neutral-100">{{ __('Select Course Offering') }}</h3>
-                    <div class="mt-4">
-                        <p class="text-sm text-gray-600 dark:text-neutral-400 mb-4">{{ __('Choose which course offering this quiz will belong to:') }}</p>
-                        <div class="space-y-3 max-h-60 overflow-y-auto">
-                            @forelse($offerings as $offering)
-                                <a href="{{ route('teacher.quizzes.create', $offering) }}"
-                                   class="block p-3 rounded-lg border border-neutral-200 hover:border-blue-300 hover:bg-blue-50 dark:border-neutral-600 dark:hover:border-blue-500 dark:hover:bg-blue-900/20 transition-colors">
-                                    <div class="font-medium text-neutral-900 dark:text-neutral-100">{{ $offering->course->name }}</div>
-                                    <div class="text-sm text-neutral-600 dark:text-neutral-400">{{ $offering->section_name }} - {{ $offering->semester->localized_name ?? $offering->semester->name }}</div>
-                                    <div class="text-xs text-neutral-500 dark:text-neutral-500 mt-1">{{ $offering->enrollments->count() }} {{ __('students') }}</div>
-                                </a>
-                            @empty
-                                <div class="text-center py-4 text-neutral-500 dark:text-neutral-400">
-                                    {{ __('No course offerings found. Please contact administrator.') }}
-                                </div>
-                            @endforelse
+        <!-- Enhanced Create Quiz Modal -->
+        <div x-show="createQuizModalOpen" 
+             x-cloak
+             class="fixed inset-0 z-[60] overflow-y-auto"
+             @keydown.escape.window="createQuizModalOpen = false">
+            
+            <!-- Backdrop with transition -->
+            <div x-show="createQuizModalOpen"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm"
+                 @click="createQuizModalOpen = false">
+            </div>
+            
+            <!-- Modal Dialog -->
+            <div class="flex min-h-screen items-center justify-center p-4">
+                <div x-show="createQuizModalOpen"
+                     x-transition:enter="ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave="ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     class="relative z-[70] w-full max-w-lg rounded-2xl bg-white shadow-2xl dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 overflow-hidden"
+                     @click.away="createQuizModalOpen = false">
+                    
+                    <!-- Header -->
+                    <div class="flex items-center justify-between px-6 py-5 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900">
+                        <div class="flex items-center gap-3">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-neutral-900 dark:text-white">
+                                    {{ __('Create New Quiz') }}
+                                </h3>
+                                <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                                    {{ __('Select a course offering') }}
+                                </p>
+                            </div>
                         </div>
+                        
+                        <button @click="createQuizModalOpen = false"
+                                class="rounded-lg p-2 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-600 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6h12v12" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Offerings List -->
+                    <div class="max-h-[380px] overflow-y-auto p-2 space-y-1.5 bg-white dark:bg-neutral-800">
+                        @forelse($offerings as $offering)
+                            <a href="{{ route('teacher.quizzes.create', $offering) }}"
+                               class="group flex items-center justify-between gap-4 rounded-xl border border-neutral-200 px-5 py-4 transition-all hover:border-[var(--color-accent)] hover:shadow-sm dark:border-neutral-700 dark:hover:border-[var(--color-accent)] dark:hover:bg-neutral-900">
+                                
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-semibold text-neutral-900 group-hover:text-[var(--color-accent)] dark:text-white dark:group-hover:text-[var(--color-accent)] transition-colors">
+                                        {{ $offering->course->name ?? __('Unknown Course') }}
+                                    </div>
+                                    <div class="mt-0.5 flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+                                        <span>{{ $offering->section_name }}</span>
+                                        <span class="text-neutral-300 dark:text-neutral-600">•</span>
+                                        <span>{{ $offering->semester->name ?? '' }}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center gap-2 text-right">
+                                    <div class="flex items-center gap-1.5 rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 01-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        <span>{{ ($offering->enrollments_count ?? $offering->enrollments->count() ?? 0) }}</span>
+                                    </div>
+                                    
+                                    <div class="text-[var(--color-accent)] opacity-0 group-hover:opacity-100 transition-all">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7-7 7m-4 0l7-7-7-7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </a>
+                        @empty
+                            <div class="px-6 py-12 text-center">
+                                <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-6 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                </div>
+                                <p class="font-medium text-neutral-700 dark:text-neutral-300">{{ __('No active course offerings') }}</p>
+                                <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{{ __('Please contact your administrator to assign offerings.') }}</p>
+                            </div>
+                        @endforelse
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="flex items-center justify-end gap-3 border-t border-neutral-200 bg-neutral-50 px-6 py-4 dark:border-neutral-700 dark:bg-neutral-900">
+                        <button type="button"
+                                @click="createQuizModalOpen = false"
+                                class="rounded-xl border border-neutral-300 px-5 py-2.5 text-sm font-medium text-neutral-700 transition hover:bg-white dark:border-neutral-600 dark:text-neutral-300 dark:hover:bg-neutral-800">
+                            {{ __('Cancel') }}
+                        </button>
                     </div>
                 </div>
-                <div class="bg-gray-50 px-4 py-3 dark:bg-neutral-700 sm:flex sm:flex-row-reverse sm:px-6">
-                    <button type="button" class="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 sm:mt-0 sm:w-auto sm:text-sm" @click="open = false">
-                        {{ __('Cancel') }}
-                    </button>
-                </div>
             </div>
         </div>
-    </div>
 
     <!-- Quiz Statistics -->
     <div class="mb-6 grid gap-4 md:grid-cols-4">
@@ -139,7 +219,7 @@
             </svg>
             <h3 class="mt-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">{{ __('No quizzes found') }}</h3>
             <p class="mt-2 text-neutral-500 dark:text-neutral-400">{{ __('You haven\'t created any quizzes yet.') }}</p>
-            <flux:button href="#" x-data="{ open: true }" @click="open = true" variant="primary" class="mt-4">
+            <flux:button type="button" @click="createQuizModalOpen = true" variant="primary" class="mt-4">
                 {{ __('Create Your First Quiz') }}
             </flux:button>
         </div>
@@ -224,4 +304,5 @@
             </div>
         </div>
     @endif
+    </div>
 </x-layouts::app>

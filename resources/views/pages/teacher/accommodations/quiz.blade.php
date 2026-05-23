@@ -120,9 +120,9 @@
             </div>
 
             <div class="mt-4 flex justify-end">
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <x-button.submit loading-text="Saving..." variant="primary">
                     {{ __('lms.save_accommodations') }}
-                </button>
+                </x-button.submit>
             </div>
         </form>
     @endif

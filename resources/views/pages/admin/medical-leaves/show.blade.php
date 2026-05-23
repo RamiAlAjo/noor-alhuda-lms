@@ -162,9 +162,9 @@
                                     <textarea name="review_notes" rows="3" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-blue-500 focus:border-blue-500"
                                         placeholder="{{ __('lms.optional_notes') }}"></textarea>
                                 </div>
-                                <button type="submit" class="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md transition">
-                                    {{ __('lms.approve_leave') }}
-                                </button>
+                                 <x-button.submit loading-text="{{ __('Approving...') }}" class="w-full">
+                                     {{ __('lms.approve_leave') }}
+                                 </x-button.submit>
                             </form>
                         </div>
 
@@ -178,9 +178,9 @@
                                     <textarea name="review_notes" rows="6" required class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-blue-500 focus:border-blue-500"
                                         placeholder="{{ __('lms.enter_rejection_reason') }}"></textarea>
                                 </div>
-                                <button type="submit" class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition">
-                                    {{ __('lms.reject_leave') }}
-                                </button>
+                                 <x-button.submit variant="danger" loading-text="{{ __('Rejecting...') }}" class="w-full">
+                                     {{ __('lms.reject_leave') }}
+                                 </x-button.submit>
                             </form>
                         </div>
                     </div>

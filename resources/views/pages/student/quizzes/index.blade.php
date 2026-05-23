@@ -99,9 +99,9 @@
             </div>
 
             <div class="flex gap-2">
-                <flux:button type="submit" variant="primary">
-                    {{ __('Filter') }}
-                </flux:button>
+                <x-button.submit loading-text="Applying..." variant="primary">
+                    Filter
+                </x-button.submit>
 
                 @if(request()->anyFilled(['search', 'status']))
                 <flux:button :href="route('student.quizzes.index')" variant="ghost">

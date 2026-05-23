@@ -103,7 +103,8 @@ class QuizAttempt extends Model
      */
     public function scopeCompleted($query)
     {
-        return $query->whereNotNull('completed_at');
+        // Using submitted_at because the column 'completed_at' was never added to the table
+        return $query->whereNotNull('submitted_at');
     }
 
     /**
@@ -115,7 +116,7 @@ class QuizAttempt extends Model
     public function scopeInProgress($query)
     {
         return $query->whereNotNull('started_at')
-            ->whereNull('completed_at');
+            ->whereNull('submitted_at');
     }
 
     /**
@@ -123,7 +124,7 @@ class QuizAttempt extends Model
      */
     public function isCompleted(): bool
     {
-        return $this->completed_at !== null;
+        return $this->submitted_at !== null;
     }
 
     /**
@@ -147,11 +148,11 @@ class QuizAttempt extends Model
      */
     public function getDurationMinutesAttribute(): ?int
     {
-        if (! $this->started_at || ! $this->completed_at) {
+        if (! $this->started_at || ! $this->submitted_at) {
             return null;
         }
 
-        return $this->started_at->diffInMinutes($this->completed_at);
+        return $this->started_at->diffInMinutes($this->submitted_at);
     }
 
     /**

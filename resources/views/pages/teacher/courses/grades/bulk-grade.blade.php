@@ -167,9 +167,9 @@
                             <flux:button :href="route('teacher.courses.grades.view', [$section, $assessment])" variant="ghost">
                                 {{ __('Cancel') }}
                             </flux:button>
-                            <flux:button type="submit" variant="primary" id="bulkGradeBtn" disabled>
-                                {{ __('Save Grades') }}
-                            </flux:button>
+                            <x-button.submit loading-text="Saving..." variant="primary" id="bulkGradeBtn" disabled>
+                                Save Grades
+                            </x-button.submit>
                         </div>
                     </div>
                 </div>

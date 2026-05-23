@@ -110,9 +110,9 @@
                 <button type="reset" class="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700">
                     {{ __('Reset') }}
                 </button>
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <x-button.submit loading-text="{{ __('Generating...') }}">
                     {{ __('Generate Report') }}
-                </button>
+                </x-button.submit>
             </div>
         </form>
     </div>

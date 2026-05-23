@@ -104,9 +104,10 @@
                     <flux:button type="button" variant="ghost" onclick="window.history.back()">
                         {{ __('Save & Continue Later') }}
                     </flux:button>
-                    <flux:button type="submit" variant="primary" onclick="return confirm('{{ __('Are you sure you want to submit? You cannot change your answers after submission.') }}')">
-                        {{ __('Submit Exam') }}
-                    </flux:button>
+                    <x-button.submit loading-text="Submitting Exam..." variant="primary" 
+                        onclick="return confirm('{{ __('Are you sure you want to submit? You cannot change your answers after submission.') }}')">
+                        Submit Exam
+                    </x-button.submit>
                 </div>
             </div>
         </form>

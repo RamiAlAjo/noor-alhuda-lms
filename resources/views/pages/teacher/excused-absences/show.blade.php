@@ -201,12 +201,12 @@ $reasonTypeLabels = [
                             <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{{ __('Review Notes (Optional)') }}</label>
                             <input type="text" name="review_notes" class="w-full rounded-lg border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800" placeholder="{{ __('Add notes about your decision...') }}" />
                         </div>
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2">
+                        <x-button.submit loading-text="Approving..." variant="primary" class="bg-green-600 hover:bg-green-700">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                             </svg>
                             {{ __('Approve') }}
-                        </button>
+                        </x-button.submit>
                     </div>
                 </form>
 
@@ -220,12 +220,12 @@ $reasonTypeLabels = [
                             <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{{ __('Rejection Reason (Required)') }}</label>
                             <textarea name="review_notes" class="w-full rounded-lg border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800" rows="3" placeholder="{{ __('Please provide a reason for rejection...') }}" required></textarea>
                         </div>
-                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2">
+                        <x-button.submit loading-text="Rejecting..." variant="danger">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                             {{ __('Reject') }}
-                        </button>
+                        </x-button.submit>
                     </div>
                 </form>
             </div>

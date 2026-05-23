@@ -78,9 +78,9 @@
                                 <form method="POST" action="{{ route('admin.academic.majors.destroy', $major) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <flux:button size="sm" variant="danger" type="submit" onclick="return confirm('{{ __('Are you sure you want to delete this major?') }}')">
+                                    <x-button.submit size="sm" variant="danger" loading-text="{{ __('Deleting...') }}" confirm="{{ __('Are you sure you want to delete this major?') }}">
                                         {{ __('Delete') }}
-                                    </flux:button>
+                                    </x-button.submit>
                                 </form>
                             </div>
                         </td>
@@ -172,9 +172,9 @@
                 <button type="button" onclick="document.getElementById('create-major-modal').close()" class="flex-1 justify-center rounded-lg px-4 py-2 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800">
                     {{ __('Cancel') }}
                 </button>
-                <button type="submit" class="flex-1 justify-center rounded-lg bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700">
+                <x-button.submit loading-text="{{ __('Creating...') }}" class="flex-1">
                     {{ __('Create Major') }}
-                </button>
+                </x-button.submit>
             </div>
         </form>
     </dialog>
@@ -247,9 +247,9 @@
                 <button type="button" onclick="document.getElementById('edit-major-{{ $major->id }}').close()" class="flex-1 justify-center rounded-lg px-4 py-2 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800">
                     {{ __('Cancel') }}
                 </button>
-                <button type="submit" class="flex-1 justify-center rounded-lg px-4 py-2 text-white" style="background: linear-gradient(to right, #f59e0b, #ef4444); border: none;">
+                <x-button.submit loading-text="{{ __('Updating...') }}" class="flex-1">
                     {{ __('Update Major') }}
-                </button>
+                </x-button.submit>
             </div>
         </form>
     </dialog>

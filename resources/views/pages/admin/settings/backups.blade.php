@@ -26,9 +26,9 @@
 
             <form method="POST" action="{{ route('admin.settings.backup') }}">
                 @csrf
-                <flux:button type="submit" variant="primary" icon="plus">
+                <x-button.submit loading-text="{{ __('Creating...') }}">
                     {{ __('Create Backup') }}
-                </flux:button>
+                </x-button.submit>
             </form>
         </div>
 

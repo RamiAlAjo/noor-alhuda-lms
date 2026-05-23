@@ -21,14 +21,16 @@ class DashboardController extends Controller
     {
         $teacher = auth()->user();
 
-        // Get courses with eager loading to prevent N+1 queries
+        // Get courses with counts only (much lighter than full relations)
         $courses = CourseOffering::where('teacher_id', $teacher->id)
             ->with([
                 'course',
                 'course.department',
                 'semester',
                 'semester.academicYear',
-                'enrollments' => function ($query) {
+            ])
+            ->withCount([
+                'enrollments as enrolled_count' => function ($query) {
                     $query->where('status', 'approved');
                 },
                 'materials',

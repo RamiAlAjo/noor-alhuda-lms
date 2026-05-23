@@ -91,9 +91,9 @@
                     <option value="grade_asc" {{ request('sort') === 'grade_asc' ? 'selected' : '' }}>{{ __('Lowest Grade') }}</option>
                 </select>
 
-                <flux:button type="submit" variant="primary">
-                    {{ __('Filter') }}
-                </flux:button>
+                <x-button.submit loading-text="Applying..." variant="primary">
+                    Filter
+                </x-button.submit>
 
                 @if(request()->anyFilled(['search', 'semester', 'sort']))
                 <flux:button :href="route('student.grades.index')" variant="ghost">

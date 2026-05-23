@@ -496,9 +496,9 @@
                                     <form action="#" method="POST" class="flex gap-2" onsubmit="updateGroupName(event, {{ $conversation->id }})">
                                         @csrf
                                         <input type="text" value="{{ $conversation->title }}" class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-100" id="groupNameInput">
-                                        <button type="submit" class="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
-                                            {{ __('Update') }}
-                                        </button>
+                                         <x-button.submit loading-text="{{ __('Updating...') }}" class="px-3 py-2 text-sm">
+                                             {{ __('Update') }}
+                                         </x-button.submit>
                                     </form>
                                 </div>
 

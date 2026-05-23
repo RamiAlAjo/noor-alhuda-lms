@@ -106,9 +106,9 @@
                         </select>
                     </div>
                     <div class="flex items-end">
-                        <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition">
-                            {{ __('lms.filter') }}
-                        </button>
+                         <x-button.submit loading-text="{{ __('Filtering...') }}">
+                             {{ __('lms.filter') }}
+                         </x-button.submit>
                     </div>
                 </form>
             </div>

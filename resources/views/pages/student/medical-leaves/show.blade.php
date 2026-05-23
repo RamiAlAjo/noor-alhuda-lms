@@ -53,9 +53,9 @@ $leaveTypeLabels = [
                                 <form method="POST" action="{{ route('student.medical-leaves.destroy', $medicalLeave) }}" onsubmit="return confirm('{{ __('Are you sure you want to cancel this request?') }}')">
                                     @csrf
                                     @method('DELETE')
-                                    <flux:button type="submit" variant="danger" size="sm">
-                                        {{ __('Cancel') }}
-                                    </flux:button>
+                                     <x-button.submit variant="danger" size="sm" loading-text="{{ __('Cancelling...') }}">
+                                         {{ __('Cancel') }}
+                                     </x-button.submit>
                                 </form>
                             </div>
                         @endif

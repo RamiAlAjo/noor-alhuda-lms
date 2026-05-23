@@ -93,9 +93,9 @@
                                 class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div class="md:col-span-5 flex gap-2">
-                            <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition">
-                                {{ __('lms.filter') }}
-                            </button>
+                             <x-button.submit loading-text="{{ __('Filtering...') }}">
+                                 {{ __('lms.filter') }}
+                             </x-button.submit>
                             <a href="{{ route('admin.medical-leaves.index') }}" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition">
                                 {{ __('lms.clear') }}
                             </a>

@@ -133,9 +133,9 @@ $leaveTypes = [
                     <flux:button :href="route('student.medical-leaves.show', $medicalLeave)" variant="secondary">
                         {{ __('Cancel') }}
                     </flux:button>
-                    <flux:button type="submit" variant="primary">
-                        {{ __('Update Request') }}
-                    </flux:button>
+                    <x-button.submit loading-text="Updating..." variant="primary">
+                        Update Request
+                    </x-button.submit>
                 </div>
             </form>
         </div>

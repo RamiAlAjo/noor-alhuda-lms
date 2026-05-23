@@ -46,8 +46,8 @@
             <form method="POST" action="{{ route('admin.enrollments.bulk-approve') }}" class="flex items-center gap-4">
                 @csrf
                 <flux:checkbox name="select_all" id="selectAll" :label="__('Select All')" />
-                <flux:button type="submit" variant="primary">{{ __('Bulk Approve') }}</flux:button>
-                <flux:button type="submit" formaction="{{ route('admin.enrollments.bulk-reject') }}" variant="danger">{{ __('Bulk Reject') }}</flux:button>
+                <x-button.submit loading-text="{{ __('Approving...') }}">{{ __('Bulk Approve') }}</x-button.submit>
+                <x-button.submit variant="danger" loading-text="{{ __('Rejecting...') }}" formaction="{{ route('admin.enrollments.bulk-reject') }}">{{ __('Bulk Reject') }}</x-button.submit>
             </form>
         </div>
 
@@ -82,11 +82,11 @@
                                 <div class="flex gap-2">
                                     <form method="POST" action="{{ route('admin.enrollments.approve', $enrollment) }}">
                                         @csrf
-                                        <flux:button type="submit" size="sm" variant="primary">{{ __('Approve') }}</flux:button>
+                                        <x-button.submit size="sm" loading-text="{{ __('Approving...') }}">{{ __('Approve') }}</x-button.submit>
                                     </form>
                                     <form method="POST" action="{{ route('admin.enrollments.reject', $enrollment) }}">
                                         @csrf
-                                        <flux:button type="submit" size="sm" variant="danger">{{ __('Reject') }}</flux:button>
+                                        <x-button.submit size="sm" variant="danger" loading-text="{{ __('Rejecting...') }}">{{ __('Reject') }}</x-button.submit>
                                     </form>
                                 </div>
                             </td>

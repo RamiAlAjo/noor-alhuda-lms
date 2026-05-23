@@ -66,9 +66,9 @@
                             <input type="date" name="date_to" value="{{ $dateTo }}"
                                 class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-blue-500 focus:border-blue-500">
                         </div>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition">
-                            {{ __('lms.filter') }}
-                        </button>
+                         <x-button.submit loading-text="{{ __('Filtering...') }}">
+                             {{ __('lms.filter') }}
+                         </x-button.submit>
                     </form>
                 </div>
             </div>

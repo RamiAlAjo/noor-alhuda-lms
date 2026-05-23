@@ -1,35 +1,46 @@
 @props([
     'loadingText' => 'Saving...',
     'variant' => 'primary',
+    'size' => 'md', // sm, md, lg
+    'full' => false,
+    'confirm' => null,
 ])
 
 @php
-    $base = 'inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-75 shadow-sm hover:shadow-md active:scale-[0.985]';
+    $base = 'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all disabled:cursor-not-allowed disabled:opacity-75 shadow-sm hover:shadow-md active:scale-[0.985]';
+
+    $sizes = [
+        'sm'  => 'px-3 py-1.5 text-xs',
+        'md'  => 'px-5 py-2.5 text-sm',
+        'lg'  => 'px-6 py-3 text-base',
+    ];
 
     $variants = [
         'primary'   => 'bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent)]/90',
         'secondary' => 'bg-neutral-200 text-neutral-800 hover:bg-neutral-300 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600',
         'danger'    => 'bg-red-600 text-white hover:bg-red-700',
+        'ghost'     => 'bg-transparent text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800',
     ];
 
-    $buttonClass = $base . ' ' . ($variants[$variant] ?? $variants['primary']);
+    $buttonClass = $base . ' ' . ($sizes[$size] ?? $sizes['md']) . ' ' . ($variants[$variant] ?? $variants['primary']);
+
+    if ($full) {
+        $buttonClass .= ' w-full';
+    }
 @endphp
 
 <button
     type="submit"
     x-data="{ loading: false }"
-    @click="loading = true"
+    @click="@if($confirm)if(confirm('{{ addslashes($confirm) }}')){ setTimeout(() => loading = true, 10); }else{return false;}@else setTimeout(() => loading = true, 10); @endif"
     :disabled="loading"
     class="{{ $buttonClass }} {{ $attributes->get('class') }}"
-    {{ $attributes->except('class') }}
+    {{ $attributes->except(['class', 'onclick']) }}
 >
     <!-- Spinner -->
-    <svg x-show="loading" x-cloak class="size-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-    </svg>
+    <div x-show="loading" x-cloak class="size-4 animate-spin rounded-full border-2 border-current border-t-transparent flex-shrink-0"></div>
 
-    <!-- Icon + Text (hidden while loading) -->
+    <!-- Content (icon + text) -->
     <span x-show="!loading" class="flex items-center gap-2">
         {{ $slot }}
     </span>

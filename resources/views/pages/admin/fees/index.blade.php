@@ -141,7 +141,7 @@
                                 <form method="POST" action="{{ route('admin.fees.destroy', $fee) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <flux:button type="submit" size="sm" variant="danger">{{ __('Delete') }}</flux:button>
+                                    <x-button.submit size="sm" variant="danger" loading-text="{{ __('Deleting...') }}">{{ __('Delete') }}</x-button.submit>
                                 </form>
                             </div>
                         </td>
@@ -212,9 +212,9 @@
                 <flux:button type="button" variant="ghost" onclick="document.getElementById('create-fee-modal').close()">
                     {{ __('Cancel') }}
                 </flux:button>
-                <flux:button type="submit" variant="primary">
+                <x-button.submit loading-text="{{ __('Creating...') }}">
                     {{ __('Create Fee') }}
-                </flux:button>
+                </x-button.submit>
             </div>
         </form>
     </dialog>
@@ -267,9 +267,9 @@
                 <flux:button type="button" variant="ghost" onclick="document.getElementById('edit-fee-modal-{{ $fee->id }}').close()">
                     {{ __('Cancel') }}
                 </flux:button>
-                <flux:button type="submit" variant="primary">
+                <x-button.submit loading-text="{{ __('Updating...') }}">
                     {{ __('Update Fee') }}
-                </flux:button>
+                </x-button.submit>
             </div>
         </form>
     </dialog>

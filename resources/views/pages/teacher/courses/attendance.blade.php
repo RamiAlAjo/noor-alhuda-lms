@@ -212,9 +212,9 @@
 
             @if($section->enrollments->where('status', 'approved')->count() > 0)
             <div class="mt-6 flex justify-end">
-                <flux:button type="submit" variant="primary">
-                    {{ __('Save Attendance') }}
-                </flux:button>
+                <x-button.submit loading-text="Saving..." variant="primary">
+                    Save Attendance
+                </x-button.submit>
             </div>
             @endif
 

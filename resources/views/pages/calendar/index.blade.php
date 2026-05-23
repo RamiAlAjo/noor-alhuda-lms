@@ -291,9 +291,9 @@
                     <flux:button type="button" variant="ghost" onclick="document.getElementById('addEventModal').close()">
                         {{ __('Cancel') }}
                     </flux:button>
-                    <flux:button type="submit" variant="primary">
+                    <x-button.submit loading-text="{{ __('Creating...') }}">
                         {{ __('Create Event') }}
-                    </flux:button>
+                    </x-button.submit>
                 </div>
             </form>
         </div>

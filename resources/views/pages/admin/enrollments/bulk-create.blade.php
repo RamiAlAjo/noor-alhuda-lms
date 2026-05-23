@@ -198,9 +198,9 @@
                 </div>
 
                 <div class="mt-6 flex justify-end">
-                    <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition">
+                    <x-button.submit loading-text="{{ __('Creating...') }}">
                         {{ __('lms.create_enrollments') }}
-                    </button>
+                    </x-button.submit>
                 </div>
             </form>
         </div>

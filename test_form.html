@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Login Test</title>
+</head>
+<body>
+    <form method="POST" action="http://127.0.0.1:8000/login">
+        @csrf
+        <input type="email" name="email" value="john.smith@noorlms.com" required>
+        <input type="password" name="password" value="password" required>
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>

@@ -23,13 +23,13 @@
  * - Routes: teacher.courses.index, teacher.courses.show, teacher.quizzes.index, teacher.quizzes.store
  * - Helpers: __(), route()
  * - Relationships: CourseOffering->course
- * - Flux UI components: flux:field, flux:label, flux:input, flux:textarea, flux:select, flux:checkbox, flux:button
+ * - Flux UI components: flux:field, flux:label, flux:input, flux:textarea, flux:select, flux:checkbox
+ * - Custom: <x-button.submit> for primary action
  *
  * @package App\Views\Pages\Teacher\Quizzes
  */
 ?>
-<x-app-layout>
-    <x-slot name="title">{{ __('Create Quiz') }} - {{ $offering->course?->name ?? __('Course') }}</x-slot>
+<x-layouts::app :title="__('Create Quiz') . ' - ' . ($offering->course?->name ?? __('Course'))">
 
     <div class="mb-6">
         <nav class="flex text-sm text-gray-400">
@@ -180,17 +180,16 @@
                 <!-- Actions -->
                 <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
                     <div class="flex flex-col gap-3">
-                        <flux:button type="submit" variant="primary" class="w-full">
-                            <x-button.submit loading-text="Creating..." variant="primary">
-                                Create Quiz
-                            </x-button.submit>
-                        </flux:button>
-                        <flux:button href="{{ route('teacher.quizzes.index', $offering) }}" variant="ghost" class="w-full">
+                        <x-button.submit loading-text="{{ __('Creating...') }}" class="w-full">
+                            {{ __('Create Quiz') }}
+                        </x-button.submit>
+                        <a href="{{ route('teacher.quizzes.index', $offering) }}"
+                           class="w-full inline-flex items-center justify-center rounded-lg border border-neutral-300 px-5 py-2.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50 dark:border-neutral-600 dark:text-neutral-300 dark:hover:bg-neutral-700">
                             {{ __('Cancel') }}
-                        </flux:button>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </form>
-</x-app-layout>
+</x-layouts::app>

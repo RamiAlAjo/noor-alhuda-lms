@@ -181,9 +181,9 @@
             <flux:button :href="route('teacher.courses.grades.view', [$section, $assessment])" variant="secondary">
                 {{ __('Cancel') }}
             </flux:button>
-            <flux:button type="submit" variant="primary">
-                {{ __('Save Grades') }}
-            </flux:button>
+            <x-button.submit loading-text="Saving..." variant="primary">
+                Save Grades
+            </x-button.submit>
         </div>
     </form>
 </x-layouts::app>

@@ -116,12 +116,9 @@
                         </div>
 
                         <div class="flex justify-end">
-                            <flux:button type="submit" variant="primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
+                            <x-button.submit loading-text="{{ __('Saving...') }}">
                                 {{ __('Save Changes') }}
-                            </flux:button>
+                            </x-button.submit>
                         </div>
                     </form>
                 </div>
@@ -154,12 +151,9 @@
                         </div>
 
                         <div class="flex justify-end">
-                            <flux:button type="submit" variant="primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
+                            <x-button.submit loading-text="{{ __('Saving...') }}">
                                 {{ __('Save Changes') }}
-                            </flux:button>
+                            </x-button.submit>
                         </div>
                     </form>
                 </div>
@@ -196,12 +190,9 @@
                         </div>
 
                         <div class="flex justify-end">
-                            <flux:button type="submit" variant="primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
+                            <x-button.submit loading-text="{{ __('Saving...') }}">
                                 {{ __('Save Changes') }}
-                            </flux:button>
+                            </x-button.submit>
                         </div>
                     </form>
                 </div>
@@ -251,9 +242,9 @@
                             <flux:input type="password" name="password_confirmation" required />
                         </div>
 
-                        <flux:button type="submit" variant="primary" class="w-full">
+                        <x-button.submit loading-text="{{ __('Updating...') }}" class="w-full">
                             {{ __('Update Password') }}
-                        </flux:button>
+                        </x-button.submit>
                     </form>
                 </div>
             </div>
@@ -301,9 +292,9 @@
                             @endif
                         </div>
 
-                        <flux:button type="submit" variant="primary" class="w-full">
+                        <x-button.submit loading-text="{{ __('Saving...') }}" class="w-full">
                             {{ __('Save Bio & CV') }}
-                        </flux:button>
+                        </x-button.submit>
                     </form>
                 </div>
             </div>

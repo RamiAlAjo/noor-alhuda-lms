@@ -8,6 +8,9 @@
 @import "./layout.css";
 @import "./auth-layouts.css";
 
+/* Alpine.js x-cloak to prevent flash of hidden elements (used in submit buttons, modals, etc.) */
+[x-cloak] { display: none !important; }
+
 /* ==================== CSS CUSTOM PROPERTIES ==================== */
 :root {
     /* Animation durations */

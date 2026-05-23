@@ -33,7 +33,7 @@ class DashboardController extends Controller
             ])
             ->get();
 
-        // Get upcoming assessments with eager loading
+        // Get upcoming assessments - limit in DB for performance
         $upcoming_assessments = StudentGrade::where('student_id', $student->id)
             ->whereHas('assessment', function ($query) {
                 $query->where('due_date', '>=', now()->toDateString())
@@ -43,9 +43,11 @@ class DashboardController extends Controller
                 'assessment.offering.course',
                 'assessment.assessmentType',
             ])
-            ->get()
-            ->sortBy('assessment.due_date')
-            ->take(5);
+            ->join('assessments', 'student_grades.assessment_id', '=', 'assessments.id')
+            ->orderBy('assessments.due_date')
+            ->select('student_grades.*')
+            ->take(5)
+            ->get();
 
         // Calculate GPA with caching (cache for 5 minutes)
         $gpa = Cache::remember("student_gpa_{$student->id}", now()->addMinutes(5), function () use ($student) {

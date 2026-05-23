@@ -110,9 +110,9 @@
                         @if($appeal->isPending())
                             <form action="{{ route('teacher.appeals.review', $appeal) }}" method="POST">
                                 @csrf
-                                <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition mb-4">
+                                <x-button.submit loading-text="Updating..." variant="primary" class="w-full mb-4">
                                     {{ __('lms.mark_as_under_review') }}
-                                </button>
+                                </x-button.submit>
                             </form>
                         @endif
 
@@ -133,9 +133,9 @@
                                         placeholder="{{ __('lms.new_grade_placeholder') }}" value="{{ $appeal->requested_grade }}">
                                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('lms.new_grade_help') }}</p>
                                 </div>
-                                <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                                <x-button.submit loading-text="Approving..." variant="primary" class="w-full bg-green-600 hover:bg-green-700">
                                     {{ __('lms.approve_appeal') }}
-                                </button>
+                                </x-button.submit>
                             </div>
                         </form>
 
@@ -149,9 +149,9 @@
                                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                         placeholder="{{ __('lms.rejection_response_placeholder') }}" required></textarea>
                                 </div>
-                                <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                                <x-button.submit loading-text="Rejecting..." variant="danger" class="w-full">
                                     {{ __('lms.reject_appeal') }}
-                                </button>
+                                </x-button.submit>
                             </div>
                         </form>
 
@@ -165,9 +165,9 @@
                                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                         placeholder="{{ __('lms.escalation_reason_placeholder') }}" required></textarea>
                                 </div>
-                                <button type="submit" class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                                <x-button.submit loading-text="Escalating..." variant="secondary" class="w-full bg-purple-600 hover:bg-purple-700 text-white">
                                     {{ __('lms.escalate_to_admin') }}
-                                </button>
+                                </x-button.submit>
                             </div>
                         </form>
                     </div>

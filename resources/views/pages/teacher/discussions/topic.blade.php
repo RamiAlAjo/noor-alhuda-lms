@@ -107,9 +107,9 @@
                     placeholder="{{ __('lms.reply_placeholder') }}"></textarea>
             </div>
             <div class="flex justify-end">
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <x-button.submit loading-text="Posting..." variant="primary">
                     {{ __('lms.post_reply') }}
-                </button>
+                </x-button.submit>
             </div>
         </form>
     </div>

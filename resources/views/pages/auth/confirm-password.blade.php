@@ -20,9 +20,9 @@
                 viewable
             />
 
-            <flux:button variant="primary" type="submit" class="w-full" data-test="confirm-password-button">
+            <x-button.submit loading-text="{{ __('Confirming...') }}" class="w-full" data-test="confirm-password-button">
                 {{ __('Confirm') }}
-            </flux:button>
+            </x-button.submit>
         </form>
     </div>
 </x-layouts::auth>
