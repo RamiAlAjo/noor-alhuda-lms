@@ -236,16 +236,44 @@ class QuizController extends Controller
      */
     public function storeQuestion(Request $request, CourseOffering $offering, Assessment $quiz): RedirectResponse
     {
-        $validated = $request->validate([
+        $rules = [
             'question_text' => 'required|string',
             'question_text_ar' => 'nullable|string',
             'question_type' => 'required|in:multiple_choice,true_false,short_answer,essay',
             'points' => 'required|integer|min:1',
-            'options' => 'nullable|array',
-            'options.*.option_text' => 'required_with:options|string',
-            'correct_option' => 'nullable|integer',
             'correct_answer' => 'nullable|string',
-        ]);
+            'options' => 'nullable|array',
+            'options.*.option_text' => 'nullable|string',
+            'correct_option' => 'nullable|integer',
+        ];
+
+        $validated = $request->validate($rules);
+
+        // Additional validation for multiple choice
+        if ($request->question_type === 'multiple_choice') {
+            $options = $request->input('options', []);
+            $filled = collect($options)->filter(fn($o) => !empty($o['option_text'] ?? ''))->count();
+
+            if ($filled < 2) {
+                return back()
+                    ->withErrors(['options' => __('At least 2 options with text are required for multiple choice questions.')])
+                    ->withInput();
+            }
+
+            if (! isset($validated['correct_option']) || $validated['correct_option'] === null) {
+                return back()
+                    ->withErrors(['correct_option' => __('Please select the correct answer.')])
+                    ->withInput();
+            }
+        }
+
+        if ($request->question_type === 'true_false') {
+            if (empty($validated['correct_answer'])) {
+                return back()
+                    ->withErrors(['correct_answer' => __('Please select the correct answer.')])
+                    ->withInput();
+            }
+        }
 
         $questionData = [
             'assessment_id' => $quiz->id,

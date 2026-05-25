@@ -154,7 +154,7 @@
                         <x-button.submit loading-text="Saving..." variant="primary" class="w-full">
                             Save Changes
                         </x-button.submit>
-                        <flux:button href="{{ route('teacher.quizzes.questions', [$offering, $quiz]) }}" variant="secondary" class="w-full">
+                        <flux:button href="{{ route('teacher.quizzes.questions', [$offering, $quiz]) }}" variant="outline" class="w-full">
                             {{ __('Manage Questions') }}
                         </flux:button>
                         <flux:button href="{{ route('teacher.quizzes.index', $offering) }}" variant="ghost" class="w-full">

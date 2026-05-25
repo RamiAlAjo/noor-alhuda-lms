@@ -51,6 +51,19 @@
     <form method="POST" action="{{ route('teacher.quizzes.store', $offering) }}" class="space-y-6">
         @csrf
 
+        @if ($errors->any())
+            <div class="rounded-lg bg-red-50 p-4 dark:bg-red-900/20">
+                <div class="text-sm text-red-700 dark:text-red-400">
+                    <strong>{{ __('Please fix the following errors:') }}</strong>
+                    <ul class="mt-2 list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        @endif
+
         <div class="grid gap-6 lg:grid-cols-3">
             <!-- Main Settings -->
             <div class="lg:col-span-2 space-y-6">
@@ -60,23 +73,23 @@
                     <div class="space-y-4">
                         <flux:field>
                             <flux:label>{{ __('Title') }}</flux:label>
-                            <flux:input type="text" name="title" required />
+                            <flux:input type="text" name="title" :value="old('title')" required />
                         </flux:field>
 
                         <flux:field>
                             <flux:label>{{ __('Title (Arabic)') }}</flux:label>
-                            <flux:input type="text" name="title_ar" dir="rtl" />
+                            <flux:input type="text" name="title_ar" :value="old('title_ar')" dir="rtl" />
                         </flux:field>
 
                         <flux:field>
                             <flux:label>{{ __('Description') }}</flux:label>
-                            <flux:textarea name="description" rows="3" />
+                            <flux:textarea name="description" :value="old('description')" rows="3" />
                         </flux:field>
 
                         <div class="grid gap-4 sm:grid-cols-2">
                             <flux:field>
                                 <flux:label>{{ __('Quiz Type') }}</flux:label>
-                                <flux:select name="quiz_type" required>
+                                <flux:select name="quiz_type" :value="old('quiz_type', 'quiz')" required>
                                     <flux:select.option value="quiz">{{ __('Quiz') }}</flux:select.option>
                                     <flux:select.option value="pre_quiz">{{ __('Pre-Quiz') }}</flux:select.option>
                                     <flux:select.option value="post_quiz">{{ __('Post-Quiz') }}</flux:select.option>
@@ -85,13 +98,13 @@
 
                             <flux:field>
                                 <flux:label>{{ __('Maximum Score') }}</flux:label>
-                                <flux:input type="number" name="max_grade" value="100" min="1" required />
+                                <flux:input type="number" name="max_grade" :value="old('max_grade', 100)" min="1" required />
                             </flux:field>
                         </div>
 
                         <flux:field>
                             <flux:label>{{ __('Weight in Final Grade (%)') }}</flux:label>
-                            <flux:input type="number" name="weight" value="0" min="0" max="100" />
+                            <flux:input type="number" name="weight" :value="old('weight', 0)" min="0" max="100" />
                         </flux:field>
                     </div>
                 </div>
@@ -104,24 +117,24 @@
                         <div class="grid gap-4 sm:grid-cols-2">
                             <flux:field>
                                 <flux:label>{{ __('Time Limit (minutes)') }}</flux:label>
-                                <flux:input type="number" name="time_limit_minutes" min="1" max="300" placeholder="{{ __('No limit') }}" />
+                                <flux:input type="number" name="time_limit_minutes" :value="old('time_limit_minutes')" min="1" max="300" placeholder="{{ __('No limit') }}" />
                             </flux:field>
 
                             <flux:field>
                                 <flux:label>{{ __('Additional Seconds') }}</flux:label>
-                                <flux:input type="number" name="time_limit_seconds" min="0" max="59" value="0" />
+                                <flux:input type="number" name="time_limit_seconds" :value="old('time_limit_seconds', 0)" min="0" max="59" />
                             </flux:field>
                         </div>
 
                         <div class="grid gap-4 sm:grid-cols-2">
                             <flux:field>
                                 <flux:label>{{ __('Attempts Allowed') }}</flux:label>
-                                <flux:input type="number" name="attempts_allowed" min="1" placeholder="{{ __('Unlimited') }}" />
+                                <flux:input type="number" name="attempts_allowed" :value="old('attempts_allowed')" min="1" placeholder="{{ __('Unlimited') }}" />
                             </flux:field>
 
                             <flux:field>
                                 <flux:label>{{ __('Passing Score (%)') }}</flux:label>
-                                <flux:input type="number" name="passing_score" min="0" max="100" step="0.01" placeholder="{{ __('No passing score') }}" />
+                                <flux:input type="number" name="passing_score" :value="old('passing_score')" min="0" max="100" step="0.01" placeholder="{{ __('No passing score') }}" />
                             </flux:field>
                         </div>
                     </div>
@@ -135,12 +148,12 @@
                         <div class="grid gap-4 sm:grid-cols-2">
                             <flux:field>
                                 <flux:label>{{ __('Available From') }}</flux:label>
-                                <flux:input type="datetime-local" name="available_from" />
+                                <flux:input type="datetime-local" name="available_from" :value="old('available_from')" />
                             </flux:field>
 
                             <flux:field>
                                 <flux:label>{{ __('Available Until') }}</flux:label>
-                                <flux:input type="datetime-local" name="available_until" />
+                                <flux:input type="datetime-local" name="available_until" :value="old('available_until')" />
                             </flux:field>
                         </div>
                     </div>
@@ -154,26 +167,19 @@
                     <h2 class="mb-4 text-lg font-semibold text-neutral-900 dark:text-white">{{ __('Publish Options') }}</h2>
 
                     <div class="space-y-4">
-                        <flux:checkbox name="is_published" label="{{ __('Publish immediately') }}" />
+                        <flux:checkbox name="is_published" value="1" :checked="old('is_published')" label="{{ __('Publish immediately') }}" />
 
                         <div class="border-t border-neutral-200 pt-4 dark:border-neutral-700">
-                            <flux:checkbox name="show_results_immediately" label="{{ __('Show results immediately after submission') }}" checked />
+                            <flux:checkbox name="show_results_immediately" value="1" :checked="old('show_results_immediately', true)" label="{{ __('Show results immediately after submission') }}" />
                         </div>
 
-                        <flux:checkbox name="show_correct_answers" label="{{ __('Show correct answers in results') }}" checked />
+                        <flux:checkbox name="show_correct_answers" value="1" :checked="old('show_correct_answers', true)" label="{{ __('Show correct answers in results') }}" />
 
-                        <flux:checkbox name="show_feedback" label="{{ __('Show question feedback') }}" checked />
-                    </div>
-                </div>
+                        <flux:checkbox name="show_feedback" value="1" :checked="old('show_feedback', true)" label="{{ __('Show question feedback') }}" />
 
-                <!-- Shuffle Options -->
-                <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
-                    <h2 class="mb-4 text-lg font-semibold text-neutral-900 dark:text-white">{{ __('Shuffle Options') }}</h2>
+                        <flux:checkbox name="shuffle_questions" value="1" :checked="old('shuffle_questions')" label="{{ __('Shuffle questions') }}" />
 
-                    <div class="space-y-4">
-                        <flux:checkbox name="shuffle_questions" label="{{ __('Shuffle questions') }}" />
-
-                        <flux:checkbox name="shuffle_options" label="{{ __('Shuffle answer options') }}" />
+                        <flux:checkbox name="shuffle_options" value="1" :checked="old('shuffle_options')" label="{{ __('Shuffle answer options') }}" />
                     </div>
                 </div>
 

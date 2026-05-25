@@ -96,6 +96,14 @@ class Assessment extends Model
     }
 
     /**
+     * Alias for grades() - used in several places for student grading.
+     */
+    public function studentGrades()
+    {
+        return $this->hasMany(StudentGrade::class);
+    }
+
+    /**
      * Get the questions for this assessment.
      */
     public function questions()

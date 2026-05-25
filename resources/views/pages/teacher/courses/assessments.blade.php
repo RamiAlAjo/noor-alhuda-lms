@@ -224,7 +224,7 @@
                                     <flux:button size="sm" :href="route('teacher.courses.assessments.questions', [$section, $assessment])" variant="primary">
                                         {{ __('Manage Questions') }}
                                     </flux:button>
-                                    <flux:button size="sm" :href="route('teacher.courses.assessments.preview', [$section, $assessment])" variant="secondary">
+                                    <flux:button size="sm" :href="route('teacher.courses.assessments.preview', [$section, $assessment])" variant="outline">
                                         {{ __('Preview') }}
                                     </flux:button>
                                 @else

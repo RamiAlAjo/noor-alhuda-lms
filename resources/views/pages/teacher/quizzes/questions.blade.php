@@ -1,5 +1,4 @@
-<x-app-layout>
-    <x-slot name="title">{{ __('Questions') }} - {{ $quiz->title }}</x-slot>
+<x-layouts::app :title="__('Questions') . ' - ' . $quiz->title">
 
     <div class="mb-6">
         <nav class="flex text-sm text-gray-400">
@@ -20,23 +19,69 @@
             <h1 class="text-2xl font-bold text-neutral-900 dark:text-white">{{ __('Questions') }}</h1>
             <p class="text-neutral-600 dark:text-neutral-400">{{ $quiz->title }}</p>
         </div>
-        <div class="flex gap-3">
-            <flux:button href="{{ route('teacher.quizzes.index', $offering) }}" variant="ghost">
-                {{ __('Back to Quizzes') }}
-            </flux:button>
-            <flux:button href="{{ route('teacher.quizzes.preview', [$offering, $quiz]) }}" variant="secondary">
-                <flux:icon name="eye" class="mr-2" />
-                {{ __('Preview') }}
-            </flux:button>
+
+        <div class="flex items-center gap-4">
+            <div class="hidden sm:flex items-center gap-4 text-sm">
+                <div class="px-3 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 flex items-center gap-2">
+                    <span class="font-medium">{{ $quiz->questions->count() }}</span>
+                    <span class="text-neutral-500 dark:text-neutral-400">{{ __('Questions') }}</span>
+                </div>
+                <div class="px-3 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 flex items-center gap-2">
+                    <span class="font-medium">{{ $quiz->questions->sum('points') }}</span>
+                    <span class="text-neutral-500 dark:text-neutral-400">{{ __('Total Points') }}</span>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <flux:button href="{{ route('teacher.quizzes.index', $offering) }}" variant="ghost">
+                    {{ __('Back to Quizzes') }}
+                </flux:button>
+                <flux:button href="{{ route('teacher.quizzes.preview', [$offering, $quiz]) }}" variant="outline">
+                    <flux:icon name="eye" class="mr-2" />
+                    {{ __('Preview') }}
+                </flux:button>
+            </div>
         </div>
     </div>
 
+    @if (session('success'))
+        <div class="mb-6 rounded-lg bg-green-50 p-4 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="mb-6 rounded-lg bg-red-50 p-4 text-red-700 dark:bg-red-900/30 dark:text-red-300">
+            <ul class="list-disc list-inside text-sm">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <style>
+        .question-item.dragging {
+            opacity: 0.6;
+            border: 2px dashed #6366f1;
+        }
+    </style>
+
     <div class="grid gap-6 lg:grid-cols-3">
         <!-- Questions List -->
-        <div class="lg:col-span-2 space-y-4">
+        <div class="lg:col-span-2">
+            <div class="mb-3 flex items-center justify-between">
+                <div class="text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                    {{ __('Drag questions to reorder') }}
+                </div>
+            </div>
+
+            <div id="questionsList" class="space-y-4">
             @if($quiz->questions->count() > 0)
                 @foreach($quiz->questions as $index => $question)
-                    <div class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800" data-question-id="{{ $question->id }}">
+                    <div class="question-item rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800 cursor-grab active:cursor-grabbing" 
+                         data-question-id="{{ $question->id }}" 
+                         draggable="true">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <div class="flex items-center gap-3 mb-3">
@@ -69,7 +114,7 @@
                                                 @if($option['is_correct'])
                                                     <flux:icon name="check-circle" class="h-5 w-5 text-green-500" />
                                                 @else
-                                                    <flux:icon name="circle" class="h-5 w-5 text-neutral-400" />
+                                                    <flux:icon name="x-circle" class="h-5 w-5 text-neutral-400" />
                                                 @endif
                                                 <span class="{{ $option['is_correct'] ? 'font-medium text-green-700 dark:text-green-300' : 'text-neutral-600 dark:text-neutral-300' }}">
                                                     {{ $option['option_text'] }}
@@ -84,7 +129,34 @@
                                     </div>
                                 @endif
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1">
+                                <!-- Reorder -->
+                                @if(!$loop->first)
+                                    <form method="POST" action="{{ route('teacher.quizzes.reorder', [$offering, $quiz]) }}" class="inline">
+                                        @csrf
+                                        <input type="hidden" name="order[]" value="{{ $question->id }}">
+                                        @foreach($quiz->questions->where('id', '!=', $question->id) as $q)
+                                            <input type="hidden" name="order[]" value="{{ $q->id }}">
+                                        @endforeach
+                                        <button type="submit" class="p-1 text-neutral-400 hover:text-neutral-600" title="{{ __('Move up') }}">
+                                            ↑
+                                        </button>
+                                    </form>
+                                @endif
+
+                                @if(!$loop->last)
+                                    <form method="POST" action="{{ route('teacher.quizzes.reorder', [$offering, $quiz]) }}" class="inline">
+                                        @csrf
+                                        @foreach($quiz->questions->where('id', '!=', $question->id) as $q)
+                                            <input type="hidden" name="order[]" value="{{ $q->id }}">
+                                        @endforeach
+                                        <input type="hidden" name="order[]" value="{{ $question->id }}">
+                                        <button type="submit" class="p-1 text-neutral-400 hover:text-neutral-600" title="{{ __('Move down') }}">
+                                            ↓
+                                        </button>
+                                    </form>
+                                @endif
+
                                 <flux:button variant="ghost" size="sm" icon="pencil" onclick="editQuestion({{ $question->id }})" />
                                 <form method="POST" action="{{ route('teacher.quizzes.questions.destroy', [$offering, $quiz, $question]) }}">
                                     @csrf
@@ -102,6 +174,7 @@
                     <p class="mt-2 text-neutral-600 dark:text-neutral-400">{{ __('Add your first question using the form on the right.') }}</p>
                 </div>
             @endif
+            </div> <!-- /#questionsList -->
         </div>
 
         <!-- Add Question Form -->
@@ -134,35 +207,32 @@
 
                     <!-- Multiple Choice Options -->
                     <div id="multipleChoiceOptions" class="space-y-3">
-                        <flux:label>{{ __('Options') }}</flux:label>
-                        <div id="optionsContainer">
-                            <div class="flex items-center gap-2 mb-2">
-                                <input type="radio" name="correct_option" value="0" checked class="h-4 w-4 text-indigo-600">
-                                <flux:input type="text" name="options[0][option_text]" placeholder="{{ __('Option 1') }}" class="flex-1" />
-                            </div>
-                            <div class="flex items-center gap-2 mb-2">
-                                <input type="radio" name="correct_option" value="1" class="h-4 w-4 text-indigo-600">
-                                <flux:input type="text" name="options[1][option_text]" placeholder="{{ __('Option 2') }}" class="flex-1" />
-                            </div>
-                            <div class="flex items-center gap-2 mb-2">
-                                <input type="radio" name="correct_option" value="2" class="h-4 w-4 text-indigo-600">
-                                <flux:input type="text" name="options[2][option_text]" placeholder="{{ __('Option 3') }}" class="flex-1" />
-                            </div>
-                            <div class="flex items-center gap-2 mb-2">
-                                <input type="radio" name="correct_option" value="3" class="h-4 w-4 text-indigo-600">
-                                <flux:input type="text" name="options[3][option_text]" placeholder="{{ __('Option 4') }}" class="flex-1" />
-                            </div>
+                        <div class="flex items-center justify-between">
+                            <flux:label>{{ __('Options') }}</flux:label>
+                            <flux:button type="button" variant="ghost" size="sm" onclick="addMcOption()">
+                                <flux:icon name="plus" class="size-4 mr-1" />
+                                {{ __('Add Option') }}
+                            </flux:button>
                         </div>
-                        <p class="text-xs text-neutral-500">{{ __('Select the radio button next to the correct answer.') }}</p>
+
+                        <div id="optionsContainer" class="space-y-2"></div>
+
+                        <p class="text-xs text-neutral-500">{{ __('Select the radio button next to the correct answer. Minimum 2 options required.') }}</p>
                     </div>
 
                     <!-- True/False Options -->
                     <div id="trueFalseOptions" class="space-y-3" style="display: none;">
                         <flux:label>{{ __('Correct Answer') }}</flux:label>
-                        <flux:radio.group>
-                            <flux:radio name="correct_answer" value="true" label="{{ __('True') }}" checked />
-                            <flux:radio name="correct_answer" value="false" label="{{ __('False') }}" />
-                        </flux:radio.group>
+                        <div class="flex gap-6">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="correct_answer" value="true" checked class="h-4 w-4 text-indigo-600 focus:ring-indigo-500">
+                                <span class="text-sm text-neutral-700 dark:text-neutral-300">{{ __('True') }}</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="correct_answer" value="false" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500">
+                                <span class="text-sm text-neutral-700 dark:text-neutral-300">{{ __('False') }}</span>
+                            </label>
+                        </div>
                     </div>
 
                     <!-- Short Answer / Essay Model Answer -->
@@ -185,24 +255,186 @@
     <script>
         function toggleQuestionOptions() {
             const type = document.getElementById('questionType').value;
+
             const mcOptions = document.getElementById('multipleChoiceOptions');
             const tfOptions = document.getElementById('trueFalseOptions');
             const modelAnswer = document.getElementById('modelAnswer');
 
-            mcOptions.style.display = 'none';
-            tfOptions.style.display = 'none';
-            modelAnswer.style.display = 'none';
-
-            if (type === 'multiple_choice') {
-                mcOptions.style.display = 'block';
-            } else if (type === 'true_false') {
-                tfOptions.style.display = 'block';
-            } else {
-                modelAnswer.style.display = 'block';
-            }
+            // Just show/hide panels. Disabling is handled on submit to avoid breaking Flux components.
+            mcOptions.style.display = (type === 'multiple_choice') ? 'block' : 'none';
+            tfOptions.style.display = (type === 'true_false') ? 'block' : 'none';
+            modelAnswer.style.display = (!['multiple_choice', 'true_false'].includes(type)) ? 'block' : 'none';
         }
+
+        // Disable fields from non-active sections right before submit (safer with Flux custom elements)
+        document.getElementById('questionForm').addEventListener('submit', function () {
+            const type = document.getElementById('questionType').value;
+
+            if (type !== 'multiple_choice' && document.getElementById('multipleChoiceOptions')) {
+                document.getElementById('multipleChoiceOptions').querySelectorAll('input, textarea, select').forEach(el => el.disabled = true);
+            }
+            if (type !== 'true_false' && document.getElementById('trueFalseOptions')) {
+                document.getElementById('trueFalseOptions').querySelectorAll('input, textarea, select').forEach(el => el.disabled = true);
+            }
+            if (!['short_answer', 'essay'].includes(type) && document.getElementById('modelAnswer')) {
+                document.getElementById('modelAnswer').querySelectorAll('input, textarea, select').forEach(el => el.disabled = true);
+            }
+        });
 
         // Initialize on page load
         toggleQuestionOptions();
+
+        // ==================== Dynamic Multiple Choice Options ====================
+        let mcOptionCount = 0;
+
+        function addMcOption() {
+            const container = document.getElementById('optionsContainer');
+            const index = mcOptionCount++;
+
+            const div = document.createElement('div');
+            div.className = 'flex items-center gap-2';
+            div.innerHTML = `
+                <input type="radio" name="correct_option" value="${index}" class="h-4 w-4 text-indigo-600">
+                <input type="text" name="options[${index}][option_text]" 
+                       placeholder="{{ __('Option') }} ${index + 1}" 
+                       class="flex-1 px-3 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800">
+                <button type="button" onclick="removeMcOption(this)" 
+                        class="text-red-500 hover:text-red-700 p-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6h12v12"></path>
+                    </svg>
+                </button>
+            `;
+            container.appendChild(div);
+
+            // If this is the first option, make it checked by default
+            if (container.children.length === 1) {
+                div.querySelector('input[type="radio"]').checked = true;
+            }
+        }
+
+        function removeMcOption(button) {
+            const container = document.getElementById('optionsContainer');
+            if (container.children.length <= 2) {
+                alert('{{ __('At least 2 options are required.') }}');
+                return;
+            }
+            button.closest('.flex').remove();
+        }
+
+        function initDefaultMcOptions() {
+            const container = document.getElementById('optionsContainer');
+            if (container.children.length === 0) {
+                // Add 2 default options
+                addMcOption();
+                addMcOption();
+            }
+        }
+
+        // Auto-init default options when switching to Multiple Choice
+        const questionTypeSelect = document.getElementById('questionType');
+        if (questionTypeSelect) {
+            questionTypeSelect.addEventListener('change', function () {
+                if (this.value === 'multiple_choice') {
+                    setTimeout(initDefaultMcOptions, 50); // small delay for display
+                }
+            });
+        }
+
+        // Also init on first load if MC is default
+        if (questionTypeSelect && questionTypeSelect.value === 'multiple_choice') {
+            setTimeout(initDefaultMcOptions, 100);
+        }
+
+        function editQuestion(questionId) {
+            // TODO: Implement edit functionality (modal or separate page)
+            alert('Edit question feature coming soon. Question ID: ' + questionId);
+        }
+
+        // ==================== Drag & Drop Reordering ====================
+        function initDragAndDrop() {
+            const list = document.getElementById('questionsList');
+            if (!list) return;
+
+            let draggedItem = null;
+
+            list.addEventListener('dragstart', function(e) {
+                draggedItem = e.target.closest('.question-item');
+                if (draggedItem) {
+                    draggedItem.classList.add('dragging');
+                }
+            });
+
+            list.addEventListener('dragend', function(e) {
+                if (draggedItem) {
+                    draggedItem.classList.remove('dragging');
+                    draggedItem = null;
+                }
+            });
+
+            list.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(list, e.clientY);
+                const item = e.target.closest('.question-item');
+                if (item && item !== draggedItem) {
+                    if (afterElement == null) {
+                        list.appendChild(draggedItem);
+                    } else {
+                        list.insertBefore(draggedItem, afterElement);
+                    }
+                }
+            });
+
+            list.addEventListener('drop', function(e) {
+                e.preventDefault();
+                // Save new order
+                saveNewOrder();
+            });
+
+            function getDragAfterElement(container, y) {
+                const draggableElements = [...container.querySelectorAll('.question-item:not(.dragging)')];
+
+                return draggableElements.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = y - box.top - box.height / 2;
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset: offset, element: child };
+                    } else {
+                        return closest;
+                    }
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+            }
+        }
+
+        function saveNewOrder() {
+            const list = document.getElementById('questionsList');
+            const items = list.querySelectorAll('.question-item');
+            const order = Array.from(items).map(item => item.dataset.questionId);
+
+            // Create and submit form
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("teacher.quizzes.reorder", [$offering, $quiz]) }}';
+
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+            form.appendChild(csrf);
+
+            order.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'order[]';
+                input.value = id;
+                form.appendChild(input);
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Initialize drag and drop
+        initDragAndDrop();
     </script>
-</x-app-layout>
+</x-layouts::app>

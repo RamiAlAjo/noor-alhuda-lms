@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use App\Models\Assessment;
 use App\Models\Course;
 use App\Models\CourseOffering;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -40,7 +42,7 @@ class SearchController extends Controller
                 });
         })
             ->with(['roles', 'profile'])
-            ->limit($limit)
+            ->limit(6)
             ->get()
             ->map(function ($user) {
                 $role = $user->roles->first()?->name ?? 'user';
@@ -64,7 +66,7 @@ class SearchController extends Controller
                 ->orWhere('description', 'like', "%{$query}%");
         })
             ->with(['department', 'major'])
-            ->limit($limit)
+            ->limit(6)
             ->get()
             ->map(function ($course) {
                 return [
@@ -79,6 +81,48 @@ class SearchController extends Controller
 
         $results = array_merge($results, $courses->toArray());
 
+        // Search Assessments / Quizzes early (so they have good visibility)
+        if (Auth::check()) {
+            $user = Auth::user();
+            $assessmentsQuery = Assessment::query()
+                ->where(function ($q) use ($query) {
+                    $q->where('title', 'like', "%{$query}%")
+                      ->orWhere('description', 'like', "%{$query}%");
+                })
+                ->with(['courseOffering.course']);
+
+            if ($user->hasRole('student')) {
+                $assessmentsQuery->whereHas('courseOffering.enrollments', function ($e) use ($user) {
+                    $e->where('student_id', $user->id)->where('status', 'approved');
+                });
+            } elseif ($user->hasRole('teacher')) {
+                $assessmentsQuery->whereHas('courseOffering', function ($o) use ($user) {
+                    $o->where('teacher_id', $user->id);
+                });
+            }
+
+            $assessments = $assessmentsQuery
+                ->limit(6)
+                ->get()
+                ->map(function ($assessment) {
+                    $course = $assessment->courseOffering?->course;
+                    $courseLabel = $course ? ($course->code . ' - ' . $course->name) : 'General';
+                    $isQuiz = !empty($assessment->quiz_type) && $assessment->quiz_type !== 'none';
+                    $typeLabel = $isQuiz ? ucfirst(str_replace('_', ' ', $assessment->quiz_type)) : 'Assignment';
+
+                    return [
+                        'id' => $assessment->id,
+                        'type' => 'assessment',
+                        'title' => $assessment->title,
+                        'subtitle' => $typeLabel . ' • ' . $courseLabel,
+                        'url' => $this->getAssessmentUrl($assessment),
+                        'icon' => $isQuiz ? 'clipboard-list' : 'document-text',
+                    ];
+                });
+
+            $results = array_merge($results, $assessments->toArray());
+        }
+
         // Search course offerings (for students/teachers)
         if (Auth::check()) {
             $user = Auth::user();
@@ -92,7 +136,7 @@ class SearchController extends Controller
                             ->orWhere('code', 'like', "%{$query}%");
                     })
                     ->with(['course', 'teacher'])
-                    ->limit($limit)
+                    ->limit(5)
                     ->get()
                     ->map(function ($offering) {
                         return [
@@ -113,7 +157,7 @@ class SearchController extends Controller
                             ->orWhere('code', 'like', "%{$query}%");
                     })
                     ->with(['course'])
-                    ->limit($limit)
+                    ->limit(5)
                     ->get()
                     ->map(function ($offering) {
                         return [
@@ -128,6 +172,27 @@ class SearchController extends Controller
 
                 $results = array_merge($results, $offerings->toArray());
             }
+
+            // Search user's own Tasks (productivity)
+            $tasks = Task::where('user_id', $user->id)
+                ->where(function ($q) use ($query) {
+                    $q->where('title', 'like', "%{$query}%")
+                      ->orWhere('description', 'like', "%{$query}%");
+                })
+                ->limit(5)
+                ->get()
+                ->map(function ($task) {
+                    return [
+                        'id' => $task->id,
+                        'type' => 'task',
+                        'title' => $task->title,
+                        'subtitle' => ($task->due_date ? 'Due ' . $task->due_date->diffForHumans() : 'Task') . ($task->completed ? ' • Done' : ''),
+                        'url' => route('tasks.index') . '#task-' . $task->id,
+                        'icon' => 'check-circle',
+                    ];
+                });
+
+            $results = array_merge($results, $tasks->toArray());
         }
 
         // Search announcements
@@ -137,7 +202,7 @@ class SearchController extends Controller
                     ->orWhere('content', 'like', "%{$query}%");
             })
             ->with('author')
-            ->limit($limit)
+            ->limit(4)
             ->get()
             ->map(function ($announcement) {
                 return [
@@ -145,7 +210,7 @@ class SearchController extends Controller
                     'type' => 'announcement',
                     'title' => $announcement->title,
                     'subtitle' => 'By '.($announcement->author->name ?? 'System').' • '.$announcement->created_at->diffForHumans(),
-                    'url' => '#', // Announcements might not have direct links
+                    'url' => route('dashboard'), // Best central place for now
                     'icon' => 'megaphone',
                 ];
             });
@@ -176,8 +241,12 @@ class SearchController extends Controller
         if ($currentUser->hasRole('admin')) {
             return route('admin.users.show', $user);
         } elseif ($currentUser->hasRole('teacher') && $user->hasRole('student')) {
-            // Teachers can view their students
-            return route('teacher.courses.students', ['section' => 'search', 'student' => $user->id]);
+            // Teachers: link to their first course's students page (with search hint)
+            $firstOffering = $currentUser->taughtCourses()->first();
+            if ($firstOffering) {
+                return route('teacher.courses.students', $firstOffering) . '?search=' . urlencode($user->name);
+            }
+            return route('teacher.courses.index');
         }
 
         return '#';
@@ -209,6 +278,39 @@ class SearchController extends Controller
 
         if ($currentUser->hasRole('admin')) {
             return route('admin.courses.show', $course);
+        }
+
+        return '#';
+    }
+
+    /**
+     * Get URL for assessment based on current user's role
+     */
+    private function getAssessmentUrl(Assessment $assessment): string
+    {
+        if (! Auth::check()) {
+            return '#';
+        }
+
+        $currentUser = Auth::user();
+        $offering = $assessment->courseOffering;
+
+        if (!$offering) {
+            return '#';
+        }
+
+        if ($currentUser->hasRole('admin')) {
+            return route('admin.academic.offerings.show', $offering); // fallback
+        } elseif ($currentUser->hasRole('teacher')) {
+            if (!empty($assessment->quiz_type) && $assessment->quiz_type !== 'none') {
+                return route('teacher.quizzes.questions', [$offering, $assessment]);
+            }
+            return route('teacher.courses.assessments', $offering);
+        } elseif ($currentUser->hasRole('student')) {
+            if (!empty($assessment->quiz_type) && $assessment->quiz_type !== 'none') {
+                return route('student.quizzes.show', $assessment);
+            }
+            return route('student.courses.show', $offering) . '#assessments';
         }
 
         return '#';

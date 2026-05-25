@@ -178,7 +178,7 @@
         
         <!-- Submit -->
         <div class="mt-6 flex justify-end gap-4">
-            <flux:button :href="route('teacher.courses.grades.view', [$section, $assessment])" variant="secondary">
+            <flux:button :href="route('teacher.courses.grades.view', [$section, $assessment])" variant="outline">
                 {{ __('Cancel') }}
             </flux:button>
             <x-button.submit loading-text="Saving..." variant="primary">
