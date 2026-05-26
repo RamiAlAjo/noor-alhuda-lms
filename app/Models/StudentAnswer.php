@@ -17,7 +17,7 @@ class StudentAnswer extends Model
         'attempt_id',
         'answer',
         'option_id',
-        'text_answer',
+        
         'is_correct',
         'points_earned',
         'feedback',
@@ -28,7 +28,7 @@ class StudentAnswer extends Model
         'is_correct' => 'boolean',
         'points_earned' => 'integer',
         'submitted_at' => 'datetime',
-        'text_answer' => 'string',
+        
         'option_id' => 'integer',
     ];
 

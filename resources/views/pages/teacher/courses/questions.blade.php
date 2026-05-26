@@ -175,21 +175,15 @@
                                     <p class="text-neutral-900 dark:text-neutral-100">{!! $question->question_text !!}</p>
                                     @if($question->question_type === 'multiple_choice' && $question->options)
                                         <div class="mt-2 flex flex-wrap gap-2">
-                                            @foreach($question->options as $option)
-                                                <span class="inline-flex items-center rounded px-2 py-1 text-xs
-                                                    @if(isset($option->is_correct) && $option->is_correct)
-                                                        bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
-                                                    @else
-                                                        bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300
-                                                    @endif">
-                                                    {!! $option->option_text !!}
-                                                    @if(isset($option->is_correct) && $option->is_correct)
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                                        </svg>
-                                                    @endif
-                                                </span>
-                                            @endforeach
+@foreach($question->options as $option)
+                                            <div class="flex items-center gap-2 rounded-lg p-2 @if($option['is_correct']) bg-green-50 dark:bg-green-900/20 @else bg-neutral-50 dark:bg-neutral-700/50 @endif @if($answer && $answer->option_id == ($option['id'] ?? $loop->index + 1)) border-2 border-indigo-500 @endif">
+                                                <div class="h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border border-neutral-300 text-neutral-900 dark:border-neutral-600 dark:text-neutral-300">
+                                                </div>
+                                                <div class="ml-2">
+                                                    {!! $option['option_text'] ?? '' !!}
+                                                </div>
+                                            </div>
+                                        @endforeach
                                         </div>
                                     @elseif($question->question_type === 'true_false')
                                         <div class="mt-2">

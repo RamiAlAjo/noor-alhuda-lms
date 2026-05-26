@@ -192,12 +192,12 @@
 
                     <flux:field>
                         <flux:label>{{ __('Question Type') }}</flux:label>
-                        <flux:select name="question_type" id="questionType" onchange="toggleQuestionOptions()">
-                            <flux:select.option value="multiple_choice">{{ __('Multiple Choice') }}</flux:select.option>
-                            <flux:select.option value="true_false">{{ __('True/False') }}</flux:select.option>
-                            <flux:select.option value="short_answer">{{ __('Short Answer') }}</flux:select.option>
-                            <flux:select.option value="essay">{{ __('Essay') }}</flux:select.option>
-                        </flux:select>
+                        <select name="question_type" id="questionType" onchange="toggleQuestionOptions()" class="w-full">
+                            <option value="multiple_choice">{{ __('Multiple Choice') }}</option>
+                            <option value="true_false">{{ __('True/False') }}</option>
+                            <option value="short_answer">{{ __('Short Answer') }}</option>
+                            <option value="essay">{{ __('Essay') }}</option>
+                        </select>
                     </flux:field>
 
                     <flux:field>

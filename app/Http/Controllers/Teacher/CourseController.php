@@ -460,7 +460,7 @@ class CourseController extends Controller
         $this->authorize('view', $section);
 
         $section->load(['course', 'enrollments.student']);
-        $assessment->load(['questions.options', 'studentGrades.student']);
+        $assessment->load(['questions', 'studentGrades.student']);
 
         // Get ungraded enrollments count
         $gradedStudentIds = $assessment->studentGrades->pluck('student_id')->toArray();
@@ -539,8 +539,8 @@ class CourseController extends Controller
      */
     public function questions(CourseSection $section, Assessment $assessment): View
     {
-        $assessment->load(['questions.options']);
-
+        $assessment->load('questions');
+ 
         return view('pages.teacher.courses.questions', compact('section', 'assessment'));
     }
 
@@ -622,7 +622,7 @@ class CourseController extends Controller
     {
         $this->authorize('view', $section);
 
-        $studentGrade->load(['student', 'assessment.questions.options', 'assessment.questions.studentAnswers' => function ($query) use ($studentGrade) {
+        $studentGrade->load(['student', 'assessment.questions', 'assessment.questions.studentAnswers' => function ($query) use ($studentGrade) {
             $query->where('student_id', $studentGrade->student_id);
         }]);
 
@@ -696,8 +696,8 @@ class CourseController extends Controller
     {
         $this->authorize('view', $section);
 
-        $assessment->load(['questions.options']);
-
+        $assessment->load('questions');
+ 
         return view('pages.teacher.courses.assessments.preview', compact('section', 'assessment'));
     }
 

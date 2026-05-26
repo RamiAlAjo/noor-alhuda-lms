@@ -1,5 +1,4 @@
-<x-app-layout>
-    <x-slot name="title">{{ __('Edit Quiz') }} - {{ $quiz->title }}</x-slot>
+<x-layouts::app :title="__('Edit Quiz') . ' - ' . $quiz->title">
 
     <div class="mb-6">
         <nav class="flex text-sm text-gray-400">
@@ -44,15 +43,16 @@
                             <flux:textarea name="description" rows="3">{{ $quiz->description }}</flux:textarea>
                         </flux:field>
 
-                        <div class="grid gap-4 sm:grid-cols-2">
-                            <flux:field>
-                                <flux:label>{{ __('Quiz Type') }}</flux:label>
-                                <flux:select name="quiz_type" required>
-                                    <flux:select.option value="quiz" {{ $quiz->quiz_type === 'quiz' ? 'selected' : '' }}>{{ __('Quiz') }}</flux:select.option>
-                                    <flux:select.option value="pre_quiz" {{ $quiz->quiz_type === 'pre_quiz' ? 'selected' : '' }}>{{ __('Pre-Quiz') }}</flux:select.option>
-                                    <flux:select.option value="post_quiz" {{ $quiz->quiz_type === 'post_quiz' ? 'selected' : '' }}>{{ __('Post-Quiz') }}</flux:select.option>
-                                </flux:select>
-                            </flux:field>
+                         <div class="grid gap-4 sm:grid-cols-2">
+                         <flux:field>
+                             <flux:label>{{ __('Quiz Type') }}</flux:label>
+                              <select name="quiz_type" required class="w-full">
+                                 <option value="quiz" {{ $quiz->quiz_type === 'quiz' ? 'selected' : '' }}>{{ __('Quiz') }}</option>
+                                 <option value="pre_quiz" {{ $quiz->quiz_type === 'pre_quiz' ? 'selected' : '' }}>{{ __('Pre-Quiz') }}</option>
+                                 <option value="post_quiz" {{ $quiz->quiz_type === 'post_quiz' ? 'selected' : '' }}>{{ __('Post-Quiz') }}</option>
+                              </select>
+                         </flux:field>
+
 
                             <flux:field>
                                 <flux:label>{{ __('Maximum Score') }}</flux:label>
@@ -165,4 +165,4 @@
             </div>
         </div>
     </form>
-</x-app-layout>
+</x-layouts::app>

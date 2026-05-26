@@ -32,14 +32,15 @@
             @csrf
             <div class="grid gap-4 md:grid-cols-2">
                 <flux:input name="title" :label="__('Title')" placeholder="{{ __('Assessment title') }}" required />
-                <flux:select name="type" :label="__('Type')" required>
-                    <flux:select.option value="quiz">{{ __('Quiz') }}</flux:select.option>
-                    <flux:select.option value="midterm">{{ __('Midterm Exam') }}</flux:select.option>
-                    <flux:select.option value="final">{{ __('Final Exam') }}</flux:select.option>
-                    <flux:select.option value="assignment">{{ __('Assignment') }}</flux:select.option>
-                    <flux:select.option value="project">{{ __('Project') }}</flux:select.option>
-                    <flux:select.option value="presentation">{{ __('Presentation') }}</flux:select.option>
-                </flux:select>
+                <flux:label>{{ __('Type') }}</flux:label>
+                <select name="type" required class="w-full">
+                    <option value="quiz">{{ __('Quiz') }}</option>
+                    <option value="midterm">{{ __('Midterm Exam') }}</option>
+                    <option value="final">{{ __('Final Exam') }}</option>
+                    <option value="assignment">{{ __('Assignment') }}</option>
+                    <option value="project">{{ __('Project') }}</option>
+                    <option value="presentation">{{ __('Presentation') }}</option>
+                </select>
             </div>
 
             <!-- Quiz Specific Fields -->

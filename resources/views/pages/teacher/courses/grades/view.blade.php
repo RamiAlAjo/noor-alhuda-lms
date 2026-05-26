@@ -232,7 +232,7 @@
                                                 <flux:icon.x-circle class="w-5 h-5 text-neutral-400" />
                                             @endif
                                             <span class="@if($option->is_correct) font-medium text-green-700 dark:text-green-300 @else text-neutral-600 dark:text-neutral-400 @endif">
-                                                {!! $option->option_text !!}
+                                                {!! $option['option_text'] ?? '' !!}
                                             </span>
                                         </div>
                                     @endforeach

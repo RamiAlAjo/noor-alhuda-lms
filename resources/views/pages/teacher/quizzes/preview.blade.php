@@ -43,7 +43,7 @@
                 </div>
             @endif
             <div class="flex items-center gap-2">
-                <flux:icon name="shuffle" class="h-5 w-5 text-indigo-500" />
+                <flux:icon name="arrow-path" class="h-5 w-5 text-indigo-500" />
                 <span>{{ $quiz->shuffle_questions ? __('Questions shuffled') : __('Questions in order') }}</span>
             </div>
         </div>

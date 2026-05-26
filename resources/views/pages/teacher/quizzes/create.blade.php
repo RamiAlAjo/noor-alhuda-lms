@@ -89,11 +89,11 @@
                         <div class="grid gap-4 sm:grid-cols-2">
                             <flux:field>
                                 <flux:label>{{ __('Quiz Type') }}</flux:label>
-                                <flux:select name="quiz_type" :value="old('quiz_type', 'quiz')" required>
-                                    <flux:select.option value="quiz">{{ __('Quiz') }}</flux:select.option>
-                                    <flux:select.option value="pre_quiz">{{ __('Pre-Quiz') }}</flux:select.option>
-                                    <flux:select.option value="post_quiz">{{ __('Post-Quiz') }}</flux:select.option>
-                                </flux:select>
+                                <select name="quiz_type" :value="old('quiz_type', 'quiz')" required class="w-full">
+                                    <option value="quiz">{{ __('Quiz') }}</option>
+                                    <option value="pre_quiz">{{ __('Pre-Quiz') }}</option>
+                                    <option value="post_quiz">{{ __('Post-Quiz') }}</option>
+                                </select>
                             </flux:field>
 
                             <flux:field>

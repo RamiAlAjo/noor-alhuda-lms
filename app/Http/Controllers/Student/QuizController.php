@@ -426,7 +426,7 @@ class QuizController extends Controller
                         ],
                         [
                             'assessment_id' => $assessment->id,
-                            'text_answer' => $textAnswer,
+                            'answer' => $textAnswer,
                             'is_correct' => $isCorrect,
                             'points_earned' => $pointsEarned,
                             'submitted_at' => now(),

@@ -45,6 +45,9 @@ class QuizAttempt extends Model
      */
     protected $fillable = [
         'student_id',
+        'assessment_id',
+        'attempt_number',
+        'status',
         'course_id',
         'course_offering_id',
         'quiz_title',
@@ -52,6 +55,7 @@ class QuizAttempt extends Model
         'max_score',
         'percentage',
         'started_at',
+        'submitted_at',
         'completed_at',
     ];
 
@@ -93,6 +97,14 @@ class QuizAttempt extends Model
     public function courseOffering(): BelongsTo
     {
         return $this->belongsTo(CourseOffering::class);
+    }
+
+    /**
+     * Get the answers for this quiz attempt.
+     */
+    public function answers(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\StudentAnswer::class, 'attempt_id');
     }
 
     /**

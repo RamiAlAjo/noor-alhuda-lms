@@ -118,8 +118,8 @@
                                 <div class="flex items-center gap-3 rounded-lg border border-neutral-200 p-4 dark:border-neutral-700">
                                     <div class="flex h-5 w-5 items-center justify-center rounded-full border border-neutral-300 dark:border-neutral-600">
                                     </div>
-                                    <span class="text-neutral-700 dark:text-neutral-300">{!! $option->option_text !!}</span>
-                                    @if(isset($option->is_correct) && $option->is_correct)
+                                    <span class="text-neutral-700 dark:text-neutral-300">{!! $option['option_text'] ?? '' !!}</span>
+                                    @if(isset($option['is_correct']) && $option['is_correct'])
                                         <span class="ml-auto inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-200">
                                             {{ __('Correct Answer') }}
                                         </span>

@@ -126,24 +126,35 @@
                                         <flux:icon name="pencil" class="mr-2" />
                                         {{ __('Edit') }}
                                     </flux:menu.item>
-                                    <flux:menu.item wire:click="togglePublish({{ $quiz->id }})" href="{{ route('teacher.quizzes.toggle-publish', [$offering, $quiz]) }}">
-                                        @if($quiz->is_published)
-                                            <flux:icon name="eye-slash" class="mr-2" />
-                                            {{ __('Unpublish') }}
-                                        @else
-                                            <flux:icon name="eye" class="mr-2" />
-                                            {{ __('Publish') }}
-                                        @endif
-                                    </flux:menu.item>
-                                    <flux:menu.item href="{{ route('teacher.quizzes.duplicate', [$offering, $quiz]) }}">
-                                        <flux:icon name="document-duplicate" class="mr-2" />
-                                        {{ __('Duplicate') }}
-                                    </flux:menu.item>
-                                    <flux:menu.separator />
-                                    <flux:menu.item color="danger" href="{{ route('teacher.quizzes.destroy', [$offering, $quiz]) }}" wire:click="deleteQuiz({{ $quiz->id }})">
-                                        <flux:icon name="trash" class="mr-2" />
-                                        {{ __('Delete') }}
-                                    </flux:menu.item>
+                                     <form method="POST" action="{{ route('teacher.quizzes.toggle-publish', [$offering, $quiz]) }}" class="w-full">
+                                         @csrf
+                                         <button type="submit" class="w-full text-left flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded">
+                                             @if($quiz->is_published)
+                                                 <flux:icon name="eye-slash" class="h-4 w-4" />
+                                                 {{ __('Unpublish') }}
+                                             @else
+                                                 <flux:icon name="eye" class="h-4 w-4" />
+                                                 {{ __('Publish') }}
+                                             @endif
+                                         </button>
+                                     </form>
+                                     <form method="POST" action="{{ route('teacher.quizzes.duplicate', [$offering, $quiz]) }}" class="w-full">
+                                         @csrf
+                                         <button type="submit" class="w-full text-left flex items-center gap-2 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded">
+                                             <flux:icon name="document-duplicate" class="h-4 w-4" />
+                                             {{ __('Duplicate') }}
+                                         </button>
+                                     </form>
+                                     <flux:menu.separator />
+                                     <form method="POST" action="{{ route('teacher.quizzes.destroy', [$offering, $quiz]) }}" class="w-full"
+                                           onsubmit="return confirm('{{ __('Are you sure you want to delete this quiz?') }}')">
+                                         @csrf
+                                         @method('DELETE')
+                                         <button type="submit" class="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded">
+                                             <flux:icon name="trash" class="h-4 w-4" />
+                                             {{ __('Delete') }}
+                                         </button>
+                                     </form>
                                 </flux:menu>
                             </flux:dropdown>
                         </div>
