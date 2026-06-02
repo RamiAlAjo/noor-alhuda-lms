@@ -67,12 +67,12 @@
         <form method="POST" action="{{ route('teacher.courses.assessments.questions.store', [$section, $assessment]) }}" class="p-6">
             @csrf
             <div class="grid gap-4 md:grid-cols-2">
-                <flux:select name="question_type" :label="__('Question Type')" required onchange="toggleOptionsField(this.value)">
-                    <flux:select.option value="multiple_choice">{{ __('Multiple Choice') }}</flux:select.option>
-                    <flux:select.option value="true_false">{{ __('True/False') }}</flux:select.option>
-                    <flux:select.option value="short_answer">{{ __('Short Answer') }}</flux:select.option>
-                    <flux:select.option value="essay">{{ __('Essay') }}</flux:select.option>
-                </flux:select>
+                 <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">{{ __(""Question Type"") }}</label><select name="question_type" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" onchange="toggleOptionsField(this.value)">
+                     <option value="multiple_choice">{{ __(""Multiple Choice"") }}</option>
+                     <option value="true_false">{{ __(""True/False"") }}</option>
+                     <option value="short_answer">{{ __(""Short Answer"") }}</option>
+                     <option value="essay">{{ __(""Essay"") }}</option>
+                 </select>
                 <flux:input name="points" type="number" :label="__('Points')" placeholder="10" required min="1" />
             </div>
 

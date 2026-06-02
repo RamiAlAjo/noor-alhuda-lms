@@ -1,12 +1,12 @@
-<x-layouts::app :title="__('Medical Profile')">
-    <!-- Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-neutral-900 dark:text-neutral-100">{{ __('Medical Profile') }}</h1>
-        <p class="mt-1 text-neutral-500 dark:text-neutral-400">{{ __('View and update your medical information') }}</p>
-    </div>
-
-    <!-- Medical Information Form -->
-    <div class="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+                    <option value="">{{ __(""Select Relationship"") }}</option>
+                    <option value="parent">{{ __("Parent") }}</option>
+                    <option value="spouse">{{ __("Spouse") }}</option>
+                    <option value="sibling">{{ __("Sibling") }}</option>
+                    <option value="friend">{{ __("Friend") }}</option>
+                    <option value="other">{{ __("Other") }}</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
         <div class="border-b border-neutral-200 px-6 py-4 dark:border-neutral-700">
             <div class="flex items-center gap-3">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400">
@@ -26,17 +26,17 @@
 
             <!-- Blood Type -->
             <div class="grid gap-4 md:grid-cols-2">
-                <flux:select name="blood_type" :label="__('Blood Type')">
-                    <flux:select.option value="">{{ __('Select Blood Type') }}</flux:select.option>
-                    <flux:select.option value="A+">A+</flux:select.option>
-                    <flux:select.option value="A-">A-</flux:select.option>
-                    <flux:select.option value="B+">B+</flux:select.option>
-                    <flux:select.option value="B-">B-</flux:select.option>
-                    <flux:select.option value="AB+">AB+</flux:select.option>
-                    <flux:select.option value="AB-">AB-</flux:select.option>
-                    <flux:select.option value="O+">O+</flux:select.option>
-                    <flux:select.option value="O-">O-</flux:select.option>
-                </flux:select>
+<label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">{{ __(""Blood Type"") }}</label><select name="blood_type" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <option value="">{{ __(""Select Blood Type"") }}</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+</select>
                 <flux:input
                     name="emergency_contact_phone"
                     :label="__('Emergency Contact Phone')"
@@ -51,23 +51,23 @@
                     :label="__('Emergency Contact Name')"
                     placeholder="{{ __('Contact person name') }}"
                 />
-                <flux:select name="emergency_contact_relationship" :label="__('Relationship')">
-                    <flux:select.option value="">{{ __('Select Relationship') }}</flux:select.option>
-                    <flux:select.option value="parent">{{ __('Parent') }}</flux:select.option>
-                    <flux:select.option value="spouse">{{ __('Spouse') }}</flux:select.option>
-                    <flux:select.option value="sibling">{{ __('Sibling') }}</flux:select.option>
-                    <flux:select.option value="friend">{{ __('Friend') }}</flux:select.option>
-                    <flux:select.option value="other">{{ __('Other') }}</flux:select.option>
-                </flux:select>
-            </div>
-
-            <!-- Allergies -->
-            <div class="mt-4">
-                <flux:textarea
-                    name="allergies"
-                    :label="__('Allergies')"
-                    placeholder="{{ __('List any allergies (medications, food, environmental)') }}"
-                    rows="3"
+<label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">{{ __(""Relationship"") }}</label><select name="emergency_contact_relationship" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <option value="">{{ __(""Select Relationship"") }}</option>
+                    <option value="">{{ __(""Select Blood Type"") }}</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="">{{ __(""Select Relationship"") }}</option>
+                    <option value="parent">{{ __("Parent") }}</option>
+                    <option value="spouse">{{ __("Spouse") }}</option>
+                    <option value="sibling">{{ __("Sibling") }}</option>
+                    <option value="friend">{{ __("Friend") }}</option>
+                    <option value="other">{{ __("Other") }}</option>
                 />
             </div>
 
@@ -100,3 +100,4 @@
         </form>
     </div>
 </x-layouts::app>
+

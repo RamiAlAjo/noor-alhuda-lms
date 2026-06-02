@@ -47,12 +47,12 @@
             <div class="mt-4 rounded-lg border border-indigo-200 bg-indigo-50 p-4 dark:border-indigo-800 dark:bg-indigo-900/20">
                 <h3 class="mb-3 text-sm font-semibold text-indigo-900 dark:text-indigo-200">{{ __('Quiz Settings') }}</h3>
                 <div class="grid gap-4 md:grid-cols-2">
-                    <flux:select name="quiz_type" :label="__('Quiz Type')">
-                        <flux:select.option value="none">{{ __('No Quiz') }}</flux:select.option>
-                        <flux:select.option value="quiz">{{ __('Quiz') }}</flux:select.option>
-                        <flux:select.option value="pre_quiz">{{ __('Pre-Quiz') }}</flux:select.option>
-                        <flux:select.option value="post_quiz">{{ __('Post-Quiz') }}</flux:select.option>
-                    </flux:select>
+                     <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">{{ __(""Quiz Type"") }}</label><select name="quiz_type" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                         <option value="none">{{ __(""No Quiz"") }}</option>
+                         <option value="quiz">{{ __(""Quiz"") }}</option>
+                         <option value="pre_quiz">{{ __(""Pre-Quiz"") }}</option>
+                         <option value="post_quiz">{{ __(""Post-Quiz"") }}</option>
+                    </select>
                     <flux:input name="time_limit_minutes" type="number" :label="__('Time Limit (minutes)')" placeholder="0 = {{ __('No limit') }}" min="0" />
                 </div>
                 <div class="mt-3 grid gap-4 md:grid-cols-3">
@@ -310,3 +310,6 @@
         }
     </script>
 </x-layouts::app>
+
+
+

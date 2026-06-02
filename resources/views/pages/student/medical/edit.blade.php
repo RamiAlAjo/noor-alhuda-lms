@@ -26,17 +26,17 @@
 
             <!-- Blood Type -->
             <div class="grid gap-4 md:grid-cols-2">
-                <flux:select name="blood_type" :label="__('Blood Type')">
-                    <flux:select.option value="">{{ __('Select Blood Type') }}</flux:select.option>
-                    <flux:select.option value="A+">A+</flux:select.option>
-                    <flux:select.option value="A-">A-</flux:select.option>
-                    <flux:select.option value="B+">B+</flux:select.option>
-                    <flux:select.option value="B-">B-</flux:select.option>
-                    <flux:select.option value="AB+">AB+</flux:select.option>
-                    <flux:select.option value="AB-">AB-</flux:select.option>
-                    <flux:select.option value="O+">O+</flux:select.option>
-                    <flux:select.option value="O-">O-</flux:select.option>
-                </flux:select>
+                <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">{{ __(""Blood Type"") }}</label><select name="blood_type" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <option value="">{{ __('Select Blood Type') }}</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                </select>
                 <flux:input
                     name="emergency_contact_phone"
                     :label="__('Emergency Contact Phone')"
@@ -53,14 +53,14 @@
                     placeholder="{{ __('Contact person name') }}"
                     value="{{ old('emergency_contact_name', $user->medicalRecord?->emergency_contact_name) }}"
                 />
-                <flux:select name="emergency_contact_relationship" :label="__('Relationship')">
-                    <flux:select.option value="">{{ __('Select Relationship') }}</flux:select.option>
-                    <flux:select.option value="parent" {{ old('emergency_contact_relationship', $user->medicalRecord?->emergency_contact_relationship) == 'parent' ? 'selected' : '' }}>{{ __('Parent') }}</flux:select.option>
-                    <flux:select.option value="spouse" {{ old('emergency_contact_relationship', $user->medicalRecord?->emergency_contact_relationship) == 'spouse' ? 'selected' : '' }}>{{ __('Spouse') }}</flux:select.option>
-                    <flux:select.option value="sibling" {{ old('emergency_contact_relationship', $user->medicalRecord?->emergency_contact_relationship) == 'sibling' ? 'selected' : '' }}>{{ __('Sibling') }}</flux:select.option>
-                    <flux:select.option value="friend" {{ old('emergency_contact_relationship', $user->medicalRecord?->emergency_contact_relationship) == 'friend' ? 'selected' : '' }}>{{ __('Friend') }}</flux:select.option>
-                    <flux:select.option value="other" {{ old('emergency_contact_relationship', $user->medicalRecord?->emergency_contact_relationship) == 'other' ? 'selected' : '' }}>{{ __('Other') }}</flux:select.option>
-                </flux:select>
+                <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">{{ __(""Relationship"") }}</label><select name="emergency_contact_relationship" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <option value="">{{ __('Select Relationship') }}</option>
+                    <option value="parent" {{ old("emergency_contact_relationship", $user->medicalRecord?->emergency_contact_relationship) == "parent" ? "selected" : "" }}>{{ __("Parent") }}</option>
+                    <option value="spouse" {{ old("emergency_contact_relationship", $user->medicalRecord?->emergency_contact_relationship) == "spouse" ? "selected" : "" }}>{{ __("Spouse") }}</option>
+                    <option value="sibling" {{ old("emergency_contact_relationship", $user->medicalRecord?->emergency_contact_relationship) == "sibling" ? "selected" : "" }}>{{ __("Sibling") }}</option>
+                    <option value="friend" {{ old("emergency_contact_relationship", $user->medicalRecord?->emergency_contact_relationship) == "friend" ? "selected" : "" }}>{{ __("Friend") }}</option>
+                    <option value="other" {{ old("emergency_contact_relationship", $user->medicalRecord?->emergency_contact_relationship) == "other" ? "selected" : "" }}>{{ __("Other") }}</option>
+                </select>
             </div>
 
             <!-- Allergies -->
@@ -105,3 +105,10 @@
         </form>
     </div>
 </x-layouts::app>
+
+
+
+
+
+
+

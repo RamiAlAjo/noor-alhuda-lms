@@ -49,27 +49,27 @@ $leaveTypes = [
                     <!-- Leave Type -->
                     <div>
                         <flux:label>{{ __('Leave Type') }}</flux:label>
-                        <flux:select name="leave_type" required>
+                        <select name="leave_type" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                             @foreach($leaveTypes as $value => $label)
                                 <option value="{{ $value }}" @if(old('leave_type', $medicalLeave->leave_type) == $value) selected @endif>
                                     {{ $label }}
                                 </option>
                             @endforeach
-                        </flux:select>
+                        </select>
                         <flux:error name="leave_type" />
                     </div>
 
                     <!-- Semester -->
                     <div>
                         <flux:label>{{ __('Semester') }}</flux:label>
-                        <flux:select name="semester_id" nullable>
+                        <select name="semester_id" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                             <option value="">{{ __('Select Semester (Optional)') }}</option>
                             @foreach($semesters as $semester)
                                 <option value="{{ $semester->id }}" @if(old('semester_id', $medicalLeave->semester_id) == $semester->id) selected @endif>
                                     {{ $semester->name }}
                                 </option>
                             @endforeach
-                        </flux:select>
+                        </select>
                         <flux:error name="semester_id" />
                     </div>
 
